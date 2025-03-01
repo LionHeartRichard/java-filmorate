@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import ru.yandex.practicum.filmorate.validation.impl.BirthdayValidator;
 
 @Constraint(validatedBy = BirthdayValidator.class)
 @Target(ElementType.FIELD)

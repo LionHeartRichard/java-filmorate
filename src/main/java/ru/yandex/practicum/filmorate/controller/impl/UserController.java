@@ -15,7 +15,7 @@ import ru.yandex.practicum.filmorate.controller.Controller;
 import ru.yandex.practicum.filmorate.exception.CustomException;
 import ru.yandex.practicum.filmorate.model.impl.User;
 
-@RestController
+@RestController("/users")
 public class UserController implements Controller<User> {
 
 	private final Map<Long, User> users = new HashMap<>();
