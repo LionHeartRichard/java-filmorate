@@ -36,7 +36,7 @@ public class FilmController implements Controller<Film> {
 		}
 		log.warn("Попытка внести информацию о фильме с id указанным в ручную, object film: {}", film.toString());
 		throw new CustomException(String.format(
-				"Фильм с id: {} не может быть добавлен! Идентификатор генерируется автоматически!", film.getId()));
+				"Фильм с id: %d не может быть добавлен! Идентификатор генерируется автоматически!", film.getId()));
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class FilmController implements Controller<Film> {
 			return film;
 		}
 		log.warn("Попытка внести изменения в информацию о фильме с несуществующим id: {}", newFilm.getId());
-		throw new CustomException(String.format("Фильм с id: {} не найден!", newFilm.getId()));
+		throw new CustomException(String.format("Фильм с id: %d не найден!", newFilm.getId()));
 	}
 
 	private Long nextId() {

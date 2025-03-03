@@ -39,7 +39,7 @@ public class UserController implements Controller<User> {
 		}
 		log.warn("Пользователь не добавлен, id создано в ручную {}", user.getId());
 		throw new CustomException(String.format(
-				"Пользователь с id: {} добавить не возможно! Не указываейте идентификатор, он генерируется автоматически!",
+				"Пользователь с id: %d добавить не возможно! Не указываейте идентификатор, он генерируется автоматически!",
 				user.getId()));
 	}
 
@@ -68,7 +68,7 @@ public class UserController implements Controller<User> {
 			return user;
 		}
 		log.warn("Попытка обновить информацию о пользователе {}, id пользователя не найден!", newUser.toString());
-		throw new CustomException(String.format("Пользователь с id: {} не найден!", newUser.getId()));
+		throw new CustomException(String.format("Пользователь с id: %d не найден!", newUser.getId()));
 	}
 
 	private Long nextId() {
