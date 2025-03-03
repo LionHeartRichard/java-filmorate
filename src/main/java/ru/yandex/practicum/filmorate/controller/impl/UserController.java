@@ -27,19 +27,20 @@ public class UserController implements Controller<User> {
 	@Override
 	@PostMapping
 	public User doPost(@Valid @RequestBody User user) {
-		log.trace("Валдидация пройдена, начало обработки POST запроса для создания/добавления пользователя "
-				+ user.toString());
+		log.trace("Валдидация пройдена, начало обработки POST запроса для создания/добавления пользователя {}",
+				user.toString());
 		if (user.getId() == null) {
 			user.setId(nextId());
 			if (user.getName() == null || user.getName().isBlank())
 				user.setName(user.getLogin());
 			users.put(user.getId(), user);
-			log.trace("Пользователь с id: " + user.getId() + " добавлен");
+			log.trace("Пользователь с id: {} добавлен", user.getId());
 			return user;
 		}
 		log.warn("Пользователь не добавлен, id создано в ручную {}", user.getId());
-		throw new CustomException("Пользователь с id: " + user.getId()
-				+ " добавить не возможно! Не указываейте идентификатор, он генерируется автоматически!");
+		throw new CustomException(String.format(
+				"Пользователь с id: {} добавить не возможно! Не указываейте идентификатор, он генерируется автоматически!",
+				user.getId()));
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public class UserController implements Controller<User> {
 			return user;
 		}
 		log.warn("Попытка обновить информацию о пользователе {}, id пользователя не найден!", newUser.toString());
-		throw new CustomException("Пользователь с id: " + newUser.getId() + " не найден!");
+		throw new CustomException(String.format("Пользователь с id: {} не найден!", newUser.getId()));
 	}
 
 	private Long nextId() {

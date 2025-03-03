@@ -27,16 +27,16 @@ public class FilmController implements Controller<Film> {
 	@Override
 	@PostMapping
 	public Film doPost(@Valid @RequestBody Film film) {
-		log.trace("Валидация пройдена. Начало обработки POST зпроса /films, обект фильм: " + film.toString());
+		log.trace("Валидация пройдена. Начало обработки POST зпроса /films, обект: {}", film.toString());
 		if (film.getId() == null) {
 			film.setId(nextId());
 			films.put(film.getId(), film);
-			log.trace("Фильм с id: " + film.getId() + " добавлен");
+			log.trace("Фильм с id: {} добавлен", film.getId());
 			return film;
 		}
-		log.warn("Попытка внести информацию о фильме с id указанным в ручную, object film: " + film.toString());
-		throw new CustomException(
-				"Фильм с id: " + film.getId() + " не может быть добавлен! Идентификатор генерируется автоматически!");
+		log.warn("Попытка внести информацию о фильме с id указанным в ручную, object film: {}", film.toString());
+		throw new CustomException(String.format(
+				"Фильм с id: {} не может быть добавлен! Идентификатор генерируется автоматически!", film.getId()));
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class FilmController implements Controller<Film> {
 	@Override
 	@PutMapping
 	public Film doPut(@Valid @RequestBody Film newFilm) {
-		log.trace("Валидация пройдена. Начало обработки PUT зпроса /films, обект: " + newFilm.toString());
+		log.trace("Валидация пройдена. Начало обработки PUT зпроса /films, обект: {}", newFilm.toString());
 		if (films.containsKey(newFilm.getId())) {
 			Film film = films.get(newFilm.getId());
 			if (newFilm.getName() != null)
@@ -60,11 +60,11 @@ public class FilmController implements Controller<Film> {
 			if (newFilm.getReleaseDate() != null)
 				film.setReleaseDate(newFilm.getReleaseDate());
 			films.put(film.getId(), film);
-			log.trace("Фильм изменен и внесен в память, обект: " + film.toString());
+			log.trace("Фильм изменен и внесен в память, обект: {}", film.toString());
 			return film;
 		}
-		log.warn("Попытка внести изменения в информацию о фильме с несуществующим id: " + newFilm.getId());
-		throw new CustomException("Фильм с id: " + newFilm.getId() + " не найден!");
+		log.warn("Попытка внести изменения в информацию о фильме с несуществующим id: {}", newFilm.getId());
+		throw new CustomException(String.format("Фильм с id: {} не найден!", newFilm.getId()));
 	}
 
 	private Long nextId() {
