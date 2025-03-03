@@ -2,24 +2,26 @@ package ru.yandex.practicum.filmorate.model.impl;
 
 import java.time.LocalDate;
 
+import org.springframework.validation.annotation.Validated;
+
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import ru.yandex.practicum.filmorate.model.WebModel;
-import ru.yandex.practicum.filmorate.validation.Birthday;
-import ru.yandex.practicum.filmorate.validation.ValidLogin;
+import ru.yandex.practicum.filmorate.validation.Login;
+import ru.yandex.practicum.filmorate.validation.BeforeNow;
 
+@Validated
 @Data
 @Builder(toBuilder = true)
 public class User implements WebModel {
-	@NonNull
+
 	private Long id;
 	@Email
 	private String email;
-	@ValidLogin
+	@Login
 	private String login;
 	private String name;
-	@Birthday
+	@BeforeNow
 	private LocalDate birthday;
 }

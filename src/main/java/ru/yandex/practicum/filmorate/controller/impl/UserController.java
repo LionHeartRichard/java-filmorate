@@ -8,14 +8,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.controller.Controller;
 import ru.yandex.practicum.filmorate.exception.CustomException;
 import ru.yandex.practicum.filmorate.model.impl.User;
 
-@RestController("/users")
+@Slf4j
+@RestController
+@RequestMapping("/users")
 public class UserController implements Controller<User> {
 
 	private final Map<Long, User> users = new HashMap<>();
@@ -23,13 +27,19 @@ public class UserController implements Controller<User> {
 	@Override
 	@PostMapping
 	public User doPost(@Valid @RequestBody User user) {
-		if (users.containsKey(user.getId())) {
+		log.trace("Валдидация пройдена, начало обработки POST запроса для создания/добавления пользователя "
+				+ user.toString());
+		if (user.getId() == null) {
+			user.setId(nextId());
 			if (user.getName() == null || user.getName().isBlank())
 				user.setName(user.getLogin());
 			users.put(user.getId(), user);
+			log.trace("Пользователь с id: " + user.getId() + " добавлен");
 			return user;
 		}
-		throw new CustomException("Пользователь с id: " + user.getId() + " уже добавлен!");
+		log.warn("Пользователь не добавлен, id создано в ручную {}", user.getId());
+		throw new CustomException("Пользователь с id: " + user.getId()
+				+ " добавить не возможно! Не указываейте идентификатор, он генерируется автоматически!");
 	}
 
 	@Override
@@ -41,6 +51,7 @@ public class UserController implements Controller<User> {
 	@Override
 	@PutMapping
 	public User doPut(@Valid @RequestBody User newUser) {
+		log.trace("Валидация пройдена, начало обработки PUT запроса для объекта {}", newUser.toString());
 		if (users.containsKey(newUser.getId())) {
 			User user = users.get(newUser.getId());
 			if (newUser.getBirthday() != null)
@@ -52,8 +63,15 @@ public class UserController implements Controller<User> {
 			if (newUser.getName() != null)
 				user.setName(newUser.getName());
 			users.put(user.getId(), user);
+			log.trace("Информация о пользователе {} успешно обновлена", user.toString());
 			return user;
 		}
+		log.warn("Попытка обновить информацию о пользователе {}, id пользователя не найден!", newUser.toString());
 		throw new CustomException("Пользователь с id: " + newUser.getId() + " не найден!");
+	}
+
+	private Long nextId() {
+		Long id = users.keySet().stream().mapToLong(key -> key).max().orElse(0);
+		return ++id;
 	}
 }

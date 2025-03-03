@@ -5,20 +5,16 @@ import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.constraintvalidation.SupportedValidationTarget;
 import jakarta.validation.constraintvalidation.ValidationTarget;
 
-import ru.yandex.practicum.filmorate.validation.ValidLogin;
+import ru.yandex.practicum.filmorate.validation.Login;
 
-@SupportedValidationTarget(ValidationTarget.PARAMETERS)
-public class ValidLoginValidator implements ConstraintValidator<ValidLogin, String> {
+@SupportedValidationTarget(ValidationTarget.ANNOTATED_ELEMENT)
+public class LoginValidator implements ConstraintValidator<Login, String> {
 
 	@Override
 	public boolean isValid(String login, ConstraintValidatorContext context) {
-		if (login == null)
+		if (login == null || login.isEmpty())
 			return false;
-		if (login.isBlank())
-			return false;
-		if (login.split(" ").length > 1)
-			return false;
-		return true;
+		return login.indexOf(' ') == -1;
 	}
 
 }

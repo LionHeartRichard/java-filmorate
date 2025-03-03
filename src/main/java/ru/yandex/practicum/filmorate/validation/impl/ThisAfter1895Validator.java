@@ -7,10 +7,10 @@ import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.constraintvalidation.SupportedValidationTarget;
 import jakarta.validation.constraintvalidation.ValidationTarget;
 
-import ru.yandex.practicum.filmorate.validation.ValidOfLocalDate1895;
+import ru.yandex.practicum.filmorate.validation.ThisAfter1895;
 
-@SupportedValidationTarget(ValidationTarget.PARAMETERS)
-public class ValidOfLocalDate1895Validator implements ConstraintValidator<ValidOfLocalDate1895, LocalDate> {
+@SupportedValidationTarget(ValidationTarget.ANNOTATED_ELEMENT)
+public class ThisAfter1895Validator implements ConstraintValidator<ThisAfter1895, LocalDate> {
 
 	private static final LocalDate THRESHOLD_DATE = LocalDate.of(1895, 12, 28);
 

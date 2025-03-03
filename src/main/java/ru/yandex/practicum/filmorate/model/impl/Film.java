@@ -1,29 +1,30 @@
 package ru.yandex.practicum.filmorate.model.impl;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
+import org.springframework.validation.annotation.Validated;
+
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Size;
 
 import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.model.WebModel;
-import ru.yandex.practicum.filmorate.validation.ValidOfLocalDate1895;
-import ru.yandex.practicum.filmorate.validation.ValidPositiveDuration;
+import ru.yandex.practicum.filmorate.validation.ThisAfter1895;
+import ru.yandex.practicum.filmorate.validation.NotNegativeValue;
 
+@Validated
 @Data
 @Builder(toBuilder = true)
-public class Film implements WebModel{
-	@NotNull(message = "Идентификатор не может быть Null!")
+public class Film implements WebModel {
+
 	private Long id;
 	@NotBlank(message = "Наименование не может быть пустым!")
 	private String name;
-	@Max(200)
+	@Size(min = 0, max = 200, message = "Описание не может быть больше 200 символов")
 	private String description;
-	@ValidOfLocalDate1895
+	@ThisAfter1895
 	private LocalDate releaseDate;
-	@ValidPositiveDuration
-	private Duration duration;
+	@NotNegativeValue
+	private Integer duration;
 }
