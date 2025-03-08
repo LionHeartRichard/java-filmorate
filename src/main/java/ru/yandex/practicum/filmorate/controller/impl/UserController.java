@@ -12,21 +12,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.controller.Controller;
 import ru.yandex.practicum.filmorate.exception.CustomException;
 import ru.yandex.practicum.filmorate.model.impl.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController implements Controller<User> {
 
+	private final UserService userService;
 	private final Map<Long, User> users = new HashMap<>();
 
 	@Override
 	@PostMapping
-	public User doPost(@Valid @RequestBody User user) {
+	public User create(@Valid @RequestBody User user) {
 		log.trace("Валдидация пройдена, начало обработки POST запроса для создания/добавления пользователя {}",
 				user.toString());
 		if (user.getId() == null) {
@@ -51,7 +55,7 @@ public class UserController implements Controller<User> {
 
 	@Override
 	@PutMapping
-	public User doPut(@Valid @RequestBody User newUser) {
+	public User update(@Valid @RequestBody User newUser) {
 		log.trace("Валидация пройдена, начало обработки PUT запроса для объекта {}", newUser.toString());
 		if (users.containsKey(newUser.getId())) {
 			User user = users.get(newUser.getId());

@@ -12,63 +12,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.controller.Controller;
 import ru.yandex.practicum.filmorate.exception.CustomException;
 import ru.yandex.practicum.filmorate.model.impl.Film;
+import ru.yandex.practicum.filmorate.storage.impl.FilmStorage;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
+@RequiredArgsConstructor
 public class FilmController implements Controller<Film> {
 
-	private final Map<Long, Film> films = new HashMap<>();
+	private final FilmStorage filmStorage;
+	private final FilmService filmService;
 
 	@Override
 	@PostMapping
-	public Film doPost(@Valid @RequestBody Film film) {
-		log.trace("Валидация пройдена. Начало обработки POST зпроса /films, обект: {}", film.toString());
-		if (film.getId() == null) {
-			film.setId(nextId());
-			films.put(film.getId(), film);
-			log.trace("Фильм с id: {} добавлен", film.getId());
-			return film;
-		}
-		log.warn("Попытка внести информацию о фильме с id указанным в ручную, object film: {}", film.toString());
-		throw new CustomException(String.format(
-				"Фильм с id: %d не может быть добавлен! Идентификатор генерируется автоматически!", film.getId()));
+	public Film create(@Valid @RequestBody Film film) {
+		return filmStorage.create(film);
 	}
 
 	@Override
 	@GetMapping
 	public Collection<Film> doGet() {
-		return films.values();
+		if()
 	}
 
 	@Override
 	@PutMapping
-	public Film doPut(@Valid @RequestBody Film newFilm) {
-		log.trace("Валидация пройдена. Начало обработки PUT зпроса /films, обект: {}", newFilm.toString());
-		if (films.containsKey(newFilm.getId())) {
-			Film film = films.get(newFilm.getId());
-			if (newFilm.getName() != null)
-				film.setName(newFilm.getName());
-			if (newFilm.getDescription() != null)
-				film.setDescription(newFilm.getDescription());
-			if (newFilm.getDuration() != null)
-				film.setDuration(newFilm.getDuration());
-			if (newFilm.getReleaseDate() != null)
-				film.setReleaseDate(newFilm.getReleaseDate());
-			films.put(film.getId(), film);
-			log.trace("Фильм изменен и внесен в память, обект: {}", film.toString());
-			return film;
-		}
-		log.warn("Попытка внести изменения в информацию о фильме с несуществующим id: {}", newFilm.getId());
-		throw new CustomException(String.format("Фильм с id: %d не найден!", newFilm.getId()));
-	}
-
-	private Long nextId() {
-		Long id = films.keySet().stream().mapToLong(key -> key).max().orElse(0);
-		return ++id;
+	public Film update(@Valid @RequestBody Film newFilm) {
+		return filmStorage.create(newFilm);
 	}
 }
