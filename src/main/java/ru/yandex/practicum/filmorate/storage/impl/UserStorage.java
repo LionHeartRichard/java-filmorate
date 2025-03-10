@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,12 @@ public class UserStorage implements Storage<User> {
 		throw new ConditionsNotMetException(String.format(
 				"Пользователь с id: %d добавить не возможно! Не указываейте идентификатор, он генерируется автоматически!",
 				user.getId()));
+	}
+
+	@Override
+	public Collection<User> read() {
+		log.trace("Обработка в Хранилище, чтение всех пользователей");
+		return users.values();
 	}
 
 	@Override

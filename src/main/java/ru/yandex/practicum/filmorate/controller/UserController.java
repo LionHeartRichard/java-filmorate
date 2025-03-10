@@ -19,6 +19,7 @@ import ru.yandex.practicum.filmorate.exception.NotValidParamException;
 import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.impl.UserStorage;
+import ru.yandex.practicum.filmorate.validation.NotNegativeValue;
 
 @Slf4j
 @RestController
@@ -41,64 +42,42 @@ public class UserController {
 		return userStorage.update(newUser);
 	}
 
+	@GetMapping
+	public Collection<User> read() {
+		log.trace("Обработка запроса на получение всех пользователей");
+		return userStorage.read();
+	}
+
 	@GetMapping("/{id}")
-	public User findById(@PathVariable final Long id) {
+	public User findById(@NotNegativeValue @PathVariable final Long id) {
 		log.trace("Поиска пользователя по id: {}", id);
-		validId(id);
 		return userStorage.findById(id);
 	}
 
-	@PutMapping("/{id}/friends/{friendId}")
-	public Collection<User> addFriend(@PathVariable(required = false) Long id,
-			@PathVariable(required = false) Long friendId) {
-		log.trace("Обработка запроса Добавление в друзья id: {}, friendId: {}", id, friendId);
-		validIdentifiers(id, friendId);
-		return userService.addFriend(id, friendId);
+	@PutMapping("/{id}/friends/{friend_id}")
+	public Collection<User> addFriend(@NotNegativeValue @PathVariable Long id,
+			@NotNegativeValue @PathVariable(value = "friend_id") Long idFriend) {
+		log.trace("Обработка запроса Добавление в друзья id: {}, idFriend: {}", id, idFriend);
+		return userService.addFriend(id, idFriend);
 	}
 
-	@DeleteMapping("/{id}/friends/{friendId}")
-	public Collection<User> deleteFriend(@PathVariable(required = false) final Long id,
-			@PathVariable(required = false) final Long friendId) {
-		log.trace("Обработка запроса Удаление из друзей id: {}, friendId: {}", id, friendId);
-		validIdentifiers(id, friendId);
-		return userService.deleteFriend(id, friendId);
+	@DeleteMapping("/{id}/friends/{friend_id}")
+	public Collection<User> deleteFriend(@NotNegativeValue @PathVariable final Long id,
+			@NotNegativeValue @PathVariable(value = "friend_id") final Long idFriend) {
+		log.trace("Обработка запроса Удаление из друзей id: {}, friendId: {}", id, idFriend);
+		return userService.deleteFriend(id, idFriend);
 	}
 
 	@GetMapping("/{id}/friends")
-	public Collection<User> getFriends(@PathVariable final Long id) {
+	public Collection<User> getFriends(@NotNegativeValue @PathVariable final Long id) {
 		log.trace("Обработка запроса на получение друзей пользователя с id: {}", id);
 		return userService.getFriends(id);
 	}
 
 	@GetMapping("/{id}/friends/common/{otherId}")
-	public Collection<User> getCommonFriends(@PathVariable(required = false) final Long id,
-			@PathVariable(required = false) final Long otherId) {
+	public Collection<User> getCommonFriends(@NotNegativeValue @PathVariable final Long id,
+			@NotNegativeValue @PathVariable final Long otherId) {
 		log.trace("Обработка запроса на получение общих друзей");
-		validIdentifiers(id, otherId);
 		return userService.getCommonFriends(id, otherId);
-	}
-
-	private void validId(Long id) {
-		if (id < 0) {
-			log.warn("Передан ошибочный идентификатор от клиента userId: {}", id);
-			throw new NotValidParamException(
-					Map.of("Не верный идентиикатор пользователя", "идентификатор - целое положительное число"),
-					Map.of("Передан идентификатор пользователя", id + ""));
-		}
-	}
-
-	private void validIdentifiers(Long id, Long friendId) {
-		if (id == null || friendId == null) {
-			log.warn("Передан ошибочный идентификатор от клиента userId: {}, friendId: {}", id, friendId);
-			throw new NotValidParamException(Map.of("Идентификатор пользователя", id + ""),
-					Map.of("Идентификатор друга", friendId + ""),
-					Map.of("Идентификаторы", "НЕ МОГУТ иметь значение null!!!"));
-		}
-		if (id < 0 || friendId < 0) {
-			log.warn("Передан ошибочный идентификатор от клиента userId: {}, friendId: {}", id, friendId);
-			throw new NotValidParamException(Map.of("Идентификатор пользователя", id + ""),
-					Map.of("Идентификатор друга", friendId + ""),
-					Map.of("Идентификаторы", "НЕ МОГУТ иметь отрицательное значение!!!"));
-		}
 	}
 }

@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import java.util.Collection;
+
 public interface Storage<T> {
 
 	public T create(T t);
 
-	// public Collection<T> read();
+	public Collection<T> read();
 
 	public T update(T t);
 

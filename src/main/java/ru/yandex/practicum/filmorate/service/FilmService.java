@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -22,6 +24,7 @@ public class FilmService {
 
 	public Film deleteLike(final Long id, final Long userId) {
 		Film film = filmStorage.findById(id);
+		@NotNull(message = "Удаление лайка для фильма не возможно! Лайки отсутсвуют")
 		Set<Long> likes = film.getLikes();
 		if (likes.contains(userId)) {
 			log.trace("лайк для фильма с id:{}, удален пользователем с id:{}", id, userId);
@@ -39,6 +42,7 @@ public class FilmService {
 		log.trace("начало обработки в СЕРВИСЕ, метод по добавлению лайков. Получен фильм: {}", film.toString());
 		userStorage.findById(userId);
 		Set<Long> likes = film.getLikes();
+		likes = likes == null ? new HashSet<>() : likes;
 		if (!likes.contains(userId)) {
 			likes.add(userId);
 			film.setLikes(likes);

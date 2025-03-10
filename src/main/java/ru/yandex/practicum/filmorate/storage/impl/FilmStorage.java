@@ -32,6 +32,12 @@ public class FilmStorage implements Storage<Film> {
 				"Фильм с id: %d не может быть добавлен! Идентификатор генерируется автоматически!", film.getId()));
 	}
 
+	@Override
+	public Collection<Film> read() {
+		log.trace("Обработка в ХРАНИЛИЩЕ. Получение списка всех фильмов");
+		return films.values();
+	}
+
 	public Collection<Film> findTopFilms(final int count) {
 		log.trace("Выполнение метода read в ХРАНИЛИЩЕ фильмов");
 		return films.values().stream().sorted((a, b) -> Integer.compare(b.getLikes().size(), a.getLikes().size()))
