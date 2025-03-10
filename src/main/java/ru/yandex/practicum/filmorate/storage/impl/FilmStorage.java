@@ -7,7 +7,8 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.CustomException;
+import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.impl.Film;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
@@ -19,26 +20,27 @@ public class FilmStorage implements Storage<Film> {
 
 	@Override
 	public Film create(Film film) {
-		log.trace("Валидация пройдена. Начало обработки POST зпроса /films, обект: {}", film.toString());
+		log.trace("создание фильма в ХРАНИЛИЩЕ фильмов, film: {}", film.toString());
 		if (film.getId() == null) {
 			film.setId(nextId());
 			films.put(film.getId(), film);
-			log.trace("Фильм с id: {} добавлен", film.getId());
+			log.trace("Фильм с id: {} добавлен в ХРАНИЛИЩЕ фильмов", film.getId());
 			return film;
 		}
-		log.warn("Попытка внести информацию о фильме с id указанным в ручную, object film: {}", film.toString());
-		throw new CustomException(String.format(
+		log.warn("Попытка внести информацию о фильме с id указанным в ручную, film: {}", film.toString());
+		throw new ConditionsNotMetException(String.format(
 				"Фильм с id: %d не может быть добавлен! Идентификатор генерируется автоматически!", film.getId()));
 	}
 
-	@Override
-	public Collection<Film> read() {
-		return films.values();
+	public Collection<Film> findTopFilms(final int count) {
+		log.trace("Выполнение метода read в ХРАНИЛИЩЕ фильмов");
+		return films.values().stream().sorted((a, b) -> Integer.compare(b.getLikes().size(), a.getLikes().size()))
+				.limit(count).toList();
 	}
 
 	@Override
 	public Film update(Film newFilm) {
-		log.trace("Валидация пройдена. Начало обработки PUT зпроса /films, обект: {}", newFilm.toString());
+		log.trace("Обновление фильма в ХРАНИЛИЩЕ фильмов newFilm: {}", newFilm.toString());
 		if (films.containsKey(newFilm.getId())) {
 			Film film = films.get(newFilm.getId());
 			if (newFilm.getName() != null)
@@ -49,29 +51,28 @@ public class FilmStorage implements Storage<Film> {
 				film.setDuration(newFilm.getDuration());
 			if (newFilm.getReleaseDate() != null)
 				film.setReleaseDate(newFilm.getReleaseDate());
+			if (newFilm.getLikes() != null)
+				film.setLikes(newFilm.getLikes());
 			films.put(film.getId(), film);
-			log.trace("Фильм изменен и внесен в память, обект: {}", film.toString());
+			log.trace("Фильм изменен и внесен в память, film: {}", film.toString());
 			return film;
 		}
-		log.warn("Попытка внести изменения в информацию о фильме с несуществующим id: {}", newFilm.getId());
-		throw new CustomException(String.format("Фильм с id: %d не найден!", newFilm.getId()));
-	}
-
-	@Override
-	public Film delete(Film t) {
-		// TODO Auto-generated method stub
-		return null;
+		log.warn(
+				"Попытка внести изменения в информацию о фильме с несуществующим id: {}. Обновление несуществующего фильма: {}",
+				newFilm.getId(), newFilm.toString());
+		throw new NotFoundException(String.format("Фильм с id: %d не найден!", newFilm.getId()));
 	}
 
 	@Override
 	public Film findById(Long id) {
-		return films.get(id);
-	}
-
-	@Override
-	public Collection<Film> findByParam(String... args) {
-		// TODO Auto-generated method stub
-		return null;
+		log.trace("Поиск в ХРАНИЛИЩЕ фильмов по id: {}", id);
+		if (films.containsKey(id)) {
+			Film film = films.get(id);
+			log.trace("Возвращаем фильм {} из ХРАНИЛИЩА", film.toString());
+			return film;
+		}
+		log.warn("Фильм с id: {} не найден", id);
+		throw new NotFoundException(String.format("Фильм с id: %d - не найден!!!", id));
 	}
 
 	private Long nextId() {

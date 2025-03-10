@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.model.impl;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,8 @@ public class UserTest {
 
 	@Test
 	public void testPositive() {
-		final User user = new User(0L, "dolores@yandex.ru", "dolore", "Dolores", LocalDate.of(2000, 8, 20));
+		final User user = new User(0L, "dolores@yandex.ru", "dolore", "Dolores", LocalDate.of(2000, 8, 20),
+				new HashSet<>());
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 		// Перебирая нарушения, мы можем получить все сообщения о нарушениях с помощью
 		// метода getMessage:
@@ -31,7 +33,8 @@ public class UserTest {
 
 	@Test
 	public void testNegativeEmail() {
-		final User user = new User(0L, "doloresyandex.ru", "dolore", "Dolores", LocalDate.of(2000, 8, 20));
+		final User user = new User(0L, "doloresyandex.ru", "dolore", "Dolores", LocalDate.of(2000, 8, 20),
+				new HashSet<>());
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		for (ConstraintViolation<User> violation : violations) {
@@ -43,7 +46,8 @@ public class UserTest {
 
 	@Test
 	public void testNegativeLogin() {
-		final User user = new User(0L, "dolores@yandex.ru", "dolore login", "Dolores", LocalDate.of(2000, 8, 20));
+		final User user = new User(0L, "dolores@yandex.ru", "dolore login", "Dolores", LocalDate.of(2000, 8, 20),
+				new HashSet<>());
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		for (ConstraintViolation<User> violation : violations) {
@@ -55,7 +59,8 @@ public class UserTest {
 
 	@Test
 	public void testNegativeBirthDay() {
-		final User user = new User(0L, "dolores@yandex.ru", "dolore", "Dolores", LocalDate.of(2446, 8, 20));
+		final User user = new User(0L, "dolores@yandex.ru", "dolore", "Dolores", LocalDate.of(2446, 8, 20),
+				new HashSet<>());
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
 
 		for (ConstraintViolation<User> violation : violations) {

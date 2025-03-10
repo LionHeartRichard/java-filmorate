@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model.impl;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -17,11 +18,12 @@ import ru.yandex.practicum.filmorate.validation.BeforeNow;
 public class User implements WebModel {
 
 	private Long id;
-	@Email
+	@Email(message = "Не корректный адрес электронной почты!!!")
 	private String email;
-	@Login
+	@Login(message = "По првилам логин не может быть пустым или содержать пробелы!!!")
 	private String login;
 	private String name;
-	@BeforeNow
+	@BeforeNow(message = "Дата рождения не может быть в будущем!!!")
 	private LocalDate birthday;
+	private Set<Long> friends;
 }

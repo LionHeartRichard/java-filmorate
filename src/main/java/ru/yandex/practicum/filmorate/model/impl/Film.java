@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model.impl;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -23,8 +24,9 @@ public class Film implements WebModel {
 	private String name;
 	@Size(min = 0, max = 200, message = "Описание не может быть больше 200 символов")
 	private String description;
-	@ThisAfter1895
+	@ThisAfter1895(message = "Дата релиза фильма не может быть раньше чем выпущен первый фильм (1895-12-28)!!!")
 	private LocalDate releaseDate;
-	@NotNegativeValue
+	@NotNegativeValue(message = "Продолжительность фильма не может быть отрицательной или равной 0!!!")
 	private Integer duration;
+	private Set<Long> likes;
 }

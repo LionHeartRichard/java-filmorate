@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.model.impl;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ public class FilmTest {
 	@Test
 	public void testPositive() {
 
-		final Film film = new Film(0L, "nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
+		final Film film = new Film(0L, "nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100, new HashSet<>());
 
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
@@ -33,7 +34,7 @@ public class FilmTest {
 	@Test
 	public void testNegativeReleazeBefore1895() {
 
-		final Film film = new Film(0L, "nisi eiusmod", "adipisicing", LocalDate.of(1894, 3, 25), 100);
+		final Film film = new Film(0L, "nisi eiusmod", "adipisicing", LocalDate.of(1894, 3, 25), 100, new HashSet<>());
 
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
@@ -44,7 +45,7 @@ public class FilmTest {
 	@Test
 	public void testNegativeDuration() {
 
-		final Film film = new Film(0L, "nisi eiusmod", "adipisicing", LocalDate.of(2000, 3, 25), -100);
+		final Film film = new Film(0L, "nisi eiusmod", "adipisicing", LocalDate.of(2000, 3, 25), -100, new HashSet<>());
 
 		Set<ConstraintViolation<Film>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
