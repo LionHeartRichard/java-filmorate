@@ -6,16 +6,20 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.util.ApiValidator;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class UserStorage implements Storage<User> {
 
+	private final ApiValidator validator;
 	private final Map<Long, User> users = new HashMap<>();
 
 	@Override
@@ -64,6 +68,7 @@ public class UserStorage implements Storage<User> {
 
 	@Override
 	public User findById(final Long id) {
+		validator.positiveValue(id, String.format("передан отрицательный идентификатор id: %d", id));
 		log.trace("Получение пользователя по id: {}", id);
 		if (users.containsKey(id)) {
 			User user = users.get(id);

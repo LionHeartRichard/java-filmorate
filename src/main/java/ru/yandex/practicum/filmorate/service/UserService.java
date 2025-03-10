@@ -9,31 +9,40 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.storage.impl.UserStorage;
+import ru.yandex.practicum.filmorate.util.ApiValidator;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class UserService {
+
+	private final ApiValidator validator;
 	private final UserStorage userStorage;
 
-	public Collection<User> addFriend(final Long id, final Long idFriend) {
+	public Collection<User> addFriend(final Long id, final Long friendId) {
+		validator.positiveValue(id, String.format("Передан отрицательный id: %d", id));
+		validator.positiveValue(friendId, String.format("Передан отрицательный friendId: %d", friendId));
 		User user = userStorage.findById(id);
-		User friend = userStorage.findById(idFriend);
+		User friend = userStorage.findById(friendId);
 		log.trace("Начало обработки в СЕРВИСЕ. Добавление в друзья");
-		Set<Long> idxes = user.getFriends();
-		Set<Long> idxesFriend = friend.getFriends();
-		idxes = idxes == null ? new HashSet<>() : idxes;
-		idxesFriend = idxesFriend == null ? new HashSet<>() : idxesFriend;
-		if (!idxes.contains(idFriend)) {
-			idxes.add(idFriend);
-			idxesFriend.add(id);
-			user.setFriends(idxes);
-			friend.setFriends(idxesFriend);
+		Set<Long> userIdexes = user.getFriends();
+		Set<Long> otherIdexes = friend.getFriends();
+		userIdexes = userIdexes == null ? new HashSet<>() : userIdexes;
+		otherIdexes = otherIdexes == null ? new HashSet<>() : otherIdexes;
+		return helperAddFriend(userIdexes, otherIdexes, user, friend, id, friendId);
+	}
+
+	private Collection<User> helperAddFriend(final Set<Long> userIdexes, final Set<Long> otherIdexes, final User user,
+			final User friend, final Long id, final Long friendId) {
+		if (!userIdexes.contains(friendId)) {
+			userIdexes.add(friendId);
+			otherIdexes.add(id);
+			user.setFriends(userIdexes);
+			friend.setFriends(otherIdexes);
 			userStorage.update(user);
 			userStorage.update(friend);
 			log.trace("Пользователи: {}, {} теперь друзья", user.toString(), friend.toString());
@@ -41,20 +50,28 @@ public class UserService {
 		return new ArrayList<>(Arrays.asList(user, friend));
 	}
 
-	public Collection<User> deleteFriend(final Long id, final Long idFriend) {
+	public Collection<User> deleteFriend(final Long id, final Long friendId) {
+		validator.positiveValue(id, String.format("Передан отрицательный id: %d", id));
+		validator.positiveValue(friendId, String.format("Передан отрицательный friendId: %d", friendId));
 		User user = userStorage.findById(id);
-		User friend = userStorage.findById(idFriend);
+		User friend = userStorage.findById(friendId);
 		log.trace("Начало обработки в СЕРВИСЕ. Удаление из друзей");
-		@NotNull(message = "Удаление из друзей не возможно, друзя отсутсвуют!")
-		Set<Long> idxes = user.getFriends();
-		@NotNull(message = "Удаление из друзей не возможно, друзя отсутсвуют!")
-		Set<Long> idxesFriend = friend.getFriends();
+		Set<Long> userIdexes = user.getFriends();
+		Set<Long> otherIdexes = friend.getFriends();
+		return helperDeleteFriend(userIdexes, otherIdexes, id, friendId, user, friend);
+	}
 
-		if (idxes.contains(idFriend) && idxesFriend.contains(id)) {
-			idxes.remove(idFriend);
-			idxesFriend.remove(id);
-			user.setFriends(idxes);
-			friend.setFriends(idxesFriend);
+	private Collection<User> helperDeleteFriend(final Set<Long> userIdexes, final Set<Long> otherIdexes, final Long id,
+			final Long friendId, final User user, final User friend) {
+		validator.collectionNotNull(userIdexes,
+				String.format("Удалить друзей у пользователя: %s невозможно. Поле друзья = null", user.toString()));
+		validator.collectionNotNull(userIdexes,
+				String.format("Удалить друзей у пользователя: %s невозможно. Поле друзья = null", friend.toString()));
+		if (userIdexes.contains(friendId) && otherIdexes.contains(id)) {
+			userIdexes.remove(friendId);
+			otherIdexes.remove(id);
+			user.setFriends(userIdexes);
+			friend.setFriends(otherIdexes);
 			userStorage.update(user);
 			userStorage.update(friend);
 			log.trace("Пользователи: {}, {} больше не дружат", user.toString(), friend.toString());
@@ -63,6 +80,7 @@ public class UserService {
 	}
 
 	public Collection<User> getFriends(final Long id) {
+		validator.positiveValue(id, String.format("Передан отрицательный id: %d", id));
 		User user = userStorage.findById(id);
 		Set<Long> setIdFriends = user.getFriends();
 		log.trace("Начало обработки в СЕРВИСЕ. Получение списка друзей");
@@ -73,12 +91,15 @@ public class UserService {
 		User user = userStorage.findById(id);
 		User other = userStorage.findById(otherId);
 		log.trace("Обработка в СЕРВИСЕ. Получение списка общих друзей");
-		@NotNull(message = "Друзя отсутсвуют! Общих друзей найти не представляет возможности")
 		Set<Long> userIdexes = user.getFriends();
-		@NotNull(message = "Друзя отсутсвуют! Общих друзей найти не представляет возможности")
+		validator.collectionNotNull(userIdexes, String.format(
+				"Найти общих друзей не представляет возможности. У пользователя: %s нет друзей", user.toString()));
 		Set<Long> otherIdexes = other.getFriends();
-		@NotNull(message = "Общие друзья отсутствуют!!!")
+		validator.collectionNotNull(otherIdexes, String.format(
+				"Найти общих друзей не представляет возможности. У пользователя: %s нет друзей", user.toString()));
 		Set<Long> common = userIdexes.stream().filter(otherIdexes::contains).collect(Collectors.toSet());
+		validator.collectionNotNull(common, "Общих друзей не найдено!");
 		return common.stream().map(userStorage::findById).toList();
 	}
+
 }

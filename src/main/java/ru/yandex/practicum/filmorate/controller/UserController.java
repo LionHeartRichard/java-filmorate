@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.NotValidParamException;
 import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.impl.UserStorage;
-import ru.yandex.practicum.filmorate.validation.NotNegativeValue;
 
 @Slf4j
 @RestController
@@ -49,34 +46,32 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}")
-	public User findById(@NotNegativeValue @PathVariable final Long id) {
+	public User findById(@PathVariable final Long id) {
 		log.trace("Поиска пользователя по id: {}", id);
 		return userStorage.findById(id);
 	}
 
 	@PutMapping("/{id}/friends/{friend_id}")
-	public Collection<User> addFriend(@NotNegativeValue @PathVariable Long id,
-			@NotNegativeValue @PathVariable(value = "friend_id") Long idFriend) {
-		log.trace("Обработка запроса Добавление в друзья id: {}, idFriend: {}", id, idFriend);
-		return userService.addFriend(id, idFriend);
+	public Collection<User> addFriend(@PathVariable Long id, @Valid @PathVariable(value = "friend_id") Long friendId) {
+		log.trace("Обработка запроса Добавление в друзья id: {}, idFriend: {}", id, friendId);
+		return userService.addFriend(id, friendId);
 	}
 
 	@DeleteMapping("/{id}/friends/{friend_id}")
-	public Collection<User> deleteFriend(@NotNegativeValue @PathVariable final Long id,
-			@NotNegativeValue @PathVariable(value = "friend_id") final Long idFriend) {
-		log.trace("Обработка запроса Удаление из друзей id: {}, friendId: {}", id, idFriend);
-		return userService.deleteFriend(id, idFriend);
+	public Collection<User> deleteFriend(@PathVariable final Long id,
+			@PathVariable(value = "friend_id") final Long friendId) {
+		log.trace("Обработка запроса Удаление из друзей id: {}, friendId: {}", id, friendId);
+		return userService.deleteFriend(id, friendId);
 	}
 
 	@GetMapping("/{id}/friends")
-	public Collection<User> getFriends(@NotNegativeValue @PathVariable final Long id) {
+	public Collection<User> getFriends(@PathVariable final Long id) {
 		log.trace("Обработка запроса на получение друзей пользователя с id: {}", id);
 		return userService.getFriends(id);
 	}
 
 	@GetMapping("/{id}/friends/common/{otherId}")
-	public Collection<User> getCommonFriends(@NotNegativeValue @PathVariable final Long id,
-			@NotNegativeValue @PathVariable final Long otherId) {
+	public Collection<User> getCommonFriends(@PathVariable final Long id, @PathVariable final Long otherId) {
 		log.trace("Обработка запроса на получение общих друзей");
 		return userService.getCommonFriends(id, otherId);
 	}

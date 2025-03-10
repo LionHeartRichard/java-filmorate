@@ -6,16 +6,20 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.impl.Film;
 import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.util.ApiValidator;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class FilmStorage implements Storage<Film> {
 
+	private final ApiValidator validator;
 	private final Map<Long, Film> films = new HashMap<>();
 
 	@Override
@@ -71,6 +75,7 @@ public class FilmStorage implements Storage<Film> {
 
 	@Override
 	public Film findById(Long id) {
+		validator.positiveValue(id, String.format("Для поиска по идентификатору передан отрицательный id: %d", id));
 		log.trace("Поиск в ХРАНИЛИЩЕ фильмов по id: {}", id);
 		if (films.containsKey(id)) {
 			Film film = films.get(id);

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.NotValidParamException;
 import ru.yandex.practicum.filmorate.model.impl.Film;
 import ru.yandex.practicum.filmorate.storage.impl.FilmStorage;
 import ru.yandex.practicum.filmorate.util.GetConstants;
@@ -52,43 +51,18 @@ public class FilmController {
 	@GetMapping("/{id}")
 	public Film findById(@PathVariable final Long id) {
 		log.trace("Обработка запроса GET /films/{id}");
-		if (id < 0) {
-			log.warn("Идентификатор фильма имеет отрицательное значение: {}", id);
-			throw new NotValidParamException(
-					Map.of("Не верный идентиикатор фильма", "идентификатор - целое положительное число"),
-					Map.of("Передан идентификатор фильма", id + ""));
-		}
 		return filmStorage.findById(id);
 	}
 
-	@PutMapping("/{id}/like/{userId}")
-	public Film addLike(@PathVariable(required = false) final Long id,
-			@PathVariable(required = false) final Long userId) {
+	@PutMapping("/{id}/like/{user_id}")
+	public Film addLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
 		log.trace("Обработка запроса PUT /films/{id}/like/{userId}");
-		validId(id, userId);
 		return filmService.addLike(id, userId);
 	}
 
-	@DeleteMapping("/{id}/like/{userId}")
-	public Film deleteLike(@PathVariable(required = false) final Long id,
-			@PathVariable(required = false) final Long userId) {
+	@DeleteMapping("/{id}/like/{user_id}")
+	public Film deleteLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
 		log.trace("Обработка запроса DELETE /films/{id}/like/{userId}");
-		validId(id, userId);
 		return filmService.deleteLike(id, userId);
-	}
-
-	private void validId(Long id, Long userId) {
-		if (id == null || userId == null) {
-			log.warn("Передан ошибочный идентификатор от клиента filmId: {}, userId: {}", id, userId);
-			throw new NotValidParamException(Map.of("Идентификатор фильма", id + ""),
-					Map.of("Идентификатор пользователя", userId + ""),
-					Map.of("Идентификаторы", "НЕ МОГУТ иметь значение null!!!"));
-		}
-		if (id < 0 || userId < 0) {
-			log.warn("Передан ошибочный идентификатор от клиента filmId: {}, userId: {}", id, userId);
-			throw new NotValidParamException(Map.of("Идентификатор фильма", id + ""),
-					Map.of("Идентификатор пользователя", userId + ""),
-					Map.of("Идентификаторы", "НЕ МОГУТ иметь отрицательное значение!!!"));
-		}
 	}
 }
