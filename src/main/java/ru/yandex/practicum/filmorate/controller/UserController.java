@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.impl.UserStorage;
+import ru.yandex.practicum.filmorate.util.ApiValidator;
 
 @Slf4j
 @RestController
@@ -24,6 +25,7 @@ import ru.yandex.practicum.filmorate.storage.impl.UserStorage;
 @RequiredArgsConstructor
 public class UserController {
 
+	private final ApiValidator validator;
 	private final UserService userService;
 	private final UserStorage userStorage;
 
@@ -48,12 +50,18 @@ public class UserController {
 	@GetMapping("/{id}")
 	public User findById(@PathVariable final Long id) {
 		log.trace("Поиска пользователя по id: {}", id);
+		validator.positiveValue(id,
+				String.format("В запросе поиск пользователя по id, передано отрицательное значение: %d", id));
 		return userStorage.findById(id);
 	}
 
 	@PutMapping("/{id}/friends/{friend_id}")
-	public Collection<User> addFriend(@PathVariable Long id, @Valid @PathVariable(value = "friend_id") Long friendId) {
+	public Collection<User> addFriend(@PathVariable Long id, @PathVariable(value = "friend_id") Long friendId) {
 		log.trace("Обработка запроса Добавление в друзья id: {}, idFriend: {}", id, friendId);
+		validator.positiveValue(id, String
+				.format("В запросе на добавление в друзья, передано отрицательное значение id-пользователя: %d", id));
+		validator.positiveValue(friendId, String
+				.format("В запросе на добавление в друзья, передано отрицательное значение id-друга: %d", friendId));
 		return userService.addFriend(id, friendId);
 	}
 
@@ -61,18 +69,29 @@ public class UserController {
 	public Collection<User> deleteFriend(@PathVariable final Long id,
 			@PathVariable(value = "friend_id") final Long friendId) {
 		log.trace("Обработка запроса Удаление из друзей id: {}, friendId: {}", id, friendId);
+		validator.positiveValue(id, String
+				.format("В запросе на Удаление из друзей, передано отрицательное значение id-пользователя: %d", id));
+		validator.positiveValue(friendId, String
+				.format("В запросе на Удаление из друзей, передано отрицательное значение id-друга: %d", friendId));
 		return userService.deleteFriend(id, friendId);
 	}
 
 	@GetMapping("/{id}/friends")
 	public Collection<User> getFriends(@PathVariable final Long id) {
 		log.trace("Обработка запроса на получение друзей пользователя с id: {}", id);
+		validator.positiveValue(id, String.format(
+				"В запросе на получение друзей пользователя, передано отрицательное значение id-пользователя: %d", id));
 		return userService.getFriends(id);
 	}
 
 	@GetMapping("/{id}/friends/common/{otherId}")
 	public Collection<User> getCommonFriends(@PathVariable final Long id, @PathVariable final Long otherId) {
 		log.trace("Обработка запроса на получение общих друзей");
+		validator.positiveValue(id, String.format(
+				"В запросе на получение общих друзей, передано отрицательное значение id-пользователя: %d", id));
+		validator.positiveValue(otherId, String.format(
+				"В запросе на получение общих друзей, передано отрицательное значение id-другого пользователя: %d",
+				otherId));
 		return userService.getCommonFriends(id, otherId);
 	}
 }

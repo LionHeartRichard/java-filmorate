@@ -2,24 +2,22 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.impl.Film;
 import ru.yandex.practicum.filmorate.storage.Storage;
-import ru.yandex.practicum.filmorate.util.ApiValidator;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class FilmStorage implements Storage<Film> {
 
-	private final ApiValidator validator;
 	private final Map<Long, Film> films = new HashMap<>();
 
 	@Override
@@ -33,7 +31,7 @@ public class FilmStorage implements Storage<Film> {
 		}
 		log.warn("Попытка внести информацию о фильме с id указанным в ручную, film: {}", film.toString());
 		throw new ConditionsNotMetException(String.format(
-				"Фильм с id: %d не может быть добавлен! Идентификатор генерируется автоматически!", film.getId()));
+				"Фильм: %s не может быть добавлен! Идентификатор генерируется автоматически!", film.toString()));
 	}
 
 	@Override
@@ -42,10 +40,14 @@ public class FilmStorage implements Storage<Film> {
 		return films.values();
 	}
 
-	public Collection<Film> findTopFilms(final int count) {
+	public Collection<Film> findTopFilms(int count) {
 		log.trace("Выполнение метода read в ХРАНИЛИЩЕ фильмов");
-		return films.values().stream().sorted((a, b) -> Integer.compare(b.getLikes().size(), a.getLikes().size()))
-				.limit(count).toList();
+		List<Film> topFilms = films.values().stream().map(f -> {
+			if (f.getLikes() == null)
+				f.setLikes(new HashSet<>());
+			return f;
+		}).sorted((a, b) -> Integer.compare(b.getLikes().size(), a.getLikes().size())).limit(count).toList();
+		return topFilms;
 	}
 
 	@Override
@@ -75,7 +77,6 @@ public class FilmStorage implements Storage<Film> {
 
 	@Override
 	public Film findById(Long id) {
-		validator.positiveValue(id, String.format("Для поиска по идентификатору передан отрицательный id: %d", id));
 		log.trace("Поиск в ХРАНИЛИЩЕ фильмов по id: {}", id);
 		if (films.containsKey(id)) {
 			Film film = films.get(id);

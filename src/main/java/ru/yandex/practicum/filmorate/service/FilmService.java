@@ -11,23 +11,19 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.impl.Film;
 import ru.yandex.practicum.filmorate.storage.impl.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.impl.UserStorage;
-import ru.yandex.practicum.filmorate.util.ApiValidator;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class FilmService {
 
-	private final ApiValidator validator;
 	private final FilmStorage filmStorage;
 	private final UserStorage userStorage;
 
 	public Film deleteLike(final Long id, final Long userId) {
-		validator.positiveValue(id, String.format("У фильма отрицатеьный id : ", id));
-		validator.positiveValue(userId, String.format("У пользователя отрицатеьный id : ", userId));
 		Film film = filmStorage.findById(id);
 		Set<Long> likes = film.getLikes();
-		validator.collectionNotNull(likes, String.format("Лайки у фильма: %s отсутствуют", film.toString()));
+		likes = likes == null ? new HashSet<>() : likes;
 		if (likes.contains(userId)) {
 			likes.remove(userId);
 			film.setLikes(likes);
@@ -35,13 +31,11 @@ public class FilmService {
 			return filmStorage.update(film);
 		}
 		log.warn("Лайк для фильма с id: {} не удален так как пользователь с id: {} не ставил лайк", id, userId);
-		throw new NotFoundException(
-				String.format("Пользователь с идентификатором: %d - не ставил лайк для фильма!!!", userId));
+		throw new NotFoundException(String
+				.format("Лайк для фильма с id: %d не удален так как пользователь с id: %d не ставил лайк", id, userId));
 	}
 
 	public Film addLike(final Long id, final Long userId) {
-		validator.positiveValue(id, String.format("У фильма отрицатеьный id : ", id));
-		validator.positiveValue(userId, String.format("У пользователя отрицатеьный id : ", userId));
 		Film film = filmStorage.findById(id);
 		log.trace("начало обработки в СЕРВИСЕ, метод по добавлению лайков. Получен фильм: {}", film.toString());
 		userStorage.findById(userId);
