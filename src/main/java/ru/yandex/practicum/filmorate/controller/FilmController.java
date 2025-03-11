@@ -65,7 +65,7 @@ public class FilmController {
 
 	@PutMapping("/{id}/like/{user_id}")
 	public Film addLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
-		log.trace("Обработка запроса PUT /films/{id}/like/{userId}");
+		log.trace("Обработка запроса PUT /films/{id}/like/{user_id}");
 		validator.positiveValue(id, String
 				.format("В запросе на добавление лайка к фильму, передано отрицательное значение id-фильма: %d", id));
 		validator.positiveValue(userId, String.format(
@@ -75,7 +75,7 @@ public class FilmController {
 
 	@DeleteMapping("/{id}/like/{user_id}")
 	public Film deleteLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
-		log.trace("Обработка запроса DELETE /films/{id}/like/{userId}");
+		log.trace("Обработка запроса DELETE /films/{id}/like/{user_id}");
 		validator.positiveValue(id, String
 				.format("В запросе на удаление лайка к фильму, передано отрицательное значение id-фильма: %d", id));
 		validator.positiveValue(userId, String.format(

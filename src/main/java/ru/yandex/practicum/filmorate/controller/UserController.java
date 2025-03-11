@@ -57,7 +57,7 @@ public class UserController {
 
 	@PutMapping("/{id}/friends/{friend_id}")
 	public Collection<User> addFriend(@PathVariable Long id, @PathVariable(value = "friend_id") Long friendId) {
-		log.trace("Обработка запроса Добавление в друзья id: {}, idFriend: {}", id, friendId);
+		log.trace("Обработка запроса Добавление в друзья id: {}, friend_id: {}", id, friendId);
 		validator.positiveValue(id, String
 				.format("В запросе на добавление в друзья, передано отрицательное значение id-пользователя: %d", id));
 		validator.positiveValue(friendId, String
@@ -68,7 +68,7 @@ public class UserController {
 	@DeleteMapping("/{id}/friends/{friend_id}")
 	public Collection<User> deleteFriend(@PathVariable final Long id,
 			@PathVariable(value = "friend_id") final Long friendId) {
-		log.trace("Обработка запроса Удаление из друзей id: {}, friendId: {}", id, friendId);
+		log.trace("Обработка запроса Удаление из друзей id: {}, friend_id: {}", id, friendId);
 		validator.positiveValue(id, String
 				.format("В запросе на Удаление из друзей, передано отрицательное значение id-пользователя: %d", id));
 		validator.positiveValue(friendId, String
@@ -84,8 +84,9 @@ public class UserController {
 		return userService.getFriends(id);
 	}
 
-	@GetMapping("/{id}/friends/common/{otherId}")
-	public Collection<User> getCommonFriends(@PathVariable final Long id, @PathVariable final Long otherId) {
+	@GetMapping("/{id}/friends/common/{other_id}")
+	public Collection<User> getCommonFriends(@PathVariable final Long id,
+			@PathVariable("other_id") final Long otherId) {
 		log.trace("Обработка запроса на получение общих друзей");
 		validator.positiveValue(id, String.format(
 				"В запросе на получение общих друзей, передано отрицательное значение id-пользователя: %d", id));
