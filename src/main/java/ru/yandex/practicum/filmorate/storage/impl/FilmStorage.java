@@ -19,17 +19,18 @@ import ru.yandex.practicum.filmorate.storage.Storage;
 public class FilmStorage implements Storage<Film> {
 
 	private final Map<Long, Film> films = new HashMap<>();
+	private long nextId = 1L;
 
 	@Override
 	public Film create(Film film) {
 		log.trace("создание фильма в ХРАНИЛИЩЕ фильмов, film: {}", film.toString());
 		if (film.getId() == null) {
-			film.setId(nextId());
+			film.setId(nextId++);
 			films.put(film.getId(), film);
 			log.trace("Фильм с id: {} добавлен в ХРАНИЛИЩЕ фильмов", film.getId());
 			return film;
 		}
-		log.warn("Попытка внести информацию о фильме с id указанным в ручную, film: {}", film.toString());
+		log.warn("Id указанн в ручную, film: {}", film.toString());
 		throw new ConditionsNotMetException(String.format(
 				"Фильм: %s не может быть добавлен! Идентификатор генерируется автоматически!", film.toString()));
 	}
@@ -51,28 +52,15 @@ public class FilmStorage implements Storage<Film> {
 	}
 
 	@Override
-	public Film update(Film newFilm) {
-		log.trace("Обновление фильма в ХРАНИЛИЩЕ фильмов newFilm: {}", newFilm.toString());
-		if (films.containsKey(newFilm.getId())) {
-			Film film = films.get(newFilm.getId());
-			if (newFilm.getName() != null)
-				film.setName(newFilm.getName());
-			if (newFilm.getDescription() != null)
-				film.setDescription(newFilm.getDescription());
-			if (newFilm.getDuration() != null)
-				film.setDuration(newFilm.getDuration());
-			if (newFilm.getReleaseDate() != null)
-				film.setReleaseDate(newFilm.getReleaseDate());
-			if (newFilm.getLikes() != null)
-				film.setLikes(newFilm.getLikes());
+	public Film update(Film film) {
+		log.trace("Обновление фильма в ХРАНИЛИЩЕ фильмов newFilm: {}", film.toString());
+		if (films.containsKey(film.getId())) {
 			films.put(film.getId(), film);
 			log.trace("Фильм изменен и внесен в память, film: {}", film.toString());
 			return film;
 		}
-		log.warn(
-				"Попытка внести изменения в информацию о фильме с несуществующим id: {}. Обновление несуществующего фильма: {}",
-				newFilm.getId(), newFilm.toString());
-		throw new NotFoundException(String.format("Фильм с id: %d не найден!", newFilm.getId()));
+		log.warn("Обновление несуществующего фильма: {}", film.toString());
+		throw new NotFoundException(String.format("Фильм с id: %d не найден!", film.getId()));
 	}
 
 	@Override
@@ -85,11 +73,6 @@ public class FilmStorage implements Storage<Film> {
 		}
 		log.warn("Фильм с id: {} не найден", id);
 		throw new NotFoundException(String.format("Фильм с id: %d - не найден!!!", id));
-	}
-
-	private Long nextId() {
-		Long id = films.keySet().stream().mapToLong(k -> k).max().orElse(0);
-		return ++id;
 	}
 
 }

@@ -66,14 +66,13 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{id}/friends/{friend_id}")
-	public Collection<User> deleteFriend(@PathVariable final Long id,
-			@PathVariable(value = "friend_id") final Long friendId) {
+	public void deleteFriend(@PathVariable final Long id, @PathVariable(value = "friend_id") final Long friendId) {
 		log.trace("Обработка запроса Удаление из друзей id: {}, friend_id: {}", id, friendId);
 		validator.positiveValue(id, String
 				.format("В запросе на Удаление из друзей, передано отрицательное значение id-пользователя: %d", id));
 		validator.positiveValue(friendId, String
 				.format("В запросе на Удаление из друзей, передано отрицательное значение id-друга: %d", friendId));
-		return userService.deleteFriend(id, friendId);
+		userService.deleteFriend(id, friendId);
 	}
 
 	@GetMapping("/{id}/friends")

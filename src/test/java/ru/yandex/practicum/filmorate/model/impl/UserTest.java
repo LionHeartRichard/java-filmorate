@@ -25,8 +25,7 @@ public class UserTest {
 		final User user = new User(0L, "dolores@yandex.ru", "dolore", "Dolores", LocalDate.of(2000, 8, 20),
 				new HashSet<>());
 		Set<ConstraintViolation<User>> violations = validator.validate(user);
-		// Перебирая нарушения, мы можем получить все сообщения о нарушениях с помощью
-		// метода getMessage:
+
 		violations.forEach(violation -> log.error(violation.getMessage()));
 		assertTrue(violations.isEmpty());
 	}

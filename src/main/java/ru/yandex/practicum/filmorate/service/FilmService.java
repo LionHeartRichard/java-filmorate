@@ -1,8 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -22,11 +19,9 @@ public class FilmService {
 
 	public Film deleteLike(final Long id, final Long userId) {
 		Film film = filmStorage.findById(id);
-		Set<Long> likes = film.getLikes();
-		likes = likes == null ? new HashSet<>() : likes;
-		if (likes.contains(userId)) {
-			likes.remove(userId);
-			film.setLikes(likes);
+
+		if (film.getLikes().contains(userId)) {
+			film.getLikes().remove(userId);
 			log.trace("лайк для фильма с id: {} удален, пользователем с id: {}", id, userId);
 			return filmStorage.update(film);
 		}
@@ -36,14 +31,12 @@ public class FilmService {
 	}
 
 	public Film addLike(final Long id, final Long userId) {
+		log.trace("Начало. Метод по добавлению лайков. Получены: id: {}, userId", id, userId);
 		Film film = filmStorage.findById(id);
-		log.trace("начало обработки в СЕРВИСЕ, метод по добавлению лайков. Получен фильм: {}", film.toString());
+		log.trace("Обработка. Метод по добавлению лайков. Получен фильм: {}", film.toString());
 		userStorage.findById(userId);
-		Set<Long> likes = film.getLikes();
-		likes = likes == null ? new HashSet<>() : likes;
-		if (!likes.contains(userId)) {
-			likes.add(userId);
-			film.setLikes(likes);
+		if (!film.getLikes().contains(userId)) {
+			film.getLikes().add(userId);
 			filmStorage.update(film);
 			log.trace("Пользователь с id: {}, поставил лайк фильму {}", userId, film.toString());
 		}

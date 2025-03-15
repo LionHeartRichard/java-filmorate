@@ -17,12 +17,13 @@ import ru.yandex.practicum.filmorate.storage.Storage;
 public class UserStorage implements Storage<User> {
 
 	private final Map<Long, User> users = new HashMap<>();
+	private long nextId = 1L;
 
 	@Override
 	public User create(User user) {
-		log.trace("Создания/добавления пользователя: {}", user.toString());
+		log.trace("Создания пользователя: {}", user.toString());
 		if (user.getId() == null) {
-			user.setId(nextId());
+			user.setId(nextId++);
 			if (user.getName() == null || user.getName().isBlank())
 				user.setName(user.getLogin());
 			users.put(user.getId(), user);
@@ -37,29 +38,20 @@ public class UserStorage implements Storage<User> {
 
 	@Override
 	public Collection<User> read() {
-		log.trace("Обработка в Хранилище, чтение всех пользователей");
+		log.trace("Обработка. Чтение всех пользователей");
 		return users.values();
 	}
 
 	@Override
-	public User update(final User newUser) {
-		log.trace("Обновление пользователя {}", newUser.toString());
-		if (users.containsKey(newUser.getId())) {
-			User user = users.get(newUser.getId());
-			if (newUser.getBirthday() != null)
-				user.setBirthday(newUser.getBirthday());
-			if (newUser.getEmail() != null)
-				user.setEmail(newUser.getEmail());
-			if (newUser.getLogin() != null)
-				user.setLogin(newUser.getLogin());
-			if (newUser.getName() != null)
-				user.setName(newUser.getName());
+	public User update(final User user) {
+		log.trace("Обновление пользователя {}", user.toString());
+		if (users.containsKey(user.getId())) {
 			users.put(user.getId(), user);
 			log.trace("Информация о пользователе {} успешно обновлена", user.toString());
 			return user;
 		}
-		log.warn("Попытка обновить информацию о пользователе {}, id пользователя не найден", newUser.toString());
-		throw new NotFoundException(String.format("Пользователь с id: %d не найден!", newUser.getId()));
+		log.warn("Пользователь: {}, id пользователя не найден", user.toString());
+		throw new NotFoundException(String.format("Пользователь с id: %d не найден!", user.getId()));
 	}
 
 	@Override
@@ -72,10 +64,5 @@ public class UserStorage implements Storage<User> {
 		}
 		log.warn("Пользователь с id: {} не найден", id);
 		throw new NotFoundException(String.format("Пользователь с id: %d не найден!", id));
-	}
-
-	private Long nextId() {
-		Long id = users.keySet().stream().mapToLong(k -> k).max().orElse(0);
-		return ++id;
 	}
 }
