@@ -1,5 +1,5 @@
 # java-filmorate
 Pet-project, yandex-practicum
 
-![Data base scheme](/src/main/resources/DB_scheme.png)
+![Entity relationship diagram sql](/src/main/resources/DB_scheme.png)
 
