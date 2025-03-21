@@ -17,8 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserTest {
 
-	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-	private Validator validator = factory.getValidator();
+	private static Validator validator;
+	static {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		validator = factory.getValidator();
+	}
 
 	@Test
 	public void testPositive() {
