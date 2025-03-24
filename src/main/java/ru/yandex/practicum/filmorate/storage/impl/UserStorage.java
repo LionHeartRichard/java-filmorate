@@ -4,20 +4,25 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.impl.User;
+import ru.yandex.practicum.filmorate.repositories.impl.UserRepositories;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
 @Slf4j
 @Component
 public class UserStorage implements Storage<User> {
+	
+	private final UserRepositories userRepositories;
+	private final Map<Long, User> users;
+	
 
-	private final Map<Long, User> users = new HashMap<>();
-	private long nextId = 1L;
+
 
 	@Override
 	public User create(User user) {
