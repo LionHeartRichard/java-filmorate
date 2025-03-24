@@ -15,25 +15,27 @@ import ru.yandex.practicum.filmorate.repositories.Repositories;
 import ru.yandex.practicum.filmorate.repositories.Specification;
 import ru.yandex.practicum.filmorate.repositories.specific.UserEmailSpecification;
 import ru.yandex.practicum.filmorate.repositories.specific.UserFindAllSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.UserSpecification;
+
+import ru.yandex.practicum.filmorate.dto.UserDto.Request.Create;
+import ru.yandex.practicum.filmorate.dto.UserDto.Request.Update;
 
 @Repository
 @RequiredArgsConstructor
-public class UserRepositories implements Repositories<UserDto, User> {
+public class UserRepositories implements Repositories<User> {
 
 	private final static String TABLE_NAME = "person";
 
 	private final UserFindAllSpecification userFindAll;
 	private final UserEmailSpecification userFindByEmail;
-	private final BaseOperations<UserDto> operations;
+	private final BaseOperations<Create> operations;
 
 	@Override
-	public Optional<Long> add(UserDto dto) {
+	public Optional<Long> add(Create dto) {
 		return operations.add(dto, TABLE_NAME);
 	}
 
 	@Override
-	public Optional<Integer> remove(UserDto dto) {
+	public Optional<Integer> remove(Update dto) {
 		// TODO Auto-generated method stub
 		return Optional.empty();
 	}

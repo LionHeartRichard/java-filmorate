@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface Repositories<T> {
-	Optional<Long> add(T row);
+	Optional<Long> add(Object dto);
 
-	Optional<Integer> remove(T row);
+	Optional<Integer> remove(Object dto);
 
-	Optional<Integer> update(T row);
+	Optional<Integer> update(Object dto);
 
 	Collection<T> query();
 }

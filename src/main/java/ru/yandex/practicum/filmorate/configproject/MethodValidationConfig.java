@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 @Configuration
-@ComponentScan({"ru.yandex.practicum.filmorate.model.impl"})
+@ComponentScan({"ru.yandex.practicum.filmorate.dto"})
 public class MethodValidationConfig {
 
 	@Bean

@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.repositories.specific;
 import java.util.Collection;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
