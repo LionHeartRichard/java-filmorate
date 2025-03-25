@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
@@ -38,17 +39,17 @@ public class BaseOperations<T> {
 		return Optional.ofNullable(id);
 	}
 
-	public Optional<Integer> update(String query, Object... params) {
+	public Optional<Integer> update(String query, PreparedStatementSetter pss) {
 		log.trace("SQL: {}", query);
-		Integer rowsUpdated = jdbc.update(query, params);
+		Integer rowsUpdated = jdbc.update(query, pss);
 		rowsUpdated = rowsUpdated == 0 ? null : rowsUpdated;
 		log.trace("End update operation");
 		return Optional.ofNullable(rowsUpdated);
 	}
 
-	public Optional<Integer> remove(Long id, String nameTable) {
-		String query = String.format("DELETE FROM %s WHERE id=?", nameTable);
-		log.trace("SQL: {}; id = {}, nameTable={}", query, id, nameTable);
+	public Optional<Integer> remove(Long id, String nameTable, String primaryKeyNameColumn) {
+		String query = String.format("DELETE FROM %s WHERE %s=?", nameTable, primaryKeyNameColumn);
+		log.trace("SQL: {}; PK:{} = {}, nameTable={}", query, primaryKeyNameColumn, id, nameTable);
 		Integer rowsDeleted = jdbc.update(query, id);
 		rowsDeleted = rowsDeleted == 0 ? null : rowsDeleted;
 		log.trace("End operation remove");

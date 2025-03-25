@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotValidParamException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.util.ErrorResponse;
@@ -35,6 +36,12 @@ public class ErrorHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(NotValidParamException.class)
 	public ErrorResponse handleNotValidParam(NotValidParamException e) {
+		return new ErrorResponse(e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(InternalServerException.class)
+	public ErrorResponse handleInternalServer(InternalServerException e) {
 		return new ErrorResponse(e.getMessage());
 	}
 

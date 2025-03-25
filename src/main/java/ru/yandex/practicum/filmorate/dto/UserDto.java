@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import lombok.Value;
 
 import ru.yandex.practicum.filmorate.validation.Login;
@@ -16,7 +17,7 @@ public enum UserDto {;
 	    private interface Id { @Min(value=0) Long getId(); }
 	    private interface UserEmail { @Email String getUserEmail(); }
 	    private interface UserLogin { @Login String getUserLogin(); }
-	    private interface Name { String getName(); }
+	    private interface Name { @Size(max=100) String getName(); }
 	    private interface Birthday { @Past LocalDate getBirthday(); }
 
 	    public enum Request{;

@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
@@ -41,15 +39,15 @@ public class FilmStorage implements Storage<Film> {
 		return films.values();
 	}
 
-	public Collection<Film> findTopFilms(int count) {
-		log.trace("Выполнение метода read в ХРАНИЛИЩЕ фильмов");
-		List<Film> topFilms = films.values().stream().map(f -> {
-			if (f.getLikes() == null)
-				f.setLikes(new HashSet<>());
-			return f;
-		}).sorted((a, b) -> Integer.compare(b.getLikes().size(), a.getLikes().size())).limit(count).toList();
-		return topFilms;
-	}
+//	public Collection<Film> findTopFilms(int count) {
+//		log.trace("Выполнение метода read в ХРАНИЛИЩЕ фильмов");
+//		List<Film> topFilms = films.values().stream().map(f -> {
+//			if (f.getLikes() == null)
+//				f.setLikes(new HashSet<>());
+//			return f;
+//		}).sorted((a, b) -> Integer.compare(b.getLikes().size(), a.getLikes().size())).limit(count).toList();
+//		return topFilms;
+//	}
 
 	@Override
 	public Film update(Film film) {

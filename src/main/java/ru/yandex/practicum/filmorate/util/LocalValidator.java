@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 
 @Slf4j
 @Component
-public class ApiValidator {
+public class LocalValidator {
 
 	public void collectionNotNull(Collection<?> collection, String message) {
 		if (collection == null) {

@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.impl.UserStorage;
-import ru.yandex.practicum.filmorate.util.ApiValidator;
+import ru.yandex.practicum.filmorate.util.LocalValidator;
 
 @Slf4j
 @RestController
@@ -25,7 +25,7 @@ import ru.yandex.practicum.filmorate.util.ApiValidator;
 @RequiredArgsConstructor
 public class UserController {
 
-	private final ApiValidator validator;
+	private final LocalValidator validator;
 	private final UserService userService;
 	private final UserStorage userStorage;
 

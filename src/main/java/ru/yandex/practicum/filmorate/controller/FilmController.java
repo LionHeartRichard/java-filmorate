@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.Film;
 import ru.yandex.practicum.filmorate.storage.impl.FilmStorage;
-import ru.yandex.practicum.filmorate.util.ApiValidator;
+import ru.yandex.practicum.filmorate.util.LocalValidator;
 import ru.yandex.practicum.filmorate.util.GetConstants;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -27,7 +27,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 @RequiredArgsConstructor
 public class FilmController {
 
-	private final ApiValidator validator;
+	private final LocalValidator validator;
 	private final FilmStorage filmStorage;
 	private final FilmService filmService;
 

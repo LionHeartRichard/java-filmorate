@@ -1,7 +1,10 @@
 package ru.yandex.practicum.filmorate.repositories.specific;
 
-import java.util.Collection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
 
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -14,18 +17,26 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.UserRowMapper;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class UserFindAllSpecification implements Specification<Object, Collection<User>> {
+public class UserFindAllSpecification implements Specification<Integer, List<User>> {
 
 	private final JdbcTemplate jdbc;
 	private final UserRowMapper rowMapper;
 
-	private static final String QUERY = "SELECT * FROM person";
+	private static final String QUERY = "SELECT * FROM person LIMIT ? OFFSET ?";
+	private static final Integer PAGE_LIMIT = 100;
 
 	@Override
-	public Collection<User> specified(Object plug, Collection<User> ans) {
+	public List<User> specified(Integer offset, List<User> ans) {
 		log.trace("SQL: {}", QUERY);
-		ans = jdbc.query(QUERY, rowMapper);
+		PreparedStatementSetter pss = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, PAGE_LIMIT);
+				ps.setInt(2, offset);
+			}
+
+		};
+		ans = jdbc.query(QUERY, pss, rowMapper);
 		return ans;
 	}
-
 }
