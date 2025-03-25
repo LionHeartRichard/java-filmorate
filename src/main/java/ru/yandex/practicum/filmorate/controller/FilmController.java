@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,7 +47,8 @@ public class FilmController {
 	@GetMapping("/popular")
 	public Collection<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count) {
 		log.trace("Обработка запроса GET /films/popular");
-		return filmStorage.findTopFilms(count);
+		return new ArrayList<>();
+//		return filmStorage.findTopFilms(count);
 	}
 
 	@PutMapping

@@ -11,8 +11,13 @@ import ru.yandex.practicum.filmorate.model.impl.User;
 public class UserRowMapper implements RowMapper<User> {
 	@Override
 	public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-		User user = new User(rs.getLong("person_id"), rs.getString("email"), rs.getString("login"),
-				rs.getString("name"), rs.getDate("birthday").toLocalDate());
+		User user = User.builder()
+				.id(rs.getLong("person_id"))
+				.email(rs.getString("email"))
+				.login(rs.getString("login"))
+				.name(rs.getString("name"))
+				.birthday(rs.getDate("birthday").toLocalDate())
+				.build();
 		return user;
 	}
 

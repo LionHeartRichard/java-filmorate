@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -59,7 +58,8 @@ public class UserStorage implements Storage<User> {
 	public User update(final User user) {
 		log.trace("Обновление пользователя {}", user.toString());
 		if (users.containsKey(user.getId())) {
-			userRepositories.update(user).or;
+			userRepositories.update(user)
+					.orElseThrow(() -> new InternalServerException("Failed user update in database!!!"));
 			users.put(user.getId(), user);
 			log.trace("Информация о пользователе {} успешно обновлена", user.toString());
 			return user;

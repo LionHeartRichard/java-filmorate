@@ -26,8 +26,8 @@ public class UserService {
 		User user = userStorage.findById(id);
 		User friend = userStorage.findById(friendId);
 		log.trace("Обработка. Добавление в друзья");
-		user.getFriends().add(friendId);
-		friend.getFriends().add(id);
+//		user.getFriends().add(friendId);
+//		friend.getFriends().add(id);
 		return new ArrayList<>(Arrays.asList(user, friend));
 	}
 
@@ -36,20 +36,21 @@ public class UserService {
 		User user = userStorage.findById(id);
 		User other = userStorage.findById(otherId);
 		log.trace("Обработка. Удаление из друзей");
-		if (user.getFriends().contains(otherId)) {
-			user.getFriends().remove(otherId);
-			other.getFriends().remove(id);
-			userStorage.update(user);
-			userStorage.update(other);
-			log.trace("Удаление из друзей ПРОИЗВЕДЕНО");
-		}
+//		if (user.getFriends().contains(otherId)) {
+//			user.getFriends().remove(otherId);
+//			other.getFriends().remove(id);
+//			userStorage.update(user);
+//			userStorage.update(other);
+//			log.trace("Удаление из друзей ПРОИЗВЕДЕНО");
+//		}
 	}
 
 	public Collection<User> getFriends(final Long id) {
 		log.trace("Начало. Получение списка друзей");
 		User user = userStorage.findById(id);
 		log.trace("Обработка. Получение списка друзей");
-		return user.getFriends().stream().map(userStorage::findById).toList();
+		return new ArrayList<>();
+//		return user.getFriends().stream().map(userStorage::findById).toList();
 	}
 
 	public Collection<User> getCommonFriends(final Long id, final Long otherId) {
@@ -57,13 +58,15 @@ public class UserService {
 		User user = userStorage.findById(id);
 		User other = userStorage.findById(otherId);
 
-		log.trace("Обработка. Получение списка общих друзей");
-		Set<Long> userIdexes = user.getFriends();
-		Set<Long> otherIdexes = other.getFriends();
+		return new ArrayList<>();
 
-		Set<Long> common = userIdexes.stream().filter(otherIdexes::contains).collect(Collectors.toSet());
-		common = common == null ? new HashSet<>() : common;
-		return common.stream().map(userStorage::findById).toList();
+//		log.trace("Обработка. Получение списка общих друзей");
+//		Set<Long> userIdexes = user.getFriends();
+//		Set<Long> otherIdexes = other.getFriends();
+//
+//		Set<Long> common = userIdexes.stream().filter(otherIdexes::contains).collect(Collectors.toSet());
+//		common = common == null ? new HashSet<>() : common;
+//		return common.stream().map(userStorage::findById).toList();
 	}
 
 }
