@@ -4,10 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import ru.yandex.practicum.filmorate.model.impl.User;
 
-@Component
+@Repository
 public class UserRowMapper implements RowMapper<User> {
 	@Override
 	public User mapRow(ResultSet rs, int rowNum) throws SQLException {

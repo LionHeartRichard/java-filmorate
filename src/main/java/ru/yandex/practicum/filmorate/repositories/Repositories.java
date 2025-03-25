@@ -10,5 +10,5 @@ public interface Repositories<T> {
 
 	Optional<Integer> update(T t);
 
-	Collection<T> query();
+	Collection<T> query(Integer offset);
 }

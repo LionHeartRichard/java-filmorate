@@ -14,4 +14,5 @@ public class Film implements WebModel {
 	String description;
 	LocalDate releaseDate;
 	Integer duration;
+	String ratingName;
 }

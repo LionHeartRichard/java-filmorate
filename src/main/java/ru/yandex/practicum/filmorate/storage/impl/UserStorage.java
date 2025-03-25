@@ -26,7 +26,7 @@ public class UserStorage implements Storage<User> {
 	@Autowired
 	public UserStorage(UserRepositories userRepositories) {
 		this.userRepositories = userRepositories;
-		users = userRepositories.query().stream().collect(Collectors.toMap(User::getId, Function.identity()));
+		users = userRepositories.query(0).stream().collect(Collectors.toMap(User::getId, Function.identity()));
 	}
 
 	@Override
