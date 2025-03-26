@@ -15,9 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.repositories.BaseOperations;
 import ru.yandex.practicum.filmorate.repositories.Repositories;
-import ru.yandex.practicum.filmorate.repositories.specific.UserEmailSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.UserFindAllSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.UserIdSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserEmailSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserFindAllSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserIdSpecification;
 
 @Slf4j
 @Repository

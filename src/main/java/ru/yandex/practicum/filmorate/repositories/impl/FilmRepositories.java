@@ -15,9 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.Film;
 import ru.yandex.practicum.filmorate.repositories.BaseOperations;
 import ru.yandex.practicum.filmorate.repositories.Repositories;
-import ru.yandex.practicum.filmorate.repositories.specific.FilmFindAllSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.FilmIdSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.FilmNameSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byfilm.FilmFindAllSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byfilm.FilmIdSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byfilm.FilmNameSpecification;
 
 @Slf4j
 @Repository

@@ -1,0 +1,12 @@
+logging:
+  level:
+    org:springframework: ERROR
+    ru:yandex:practicum:filmorate: TRACE
+spring:
+  sql:init:mode: always
+  datasource:
+    initialization-mode: always
+    url: jdbc:h2:mem:filmorate
+    username: sa
+    password: p_h2-Db
+    driverClassName: org.h2.Driver

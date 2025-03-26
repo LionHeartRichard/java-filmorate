@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.repositories.specific;
+package ru.yandex.practicum.filmorate.repositories.specific.byfilm;
 
 import java.util.Optional;
 

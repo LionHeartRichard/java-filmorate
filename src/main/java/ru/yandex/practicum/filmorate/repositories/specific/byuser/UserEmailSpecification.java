@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.repositories.specific;
+package ru.yandex.practicum.filmorate.repositories.specific.byuser;
 
 import java.util.Optional;
 
@@ -21,6 +21,7 @@ public class UserEmailSpecification implements Specification<String, Optional<Us
 
 	private static final String QUERY = "SELECT * FROM person WHERE email=?";
 
+	//////////////////////////////////////
 	@Override
 	public Optional<User> specified(String email, Optional<User> ans) {
 		log.trace("SQL: {}; EMAIL: ", QUERY, email);
@@ -28,5 +29,4 @@ public class UserEmailSpecification implements Specification<String, Optional<Us
 		log.trace("Ans is present: {}", ans.isPresent());
 		return ans;
 	}
-
 }
