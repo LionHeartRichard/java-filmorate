@@ -30,6 +30,7 @@ public class FilmFindByGenreSpecification implements Specification<Object[], Set
 	public Set<Long> specified(Object[] params, Set<Long> ans) {
 		String genre = String.valueOf(params[0]);
 		Integer offset = (Integer) params[1];
+		log.trace("genre: {}, offset: {}", genre, offset);
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -39,6 +40,7 @@ public class FilmFindByGenreSpecification implements Specification<Object[], Set
 			}
 		};
 		ans = jdbc.queryForStream(QUERY, pss, rowMapper).map(FilmGenre::getFilmId).collect(Collectors.toSet());
+		log.trace("SQL: {}", QUERY);
 		return ans;
 	}
 

@@ -80,18 +80,11 @@ public class BaseOperations<T> {
 		return builder.toString();
 	}
 
-	public Optional<Long> add(String query, Object... params) {
+	public Optional<Long> add(String query, PreparedStatementSetter pss) {
 		log.trace("SQL: ", query);
-		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-		jdbc.update(connection -> {
-			PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-			int[] idx = {1};
-			for (Object p : params)
-				ps.setObject(idx[0]++, p);
-			return ps;
-		}, keyHolder);
-		Long id = keyHolder.getKeyAs(Long.class);
-		log.trace("id={}", id);
-		return Optional.ofNullable(id);
+		Integer rowAdd = jdbc.update(query, pss);
+		rowAdd = rowAdd == 0 ? null : rowAdd;
+		log.trace("Row add: {}", rowAdd);
+		return Optional.ofNullable(rowAdd.longValue());
 	}
 }

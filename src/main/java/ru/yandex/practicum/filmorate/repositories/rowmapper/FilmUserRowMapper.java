@@ -4,9 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import ru.yandex.practicum.filmorate.model.impl.FilmUser;
 
+@Repository
 public class FilmUserRowMapper implements RowMapper<FilmUser> {
 
 	@Override

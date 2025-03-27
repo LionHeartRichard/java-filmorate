@@ -28,6 +28,7 @@ public class StatusSpecification implements Specification<Integer, Set<String>> 
 
 	@Override
 	public Set<String> specified(Integer offset, Set<String> ans) {
+		log.trace("SQL: {}, offset: {}", QUERY, offset);
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {

@@ -29,13 +29,12 @@ public class FilmRepositories implements Repositories<Film> {
 	private final FilmIdSpecification filmFindByid;
 	private final BaseOperations<Film> operations;
 
-	private static final String UPDATE_FILM = "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, rating_name = ?  WHERE film_id = ?";
 	private static final String TBALE_NAME = "film";
 	private static final String ID = "film_id";
 
 	@Override
 	public Optional<Long> add(Film film) {
-		log.trace("add film: {}", film.toString());
+		log.trace("add film: {}", Optional.ofNullable(film).map(Film::toString).orElse("null"));
 		return operations.add(film, TBALE_NAME, ID);
 	}
 
@@ -47,7 +46,8 @@ public class FilmRepositories implements Repositories<Film> {
 
 	@Override
 	public Optional<Integer> update(Film film) {
-		log.trace("update film: {}", film.toString());
+		log.trace("update film: {}", Optional.ofNullable(film).map(Film::toString).orElse("null"));
+		String updateFilm = "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, rating_name = ?  WHERE film_id = ?";
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -59,7 +59,7 @@ public class FilmRepositories implements Repositories<Film> {
 				ps.setLong(6, film.getId());
 			}
 		};
-		return operations.update(UPDATE_FILM, pss);
+		return operations.update(updateFilm, pss);
 	}
 
 	@Override

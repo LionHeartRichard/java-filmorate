@@ -29,14 +29,14 @@ public class UserRepositories implements Repositories<User> {
 	private final UserIdSpecification userFindByid;
 	private final BaseOperations<User> operations;
 
-	private static final String UPDATE_USER = "UPDATE person SET email = ?, login = ?, name = ?, birthday = ?  WHERE person_id = ?";
+	private static final String PK = "person_id";
 	private static final String TABLE_NAME = "person";
 	private static final String ID = "person_id";
 
 	@Override
 	public Optional<Long> add(User user) {
-		log.trace("add user: {}", user.toString());
-		return operations.add(user, TABLE_NAME);
+		log.trace("add user: {}", Optional.ofNullable(user).map(User::toString).orElse("null"));
+		return operations.add(user, TABLE_NAME, PK);
 	}
 
 	@Override
@@ -47,7 +47,8 @@ public class UserRepositories implements Repositories<User> {
 
 	@Override
 	public Optional<Integer> update(User user) {
-		log.trace("user update: {}", user.toString());
+		log.trace("user update: {}", Optional.ofNullable(user).map(User::toString).orElse("null"));
+		String updateUser = "UPDATE person SET email = ?, login = ?, name = ?, birthday = ?  WHERE person_id = ?";
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -58,7 +59,7 @@ public class UserRepositories implements Repositories<User> {
 				ps.setLong(5, user.getId());
 			}
 		};
-		return operations.update(UPDATE_USER, pss);
+		return operations.update(updateUser, pss);
 	}
 
 	@Override
