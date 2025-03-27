@@ -21,10 +21,11 @@ public class BaseOperations<T> {
 
 	private final JdbcTemplate jdbc;
 
-	public Optional<Long> add(T t, String nameTable) {
+	public Optional<Long> add(T t, String nameTable, String primaryKey) {
+		log.trace("Object: {}, Name-table: {}, PK: {}", t.toString(), nameTable, primaryKey);
 		Object[] params = getParam(t);
 		String values = getValues(params.length);
-		String query = String.format("INSERT INTO %s VALUES (%s) returning id", nameTable, values);
+		String query = String.format("INSERT INTO %s VALUES (%s) returning %s", nameTable, values, primaryKey);
 		log.trace("SQL: ", query);
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbc.update(connection -> {
@@ -77,5 +78,20 @@ public class BaseOperations<T> {
 		}
 		builder.append("?");
 		return builder.toString();
+	}
+
+	public Optional<Long> add(String query, Object... params) {
+		log.trace("SQL: ", query);
+		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+		jdbc.update(connection -> {
+			PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			int[] idx = {1};
+			for (Object p : params)
+				ps.setObject(idx[0]++, p);
+			return ps;
+		}, keyHolder);
+		Long id = keyHolder.getKeyAs(Long.class);
+		log.trace("id={}", id);
+		return Optional.ofNullable(id);
 	}
 }

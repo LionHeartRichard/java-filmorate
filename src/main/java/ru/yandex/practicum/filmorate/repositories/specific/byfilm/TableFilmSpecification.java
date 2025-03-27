@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.repositories.specific.byfilm;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -17,23 +17,26 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmRowMapper;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class FilmIdSpecification implements Specification<Long, Optional<Film>> {
+public class TableFilmSpecification implements Specification<Integer, List<Film>> {
+
 	private final JdbcTemplate jdbc;
 	private final FilmRowMapper rowMapper;
 
-	private static final String QUERY = "SELECT * FROM film WHERE film_id=?";
+	private static final String QUERY = "SELECT * FROM film LIMIT ? OFFSET ?";
+	private static final Integer PAGE_LIMIT = 100;
 
 	@Override
-	public Optional<Film> specified(Long filmId, Optional<Film> ans) {
-		log.trace("Find film by id: {}", filmId);
+	public List<Film> specified(Integer offset, List<Film> ans) {
+		log.trace("film all, OFFSET: {}", offset);
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setLong(1, filmId);
+				ps.setInt(1, PAGE_LIMIT);
+				ps.setInt(2, offset);
 			}
 		};
-		ans = jdbc.queryForStream(QUERY, pss, rowMapper).findFirst();
-		log.trace("SQL :{}", QUERY);
+		log.trace("film all, SQL: {}", QUERY);
+		ans = jdbc.query(QUERY, pss, rowMapper);
 		return ans;
 	}
 

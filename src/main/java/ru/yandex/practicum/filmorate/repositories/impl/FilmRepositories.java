@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.Film;
 import ru.yandex.practicum.filmorate.repositories.BaseOperations;
 import ru.yandex.practicum.filmorate.repositories.Repositories;
-import ru.yandex.practicum.filmorate.repositories.specific.byfilm.FilmFindAllSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byfilm.TableFilmSpecification;
 import ru.yandex.practicum.filmorate.repositories.specific.byfilm.FilmIdSpecification;
 import ru.yandex.practicum.filmorate.repositories.specific.byfilm.FilmNameSpecification;
 
@@ -24,7 +24,7 @@ import ru.yandex.practicum.filmorate.repositories.specific.byfilm.FilmNameSpecif
 @RequiredArgsConstructor
 public class FilmRepositories implements Repositories<Film> {
 
-	private final FilmFindAllSpecification filmFindAll;
+	private final TableFilmSpecification tableFilmSpecification;
 	private final FilmNameSpecification filmFindByName;
 	private final FilmIdSpecification filmFindByid;
 	private final BaseOperations<Film> operations;
@@ -36,7 +36,7 @@ public class FilmRepositories implements Repositories<Film> {
 	@Override
 	public Optional<Long> add(Film film) {
 		log.trace("add film: {}", film.toString());
-		return operations.add(film, TBALE_NAME);
+		return operations.add(film, TBALE_NAME, ID);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class FilmRepositories implements Repositories<Film> {
 	@Override
 	public Collection<Film> query(Integer offset) {
 		log.trace("film find all, OFFSET: {}", offset);
-		return filmFindAll.specified(offset, new ArrayList<>());
+		return tableFilmSpecification.specified(offset, new ArrayList<>());
 	}
 
 	public Collection<Film> query(String name) {

@@ -1,8 +1,11 @@
 package ru.yandex.practicum.filmorate.repositories.specific.byuser;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +26,13 @@ public class UserIdSpecification implements Specification<Long, Optional<User>> 
 	@Override
 	public Optional<User> specified(Long id, Optional<User> ans) {
 		log.trace("SQL: {}; ID: ", QUERY, id);
-		ans = Optional.ofNullable(jdbc.queryForObject(QUERY, rowMapper, id));
+		PreparedStatementSetter pss = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setLong(1, id);
+			}
+		};
+		ans = jdbc.queryForStream(QUERY, pss, rowMapper).findFirst();
 		log.trace("Ans is present: {}", ans.isPresent());
 		return ans;
 	}

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.repositories.specific.byfilm;
+package ru.yandex.practicum.filmorate.repositories.specific.byfriend;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -10,33 +10,31 @@ import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.model.impl.Film;
+import ru.yandex.practicum.filmorate.model.impl.Friend;
 import ru.yandex.practicum.filmorate.repositories.Specification;
-import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmRowMapper;
+import ru.yandex.practicum.filmorate.repositories.rowmapper.FriendRowMapper;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class FilmFindAllSpecification implements Specification<Integer, List<Film>> {
+public class TableFriendSpecification implements Specification<Integer, List<Friend>> {
 
 	private final JdbcTemplate jdbc;
-	private final FilmRowMapper rowMapper;
+	private final FriendRowMapper rowMapper;
 
-	private static final String QUERY = "SELECT * FROM film LIMIT ? OFFSET ?";
-	private static final Integer PAGE_LIMIT = 100;
+	private static final Integer LIMIT = 200;
+	private static final String QUERY = "SELECT * FROM friend LIMIT ? OFFSET ?";
 
 	@Override
-	public List<Film> specified(Integer offset, List<Film> ans) {
-		log.trace("film all, OFFSET: {}", offset);
+	public List<Friend> specified(Integer offset, List<Friend> ans) {
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setInt(1, PAGE_LIMIT);
+				ps.setInt(1, LIMIT);
 				ps.setInt(2, offset);
 			}
 		};
-		log.trace("film all, SQL: {}", QUERY);
-		ans = jdbc.query(QUERY, pss, rowMapper);
+		ans = jdbc.queryForStream(QUERY, pss, rowMapper).toList();
 		return ans;
 	}
 
