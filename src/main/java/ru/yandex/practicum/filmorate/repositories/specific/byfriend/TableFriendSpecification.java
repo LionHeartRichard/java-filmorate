@@ -27,6 +27,7 @@ public class TableFriendSpecification implements Specification<Integer, List<Fri
 
 	@Override
 	public List<Friend> specified(Integer offset, List<Friend> ans) {
+		log.trace("offset: {}", offset);
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {

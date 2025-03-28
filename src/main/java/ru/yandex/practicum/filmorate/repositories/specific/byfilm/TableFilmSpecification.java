@@ -35,8 +35,8 @@ public class TableFilmSpecification implements Specification<Integer, List<Film>
 				ps.setInt(2, offset);
 			}
 		};
-		log.trace("film all, SQL: {}", QUERY);
 		ans = jdbc.query(QUERY, pss, rowMapper);
+		log.trace("film all, SQL: {}", QUERY);
 		return ans;
 	}
 

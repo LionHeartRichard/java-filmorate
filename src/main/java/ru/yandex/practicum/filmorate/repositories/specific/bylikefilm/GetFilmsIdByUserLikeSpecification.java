@@ -30,6 +30,7 @@ public class GetFilmsIdByUserLikeSpecification implements Specification<Long[], 
 	public Set<Long> specified(Long[] params, Set<Long> ans) {
 		Long userId = params[0];
 		Integer offset = params[1].intValue();
+		log.trace("userId: {}, offset: {}", userId, offset);
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {

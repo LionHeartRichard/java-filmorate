@@ -30,6 +30,7 @@ public class GetAllFrienSpecification implements Specification<Long[], Map<Long,
 	public Map<Long, String> specified(Long[] params, Map<Long, String> ans) {
 		Long userId = params[0];
 		Integer offset = params[1].intValue();
+		log.trace("userId: {}, offset: {}", userId, offset);
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {

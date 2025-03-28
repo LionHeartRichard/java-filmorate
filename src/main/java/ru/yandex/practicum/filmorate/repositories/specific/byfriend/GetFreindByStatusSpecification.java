@@ -31,6 +31,7 @@ public class GetFreindByStatusSpecification implements Specification<Object[], S
 		Long userId = (Long) params[0];
 		String statusFriend = String.valueOf(params[1]);
 		Integer offset = (Integer) params[2];
+		log.trace("userId: {}, statusFriend: {}, offset: {}", userId, statusFriend, offset);
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {

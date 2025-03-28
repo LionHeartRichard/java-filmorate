@@ -17,6 +17,7 @@ public class GetCountLikeByFilmSpecification implements Specification<Long, Inte
 
 	@Override
 	public Integer specified(Long filmId, Integer ans) {
+		log.trace("filmId: {}", filmId);
 		ans = jdbc.queryForObject(QUERY, Integer.class, filmId);
 		return ans;
 	}

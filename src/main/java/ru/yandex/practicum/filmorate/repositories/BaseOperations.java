@@ -22,7 +22,8 @@ public class BaseOperations<T> {
 	private final JdbcTemplate jdbc;
 
 	public Optional<Long> add(T t, String nameTable, String primaryKey) {
-		log.trace("Object: {}, Name-table: {}, PK: {}", t.toString(), nameTable, primaryKey);
+		log.trace("Object: {}, Name-table: {}, PK: {}", Optional.ofNullable(t).map(Object::toString).orElse("null"),
+				nameTable, primaryKey);
 		Object[] params = getParam(t);
 		String values = getValues(params.length);
 		String query = String.format("INSERT INTO %s VALUES (%s) returning %s", nameTable, values, primaryKey);
@@ -59,7 +60,7 @@ public class BaseOperations<T> {
 
 	@SneakyThrows
 	private Object[] getParam(T t) {
-		log.trace("Reflection field for Object: {}", t.toString());
+		log.trace("Reflection field for Object: {}", Optional.ofNullable(t).map(Object::toString).orElse("null"));
 		Field[] fields = t.getClass().getDeclaredFields();
 		Object[] params = new Object[fields.length];
 		int[] idx = {0};
@@ -81,7 +82,7 @@ public class BaseOperations<T> {
 	}
 
 	public Optional<Long> add(String query, PreparedStatementSetter pss) {
-		log.trace("SQL: ", query);
+		log.trace("SQL: {}", query);
 		Integer rowAdd = jdbc.update(query, pss);
 		rowAdd = rowAdd == 0 ? null : rowAdd;
 		log.trace("Row add: {}", rowAdd);
