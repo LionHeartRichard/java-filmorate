@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.model.impl.Friend;
+import ru.yandex.practicum.filmorate.model.impl.Genre;
 import ru.yandex.practicum.filmorate.repositories.Specification;
-import ru.yandex.practicum.filmorate.repositories.rowmapper.FriendRowMapper;
+import ru.yandex.practicum.filmorate.repositories.rowmapper.GenreRowMapper;
 
 @Slf4j
 @Repository
@@ -21,7 +21,7 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.FriendRowMapper;
 public class GenreSpecification implements Specification<Integer, Set<String>> {
 
 	private final JdbcTemplate jdbc;
-	private final FriendRowMapper rowMapper;
+	private final GenreRowMapper rowMapper;
 
 	private static final Integer LIMIT = 200;
 	private static final String QUERY = "SELECT * FROM genre LIMIT ? OFFSET ?";
@@ -36,7 +36,7 @@ public class GenreSpecification implements Specification<Integer, Set<String>> {
 				ps.setInt(2, offset);
 			}
 		};
-		ans = jdbc.query(QUERY, pss, rowMapper).stream().map(Friend::getStatusName).collect(Collectors.toSet());
+		ans = jdbc.query(QUERY, pss, rowMapper).stream().map(Genre::getName).collect(Collectors.toSet());
 		return ans;
 	}
 
