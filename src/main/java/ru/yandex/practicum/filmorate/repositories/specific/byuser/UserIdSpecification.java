@@ -21,7 +21,7 @@ public class UserIdSpecification implements Specification<Long, Optional<User>> 
 	private final JdbcTemplate jdbc;
 	private final UserRowMapper rowMapper;
 
-	private static final String QUERY = "SELECT * FROM person WHERE person_id=?";
+	private static final String QUERY = "SELECT * FROM person WHERE person_id = ?";
 
 	@Override
 	public Optional<User> specified(Long id, Optional<User> ans) {

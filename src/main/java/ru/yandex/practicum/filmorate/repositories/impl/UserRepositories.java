@@ -16,7 +16,7 @@ import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.repositories.BaseOperations;
 import ru.yandex.practicum.filmorate.repositories.Repositories;
 import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserEmailSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserFindAllSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byuser.TableUserSpecification;
 import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserIdSpecification;
 
 @Slf4j
@@ -24,7 +24,7 @@ import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserIdSpecific
 @RequiredArgsConstructor
 public class UserRepositories implements Repositories<User> {
 
-	private final UserFindAllSpecification userFindAll;
+	private final TableUserSpecification userFindAll;
 	private final UserEmailSpecification userFindByEmail;
 	private final UserIdSpecification userFindByid;
 	private final BaseOperations<User> operations;
@@ -36,7 +36,9 @@ public class UserRepositories implements Repositories<User> {
 	@Override
 	public Optional<Long> add(User user) {
 		log.trace("add user: {}", Optional.ofNullable(user).map(User::toString).orElse("null"));
-		return operations.add(user, TABLE_NAME, PK);
+		String queryInsert = "INSERT INTO person (email,login,name,birthday) VALUES (?,?,?,?)";
+		Object[] params = {user.getEmail(), user.getLogin(), user.getName(), user.getBirthday()};
+		return operations.add(queryInsert, params);
 	}
 
 	@Override

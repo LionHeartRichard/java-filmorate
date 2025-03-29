@@ -1,9 +1,9 @@
-package ru.yandex.practicum.filmorate.repositories.specific;
+package ru.yandex.practicum.filmorate.repositories.specific.byfriend;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +12,20 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
-import ru.yandex.practicum.filmorate.repositories.rowmapper.GenreRowMapper;
+import ru.yandex.practicum.filmorate.model.impl.Friend;
+import ru.yandex.practicum.filmorate.repositories.rowmapper.FriendRowMapper;
 
 @JdbcTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Import({GenreSpecification.class, GenreRowMapper.class})
-public class GenreSpecificationAppTest {
-
-	private final GenreSpecification genreSpecification;
+@Import({TableFriendSpecification.class, FriendRowMapper.class})
+public class TableFriendSpecificationAppTest {
+	private final TableFriendSpecification tableSpec;
 
 	@Test
 	void getTableData() {
-		Set<String> genre = genreSpecification.specified(0, new HashSet<>());
+		List<Friend> friends = tableSpec.specified(0, new ArrayList<>());
 
-		assertTrue(!genre.isEmpty());
+		assertTrue(!friends.isEmpty());
 	}
 }

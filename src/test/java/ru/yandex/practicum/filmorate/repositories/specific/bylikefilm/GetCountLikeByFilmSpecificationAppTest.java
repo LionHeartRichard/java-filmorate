@@ -1,9 +1,6 @@
-package ru.yandex.practicum.filmorate.repositories.specific;
+package ru.yandex.practicum.filmorate.repositories.specific.bylikefilm;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +9,20 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
-import ru.yandex.practicum.filmorate.repositories.rowmapper.GenreRowMapper;
 
 @JdbcTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Import({GenreSpecification.class, GenreRowMapper.class})
-public class GenreSpecificationAppTest {
+@Import({GetCountLikeByFilmSpecification.class})
+public class GetCountLikeByFilmSpecificationAppTest {
 
-	private final GenreSpecification genreSpecification;
+	private final GetCountLikeByFilmSpecification getLiksSpec;
 
 	@Test
-	void getTableData() {
-		Set<String> genre = genreSpecification.specified(0, new HashSet<>());
+	void getLikes() {
+		Integer count = 0;
+		count = getLiksSpec.specified(1L, count);
 
-		assertTrue(!genre.isEmpty());
+		assertTrue(count > 0);
 	}
 }

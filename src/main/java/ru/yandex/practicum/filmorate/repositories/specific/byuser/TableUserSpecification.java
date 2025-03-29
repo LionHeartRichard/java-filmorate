@@ -17,7 +17,7 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.UserRowMapper;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class UserFindAllSpecification implements Specification<Integer, List<User>> {
+public class TableUserSpecification implements Specification<Integer, List<User>> {
 
 	private final JdbcTemplate jdbc;
 	private final UserRowMapper rowMapper;

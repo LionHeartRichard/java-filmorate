@@ -35,7 +35,13 @@ public class FilmRepositories implements Repositories<Film> {
 	@Override
 	public Optional<Long> add(Film film) {
 		log.trace("add film: {}", Optional.ofNullable(film).map(Film::toString).orElse("null"));
-		return operations.add(film, TBALE_NAME, ID);
+		String queryInsert = "INSERT INTO film (name,description,release_date,duration,rating_name) VALUES (?,?,?,?,?)";
+		Object[] params = {film.getName(), 
+				film.getDescription(), 
+				film.getReleaseDate(), 
+				film.getDuration(),
+				film.getRatingName()};
+		return operations.add(queryInsert, params);
 	}
 
 	@Override

@@ -1,9 +1,8 @@
-package ru.yandex.practicum.filmorate.repositories.specific;
+package ru.yandex.practicum.filmorate.repositories.specific.byuser;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +11,21 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
-import ru.yandex.practicum.filmorate.repositories.rowmapper.GenreRowMapper;
+import ru.yandex.practicum.filmorate.model.impl.User;
+import ru.yandex.practicum.filmorate.repositories.rowmapper.UserRowMapper;
 
 @JdbcTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Import({GenreSpecification.class, GenreRowMapper.class})
-public class GenreSpecificationAppTest {
+@Import({UserIdSpecification.class, UserRowMapper.class})
+public class UserIdSpecificationAppTest {
 
-	private final GenreSpecification genreSpecification;
+	private final UserIdSpecification userIdSpec;
 
 	@Test
-	void getTableData() {
-		Set<String> genre = genreSpecification.specified(0, new HashSet<>());
+	void getUserById() {
+		Optional<User> userOpt = userIdSpec.specified(1L, Optional.empty());
 
-		assertTrue(!genre.isEmpty());
+		assertTrue(userOpt.isPresent());
 	}
 }

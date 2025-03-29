@@ -17,7 +17,7 @@ import ru.yandex.practicum.filmorate.model.impl.Friend;
 import ru.yandex.practicum.filmorate.repositories.BaseOperations;
 import ru.yandex.practicum.filmorate.repositories.Repositories;
 import ru.yandex.practicum.filmorate.repositories.specific.byfriend.TableFriendSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byfriend.GetAllFrienSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byfriend.GetAllFrienIdSpecification;
 
 @Slf4j
 @Repository
@@ -26,7 +26,7 @@ public class FriendRepositories implements Repositories<Friend> {
 
 	private final BaseOperations<Friend> baseOperations;
 	private final TableFriendSpecification tableFriendSpecification;
-	private final GetAllFrienSpecification getAllFriendSpecification;
+	private final GetAllFrienIdSpecification getAllFriendSpecification;
 
 	private static final String ID = "person_id";
 	private static final String TABLE_NAME = "friend";

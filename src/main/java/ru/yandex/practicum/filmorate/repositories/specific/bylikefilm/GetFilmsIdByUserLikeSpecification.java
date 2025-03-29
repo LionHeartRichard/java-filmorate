@@ -24,7 +24,7 @@ public class GetFilmsIdByUserLikeSpecification implements Specification<Long[], 
 	private final FilmUserRowMapper rowMapper;
 
 	private static final Integer LIMIT = 200;
-	private static final String QUERY = "SELECT * FROM film_person WHERE person_id = ? LIKE ? OFFSET ?";
+	private static final String QUERY = "SELECT * FROM film_person WHERE person_id = ? LIMIT ? OFFSET ?";
 
 	@Override
 	public Set<Long> specified(Long[] params, Set<Long> ans) {

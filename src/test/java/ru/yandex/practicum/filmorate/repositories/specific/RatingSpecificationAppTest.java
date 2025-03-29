@@ -5,25 +5,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
-import ru.yandex.practicum.filmorate.repositories.rowmapper.StatusRowMapper;
+import ru.yandex.practicum.filmorate.repositories.rowmapper.RatingRowMapper;
 
 @JdbcTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Import({StatusSpecification.class, StatusRowMapper.class})
-public class StatusSpecificationAppTest {
+@Import({RatingSpecification.class, RatingRowMapper.class})
+public class RatingSpecificationAppTest {
 
-	private final StatusSpecification statusSpecification;
-	
+	private final RatingSpecification ratingSpecification;
+
+	@Test
 	void getTableData() {
-		Set<String> status = statusSpecification.specified(0, new HashSet<>());
-		
-		assertTrue(!status.isEmpty());
+		Set<String> rating = ratingSpecification.specified(0, new HashSet<>());
+
+		assertTrue(!rating.isEmpty());
 	}
+
 }
