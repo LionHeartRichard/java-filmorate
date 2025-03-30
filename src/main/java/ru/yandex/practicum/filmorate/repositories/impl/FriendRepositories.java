@@ -18,6 +18,7 @@ import ru.yandex.practicum.filmorate.repositories.BaseOperations;
 import ru.yandex.practicum.filmorate.repositories.Repositories;
 import ru.yandex.practicum.filmorate.repositories.specific.byfriend.TableFriendSpecification;
 import ru.yandex.practicum.filmorate.repositories.specific.byfriend.GetAllFrienIdSpecification;
+import ru.yandex.practicum.filmorate.repositories.specific.byfriend.GetStatusFriendSpecification;
 
 @Slf4j
 @Repository
@@ -27,6 +28,7 @@ public class FriendRepositories implements Repositories<Friend> {
 	private final BaseOperations<Friend> baseOperations;
 	private final TableFriendSpecification tableFriendSpecification;
 	private final GetAllFrienIdSpecification getAllFriendSpecification;
+	private final GetStatusFriendSpecification getStatusFriendSpecification;
 
 	private static final String ID = "person_id";
 	private static final String TABLE_NAME = "friend";
@@ -91,6 +93,10 @@ public class FriendRepositories implements Repositories<Friend> {
 		log.trace("userId: {}, offset: {}", userId, offset);
 		Long[] params = new Long[] {userId, offset.longValue()};
 		return getAllFriendSpecification.specified(params, new HashMap<>());
+	}
+
+	public Optional<Friend> query(Long userId, Long friendId) {
+		return getStatusFriendSpecification.specified(new Long[] {userId, friendId}, Optional.empty());
 	}
 
 }
