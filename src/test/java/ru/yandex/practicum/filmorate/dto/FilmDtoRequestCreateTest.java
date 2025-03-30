@@ -25,7 +25,7 @@ public class FilmDtoRequestCreateTest {
 	@Test
 	public void testPositive() {
 
-		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100, "rating");
+		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
 
 		Set<ConstraintViolation<Create>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
@@ -34,19 +34,9 @@ public class FilmDtoRequestCreateTest {
 	}
 
 	@Test
-	public void testNegativeRatingIsBlank() {
-		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100, "");
-
-		Set<ConstraintViolation<Create>> violations = validator.validate(film);
-		violations.forEach(violation -> log.error(violation.getMessage()));
-
-		assertTrue(!violations.isEmpty());
-	}
-
-	@Test
 	public void testNegativeReleazeBefore1895() {
 
-		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(1894, 3, 25), 100, "rating");
+		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(1894, 3, 25), 100);
 
 		Set<ConstraintViolation<Create>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
@@ -57,7 +47,7 @@ public class FilmDtoRequestCreateTest {
 	@Test
 	public void testNegativeDuration() {
 
-		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(2000, 3, 25), -100, "rating");
+		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(2000, 3, 25), -100);
 
 		Set<ConstraintViolation<Create>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));

@@ -15,23 +15,23 @@ import ru.yandex.practicum.filmorate.validation.Login;
 @Validated
 public enum UserDto {;
 	    private interface Id { @Min(value=0) Long getId(); }
-	    private interface UserEmail { @Email String getUserEmail(); }
-	    private interface UserLogin { @Login String getUserLogin(); }
+	    private interface UserEmail { @Email String getEmail(); }
+	    private interface UserLogin { @Login String getLogin(); }
 	    private interface Name { @Size(max=100) String getName(); }
 	    private interface Birthday { @Past LocalDate getBirthday(); }
 
 	    public enum Request{;
 	        @Value public static class Create implements UserEmail, UserLogin, Name, Birthday {
-	            String userEmail;
-	            String userLogin;
+	            String email;
+	            String login;
 	            String name;
 	            LocalDate birthday;
 	        }
 	        
 	        @Value public static class Update implements Id, UserEmail, UserLogin, Name, Birthday {
 	        	Long id;
-	        	String userEmail;
-	            String userLogin;
+	        	String email;
+	            String login;
 	            String name;
 	            LocalDate birthday;
 	        }
@@ -40,14 +40,14 @@ public enum UserDto {;
 
 	    public enum Response{;
 	        @Value public static class Public implements UserLogin, Name {
-	            String userLogin;
+	            String login;
 	            String name;
 	        }
 
 	        @Value public static class Private implements Id, UserEmail, UserLogin, Name, Birthday {
 	        	Long id;
-	        	String userEmail;
-	            String userLogin;
+	        	String email;
+	            String login;
 	            String name;
 	            LocalDate birthday;
 	        }

@@ -1,42 +1,54 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.impl.Film;
+import ru.yandex.practicum.filmorate.repositories.impl.FilmRepositories;
 import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.util.dtomapper.FilmDtoMapper;
+import ru.yandex.practicum.filmorate.dto.FilmDto.Request.Create;
+import ru.yandex.practicum.filmorate.dto.FilmDto.Request.Update;
+import ru.yandex.practicum.filmorate.dto.FilmDto.Response.Private;
 
 @Slf4j
 @Component
-public class FilmStorage implements Storage<Film> {
+public class FilmStorage implements Storage<Private, Create, Update> {
 
-	private final Map<Long, Film> films = new HashMap<>();
-	private long nextId = 1L;
+	private final FilmRepositories filmRepositories;
+	private final Map<Long, Film> films;
 
-	@Override
-	public Film create(Film film) {
-		log.trace("создание фильма в ХРАНИЛИЩЕ фильмов, film: {}", film.toString());
-		if (film.getId() == null) {
-			film.setId(nextId++);
-			films.put(film.getId(), film);
-			log.trace("Фильм с id: {} добавлен в ХРАНИЛИЩЕ фильмов", film.getId());
-			return film;
-		}
-		log.warn("Id указанн в ручную, film: {}", film.toString());
-		throw new ConditionsNotMetException(String.format(
-				"Фильм: %s не может быть добавлен! Идентификатор генерируется автоматически!", film.toString()));
+	@Autowired
+	public FilmStorage(FilmRepositories filmRepositories) {
+		this.filmRepositories = filmRepositories;
+		films = this.filmRepositories.query(0).stream().collect(Collectors.toMap(Film::getId, Function.identity()));
 	}
 
 	@Override
-	public Collection<Film> read() {
+	public Private create(Create filmDto) {
+		Film film = FilmDtoMapper.returnFilm(filmDto);
+		log.trace("создание фильма в ХРАНИЛИЩЕ фильмов, film: {}", film.toString());
+		Long id = filmRepositories.add(film)
+				.orElseThrow(() -> new InternalServerException("Faild! Film not added to database!!!"));
+		film.setId(id);
+		films.put(film.getId(), film);
+		log.trace("Фильм с id: {} добавлен в ХРАНИЛИЩЕ фильмов", film.getId());
+		return FilmDtoMapper.returnPrivate(film);
+
+	}
+
+	@Override
+	public Collection<Private> read() {
 		log.trace("Обработка в ХРАНИЛИЩЕ. Получение списка всех фильмов");
-		return films.values();
+		return films.values().stream().map(FilmDtoMapper::returnPrivate).toList();
 	}
 
 //	public Collection<Film> findTopFilms(int count) {
@@ -50,27 +62,36 @@ public class FilmStorage implements Storage<Film> {
 //	}
 
 	@Override
-	public Film update(Film film) {
+	public Private update(Update filmDto) {
+		Film film = FilmDtoMapper.returnFilm(filmDto);
 		log.trace("Обновление фильма в ХРАНИЛИЩЕ фильмов newFilm: {}", film.toString());
 		if (films.containsKey(film.getId())) {
+			filmRepositories.update(film)
+					.orElseThrow(() -> new InternalServerException("Failed! Film not updated to database!!!"));
 			films.put(film.getId(), film);
 			log.trace("Фильм изменен и внесен в память, film: {}", film.toString());
-			return film;
+			return FilmDtoMapper.returnPrivate(film);
 		}
-		log.warn("Обновление несуществующего фильма: {}", film.toString());
-		throw new NotFoundException(String.format("Фильм с id: %d не найден!", film.getId()));
+		filmRepositories.query(film.getId())
+				.orElseThrow(() -> new NotFoundException("Failed! Film not found in database!!!"));
+		filmRepositories.update(film)
+				.orElseThrow(() -> new InternalServerException("Failed! Film not updated to database!!!"));
+		log.trace("Фильм изменен и внесен в память, film: {}", film.toString());
+		return FilmDtoMapper.returnPrivate(film);
 	}
 
 	@Override
-	public Film findById(Long id) {
+	public Private findById(Long id) {
 		log.trace("Поиск в ХРАНИЛИЩЕ фильмов по id: {}", id);
+		Film film;
 		if (films.containsKey(id)) {
-			Film film = films.get(id);
+			film = films.get(id);
 			log.trace("Возвращаем фильм {} из ХРАНИЛИЩА", film.toString());
-			return film;
+			return FilmDtoMapper.returnPrivate(film);
 		}
-		log.warn("Фильм с id: {} не найден", id);
-		throw new NotFoundException(String.format("Фильм с id: %d - не найден!!!", id));
+		film = filmRepositories.query(id)
+				.orElseThrow(() -> new NotFoundException("Failed! Film not found in database!!!"));
+		return FilmDtoMapper.returnPrivate(film);
 	}
 
 }

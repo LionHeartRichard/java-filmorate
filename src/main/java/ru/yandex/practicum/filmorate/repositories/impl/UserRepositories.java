@@ -29,7 +29,6 @@ public class UserRepositories implements Repositories<User> {
 	private final UserIdSpecification userFindByid;
 	private final BaseOperations<User> operations;
 
-	private static final String PK = "person_id";
 	private static final String TABLE_NAME = "person";
 	private static final String ID = "person_id";
 

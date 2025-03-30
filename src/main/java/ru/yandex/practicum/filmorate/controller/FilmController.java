@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.model.impl.Film;
 import ru.yandex.practicum.filmorate.storage.impl.FilmStorage;
 import ru.yandex.practicum.filmorate.util.LocalValidator;
 import ru.yandex.practicum.filmorate.util.GetConstants;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 
 @Slf4j
 @RestController
@@ -33,55 +33,56 @@ public class FilmController {
 	private final FilmService filmService;
 
 	@PostMapping
-	public Film create(@Valid @RequestBody Film film) {
+	public FilmDto.Response.Private create(@Valid @RequestBody FilmDto.Request.Create filmDto) {
 		log.trace("Обработка запроса POST /films");
-		return filmStorage.create(film);
+		return filmStorage.create(filmDto);
 	}
 
 	@GetMapping
-	public Collection<Film> read() {
+	public Collection<FilmDto.Response.Private> read() {
 		log.trace("Обработка запроса GET /films");
 		return filmStorage.read();
 	}
 
 	@GetMapping("/popular")
-	public Collection<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count) {
+	public Collection<FilmDto.Response.Private> findTopFilms(
+			@RequestParam(defaultValue = GetConstants.COUNT) Integer count) {
 		log.trace("Обработка запроса GET /films/popular");
 		return new ArrayList<>();
 //		return filmStorage.findTopFilms(count);
 	}
 
 	@PutMapping
-	public Film update(@Valid @RequestBody final Film newFilm) {
+	public FilmDto.Response.Private update(@Valid @RequestBody final FilmDto.Request.Update filmDto) {
 		log.trace("Обработка запроса PUT /films");
-		return filmStorage.update(newFilm);
+		return filmStorage.update(filmDto);
 	}
 
 	@GetMapping("/{id}")
-	public Film findById(@PathVariable final Long id) {
+	public FilmDto.Response.Private findById(@PathVariable final Long id) {
 		log.trace("Обработка запроса GET /films/{id}");
 		validator.positiveValue(id,
 				String.format("В запросе на поиск фильма по id, передано отрицательное значение: %d", id));
 		return filmStorage.findById(id);
 	}
 
-	@PutMapping("/{id}/like/{user_id}")
-	public Film addLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
-		log.trace("Обработка запроса PUT /films/{id}/like/{user_id}");
-		validator.positiveValue(id, String
-				.format("В запросе на добавление лайка к фильму, передано отрицательное значение id-фильма: %d", id));
-		validator.positiveValue(userId, String.format(
-				"В запросе на добавление лайка к фильму, передано отрицательное значение id-пользователя: %d", userId));
-		return filmService.addLike(id, userId);
-	}
-
-	@DeleteMapping("/{id}/like/{user_id}")
-	public Film deleteLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
-		log.trace("Обработка запроса DELETE /films/{id}/like/{user_id}");
-		validator.positiveValue(id, String
-				.format("В запросе на удаление лайка к фильму, передано отрицательное значение id-фильма: %d", id));
-		validator.positiveValue(userId, String.format(
-				"В запросе на удаление лайка к фильму, передано отрицательное значение id-пользователя: %d", userId));
-		return filmService.deleteLike(id, userId);
-	}
+//	@PutMapping("/{id}/like/{user_id}")
+//	public Film addLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
+//		log.trace("Обработка запроса PUT /films/{id}/like/{user_id}");
+//		validator.positiveValue(id, String
+//				.format("В запросе на добавление лайка к фильму, передано отрицательное значение id-фильма: %d", id));
+//		validator.positiveValue(userId, String.format(
+//				"В запросе на добавление лайка к фильму, передано отрицательное значение id-пользователя: %d", userId));
+//		return filmService.addLike(id, userId);
+//	}
+//
+//	@DeleteMapping("/{id}/like/{user_id}")
+//	public Film deleteLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
+//		log.trace("Обработка запроса DELETE /films/{id}/like/{user_id}");
+//		validator.positiveValue(id, String
+//				.format("В запросе на удаление лайка к фильму, передано отрицательное значение id-фильма: %d", id));
+//		validator.positiveValue(userId, String.format(
+//				"В запросе на удаление лайка к фильму, передано отрицательное значение id-пользователя: %d", userId));
+//		return filmService.deleteLike(id, userId);
+//	}
 }

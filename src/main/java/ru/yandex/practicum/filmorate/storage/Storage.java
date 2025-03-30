@@ -2,15 +2,13 @@ package ru.yandex.practicum.filmorate.storage;
 
 import java.util.Collection;
 
-public interface Storage<T> {
+public interface Storage<R, C, U> {
 
-	public T create(T t);
+	public R create(C createDto);
 
-	public Collection<T> read();
+	public Collection<R> read();
 
-	public T update(T t);
+	public R update(U updateDto);
 
-	// public T delete(Long id);
-
-	public T findById(Long id);
+	public R findById(Long id);
 }

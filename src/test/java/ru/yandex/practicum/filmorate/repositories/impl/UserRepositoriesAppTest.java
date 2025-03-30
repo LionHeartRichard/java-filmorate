@@ -28,10 +28,6 @@ import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserIdSpecific
 		UserRepositories.class, UserRowMapper.class})
 public class UserRepositoriesAppTest {
 
-	private final TableUserSpecification userFindAll;
-	private final UserEmailSpecification userFindByEmail;
-	private final UserIdSpecification userFindByid;
-	private final BaseOperations<User> operations;
 	private final UserRepositories userRepositories;
 
 	private User user;
@@ -78,4 +74,5 @@ public class UserRepositoriesAppTest {
 
 		assertEquals(expected, actual);
 	}
+
 }

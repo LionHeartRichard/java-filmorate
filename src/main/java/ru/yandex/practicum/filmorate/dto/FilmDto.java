@@ -17,44 +17,39 @@ public enum FilmDto {;
     private interface Description { @Size(min = 0, max = 200) String getDescription(); }
     private interface ReleaseDate { @ThisAfter1895 LocalDate getReleaseDate();}
     private interface Duration { @Min(value=1) Integer getDuration();}
-    private interface RatingName { @NotBlank @Size(max=50) String getRatingName();}
 
     public enum Request{;
-        @Value public static class Create implements Name, Description, ReleaseDate, Duration, RatingName {
+        @Value public static class Create implements Name, Description, ReleaseDate, Duration {
             String name;
             String description;
             LocalDate releaseDate;
             Integer duration;
-            String ratingName;
         }
         
-        @Value public static class Update implements Id, Name, Description, ReleaseDate, Duration, RatingName {
+        @Value public static class Update implements Id, Name, Description, ReleaseDate, Duration {
         	Long id;
         	String name;
             String description;
             LocalDate releaseDate;
             Integer duration;
-            String ratingName;
         }
     }
   
 
     public enum Response{;
-        @Value public static class Public implements Name, Description, ReleaseDate, Duration, RatingName {
+        @Value public static class Public implements Name, Description, ReleaseDate, Duration {
         	String name;
             String description;
             LocalDate releaseDate;
             Integer duration;
-            String ratingName;
         }
 
-        @Value public static class Private implements Id, Name, Description, ReleaseDate, Duration, RatingName {
+        @Value public static class Private implements Id, Name, Description, ReleaseDate, Duration {
         	Long id;
         	String name;
             String description;
             LocalDate releaseDate;
             Integer duration;
-            String ratingName;
         }
     }
 }
