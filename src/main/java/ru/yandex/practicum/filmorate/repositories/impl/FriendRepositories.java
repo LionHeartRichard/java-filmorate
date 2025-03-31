@@ -2,8 +2,11 @@ package ru.yandex.practicum.filmorate.repositories.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,11 +26,6 @@ public class FriendRepositories extends BaseRepo<Friend> implements Repositories
 	@Autowired
 	public FriendRepositories(JdbcTemplate jdbc, FriendRowMapper rowMapper) {
 		super(jdbc, rowMapper, "friend", "person_id");
-	}
-
-	public Optional<Integer> remove(Long userId) {
-		log.trace("remove userId: {}", userId);
-		return super.remove(userId);
 	}
 
 	public Optional<Integer> remove(Long userId, Long friendId) {
@@ -75,9 +73,16 @@ public class FriendRepositories extends BaseRepo<Friend> implements Repositories
 		return super.update(updateFriend, pss);
 	}
 
-	@Override
-	public Stream<Friend> getStream(Integer offset) {
-		return super.getStreamByTable(offset);
+	public Set<Long> getFriends(Long id) {
+		log.trace("getFriends({})", id);
+		String querySelect = String.format("SELECT friend_id FROM friend WHERE person_id = %d", id);
+		return jdbc.query(querySelect, rs -> {
+			Set<Long> ans = new HashSet<>();
+			while (rs.next()) {
+				ans.add(rs.getLong("friend_id"));
+			}
+			return ans;
+		});
 	}
 
 }

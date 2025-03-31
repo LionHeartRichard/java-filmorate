@@ -73,7 +73,7 @@ public abstract class BaseRepo<T> {
 		return jdbc.queryForStream(query, rowMapper).toList();
 	}
 
-	public Stream<T> getStreamByTable(Integer offset) {
+	public Stream<T> getStream(Integer offset) {
 		String query = String.format(SELECT_TABELE, nameTable, limit, offset);
 		log.trace("SQL: {}; nameTable = {}; LIMIT = {}, OFFSET = {}", query, namePk, nameTable, limit, offset);
 		return jdbc.queryForStream(query, rowMapper);

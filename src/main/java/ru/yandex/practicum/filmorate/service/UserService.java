@@ -2,14 +2,17 @@ package ru.yandex.practicum.filmorate.service;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.impl.Friend;
 import ru.yandex.practicum.filmorate.model.impl.User;
@@ -19,56 +22,65 @@ import ru.yandex.practicum.filmorate.util.dtomapper.FriendDtoMapper;
 import ru.yandex.practicum.filmorate.util.dtomapper.UserDtoMapper;
 import ru.yandex.practicum.filmorate.dto.FriendDto;
 import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.dto.UserDto.Response.Private;
 
 @Slf4j
-@Component
-@RequiredArgsConstructor
+@Service
 public class UserService {
 
 	private final FriendRepositories friendRepo;
 	private final UserRepositories userRepo;
+	private final Map<Long, User> cache;
 
-	public FriendDto.Response.Private addFriend(final Long id, final Long friendId) {
-		log.trace("Начало. Добавление в друзья");
-		userRepo.query(id).orElseThrow(() -> new NotFoundException("User not found in database!!!"));
-		userRepo.query(friendId).orElseThrow(() -> new NotFoundException("Friend not found in database!!!"));
-		log.trace("Обработка. Добавление в друзья");
-		Friend ans = Friend.builder().userId(id).friendId(friendId).statusName("friend").build();
-		friendRepo.add(ans);
-		return FriendDtoMapper.returnDto(ans);
+	@Autowired
+	public UserService(UserRepositories userRepo, FriendRepositories friendRepo) {
+		this.userRepo = userRepo;
+		this.friendRepo = friendRepo;
+		cache = this.userRepo.getTable(0).stream().collect(Collectors.toMap(User::getId, u -> u));
 	}
 
-	public void deleteFriend(final Long id, final Long friendId) {
-		log.trace("Начало. Удаление из друзей");
-		Optional<Friend> friendOpt = friendRepo.query(id, friendId);
-		log.trace("Обработка. Удаление из друзей");
-		if (friendOpt.isPresent())
-			friendRepo.remove(id, friendId);
+	public Private create(UserDto.Request.Create userDto) {
+		User user = UserDtoMapper.returnUser(userDto);
+		Long id = userRepo.add(user)
+				.orElseThrow(() -> new InternalServerException("Error - when adding a user to the database!"));
+		user.setId(id);
+		cache.put(id, user);
+		return UserDtoMapper.returnPrivateDto(user);
 	}
 
-	public Collection<UserDto.Response.Private> getFriends(final Long id) {
-		Set<Long> friendsId = friendRepo.query(id, 0).keySet();
-		return friendsId.stream().map(i -> {
-			Optional<User> userOpt = userRepo.query(i);
-			if (userOpt.isPresent())
-				return UserDtoMapper.returnPrivateDto(userOpt.get());
-			return null;
-		}).toList();
+	public Private update(@Valid UserDto.Request.Update userDto) {
+		Long id = userDto.getId();
+		if (cache.containsKey(id)) {
+			User user = UserDtoMapper.returnUser(userDto);
+			userRepo.update(user).orElseThrow(() -> new InternalServerException("Failed! Update user in data base!"));
+			cache.put(id, user);
+			return UserDtoMapper.returnPrivateDto(user);
+		}
+		throw new NotFoundException("Failed update user! User not found!");
 	}
 
-	public Collection<UserDto.Response.Private> getCommonFriends(final Long id, final Long otherId) {
-		log.trace("Начало. Получение списка общих друзей");
-		Set<Long> userIdexes = friendRepo.query(id, 0).keySet();
-		Set<Long> otherIdexes = friendRepo.query(otherId, 0).keySet();
-		log.trace("Обработка. Получение списка общих друзей");
-		Set<Long> common = userIdexes.stream().filter(otherIdexes::contains).collect(Collectors.toSet());
-		common = common == null ? new HashSet<>() : common;
-		return common.stream().map(i -> {
-			Optional<User> userOpt = userRepo.query(i);
-			if (userOpt.isPresent())
-				return UserDtoMapper.returnPrivateDto(userOpt.get());
-			return null;
-		}).toList();
+	public Collection<Private> read() {
+		return cache.values().stream().map(UserDtoMapper::returnPrivateDto).toList();
 	}
 
+	public Private findById(Long id) {
+		User user = cache.get(id);
+		if (user == null)
+			throw new NotFoundException("User not found!");
+		return UserDtoMapper.returnPrivateDto(user);
+	}
+
+	public FriendDto.Response.Private addFriend(Long id, Long friendId) {
+		Friend friend = Friend.builder().userId(id).friendId(friendId).build();
+		friendRepo.add(friend).orElseThrow(() -> new InternalServerException("Failed! Add friend in data base!"));
+		return FriendDtoMapper.returnDto(friend);
+	}
+
+	public void deleteFriend(Long id, Long friendId) {
+		friendRepo.remove(id, friendId);
+	}
+
+	public Collection<Long> getFriends(Long id) {
+		return friendRepo.getFriends(id);
+	}
 }

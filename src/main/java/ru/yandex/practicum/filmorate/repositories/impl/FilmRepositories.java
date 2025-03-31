@@ -3,9 +3,7 @@ package ru.yandex.practicum.filmorate.repositories.impl;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,11 +34,6 @@ public class FilmRepositories extends BaseRepo<Film> implements Repositories<Fil
 		return super.addByGeneratedKey(queryInsert, params);
 	}
 
-	public Optional<Integer> remove(Long id) {
-		log.trace("remove film, id: {}", id);
-		return super.remove(id);
-	}
-
 	@Override
 	public Optional<Integer> update(Film film) {
 		log.trace("update film: {}", Optional.ofNullable(film).map(Film::toString).orElse("null"));
@@ -58,17 +51,4 @@ public class FilmRepositories extends BaseRepo<Film> implements Repositories<Fil
 		};
 		return super.update(updateFilm, pss);
 	}
-
-	@Override
-	public Collection<Film> getTable(Integer offset) {
-		log.trace("film find all, OFFSET: {}", offset);
-		return super.getTable(offset);
-	}
-
-	@Override
-	public Stream<Film> getStream(Integer offset) {
-		log.trace("film find all STREAM, OFFSET: {}", offset);
-		return super.getStreamByTable(offset);
-	}
-
 }

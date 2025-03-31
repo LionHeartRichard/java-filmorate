@@ -25,10 +25,6 @@ public class FilmGenreRepositories extends BaseRepo<FilmGenre> implements Reposi
 		super(jdbc, rowMapper, "film_genre", "film_id");
 	}
 
-	public Optional<Integer> remove(Long id) {
-		return super.remove(id);
-	}
-
 	public Optional<Integer> remove(Long id, String genre) {
 		log.trace("remove film_id: {}, genre: {}", id, genre);
 		String queryDelete = "DELETE FROM film_genre WHERE film_id = ? AND name = ?";
@@ -70,11 +66,6 @@ public class FilmGenreRepositories extends BaseRepo<FilmGenre> implements Reposi
 			}
 		};
 		return super.update(queryUpdate, pss);
-	}
-
-	@Override
-	public Stream<FilmGenre> getStream(Integer offset) {
-		return super.getStreamByTable(offset);
 	}
 
 }

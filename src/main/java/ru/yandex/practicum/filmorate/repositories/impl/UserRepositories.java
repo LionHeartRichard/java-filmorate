@@ -26,11 +26,6 @@ public class UserRepositories extends BaseRepo<User> implements Repositories<Use
 		super(jdbc, rowMapper, "person", "person_id");
 	}
 
-	public Optional<Integer> remove(Long id) {
-		log.trace("remove user, id: {}", id);
-		return super.remove(id);
-	}
-
 	@Override
 	public Optional<Long> add(User user) {
 		log.trace("add user: {}", Optional.ofNullable(user).map(User::toString).orElse("null"));
@@ -54,10 +49,5 @@ public class UserRepositories extends BaseRepo<User> implements Repositories<Use
 			}
 		};
 		return super.update(updateUser, pss);
-	}
-
-	@Override
-	public Stream<User> getStream(Integer offset) {
-		return super.getStreamByTable(offset);
 	}
 }

@@ -11,5 +11,3 @@ INSERT INTO person (email,login,name,birthday) VALUES
 ('dolores@gmail.com','loginDolores','Dolores','1992-04-27'),
 ('gmail@com','loginPerson','namePerson','2000-01-01'),
 ('j7@com','loginJ-7','Name j7','1990-09-19');
-INSERT INTO film_genre VALUES (1, 'Thriller'), (1, 'Actrion'), (3, 'Action');
-INSERT INTO film_person VALUES (1,1), (1,3),(3,1),(3,3);

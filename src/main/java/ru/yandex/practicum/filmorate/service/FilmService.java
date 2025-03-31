@@ -1,45 +1,79 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.stereotype.Component;
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.FilmDto.Response.Private;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.impl.Film;
-import ru.yandex.practicum.filmorate.storage.impl.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.impl.UserStorage;
+import ru.yandex.practicum.filmorate.model.impl.Like;
+import ru.yandex.practicum.filmorate.repositories.impl.FilmRepositories;
+import ru.yandex.practicum.filmorate.repositories.impl.LikeRepositories;
+import ru.yandex.practicum.filmorate.util.dtomapper.FilmDtoMapper;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
+@Service
 public class FilmService {
 
-	private final FilmStorage filmStorage;
-	private final UserStorage userStorage;
-//
-//	public Film deleteLike(final Long id, final Long userId) {
-//		Film film = filmStorage.findById(id);
-//
-////		if (film.getLikes().contains(userId)) {
-////			film.getLikes().remove(userId);
-////			log.trace("лайк для фильма с id: {} удален, пользователем с id: {}", id, userId);
-////			return filmStorage.update(film);
-////		}
-//		log.warn("Лайк для фильма с id: {} не удален так как пользователь с id: {} не ставил лайк", id, userId);
-//		throw new NotFoundException(String
-//				.format("Лайк для фильма с id: %d не удален так как пользователь с id: %d не ставил лайк", id, userId));
-//	}
-//
-//	public Film addLike(final Long id, final Long userId) {
-//		log.trace("Начало. Метод по добавлению лайков. Получены: id: {}, userId", id, userId);
-//		Film film = filmStorage.findById(id);
-//		log.trace("Обработка. Метод по добавлению лайков. Получен фильм: {}", film.toString());
-//		userStorage.findById(userId);
-////		if (!film.getLikes().contains(userId)) {
-////			film.getLikes().add(userId);
-////			filmStorage.update(film);
-////			log.trace("Пользователь с id: {}, поставил лайк фильму {}", userId, film.toString());
-////		}
-//		return film;
-//	}
+	private final FilmRepositories filmRepo;
+	private final LikeRepositories likeRepo;
+
+	private final Map<Long, Film> cache;
+
+	@Autowired
+	public FilmService(FilmRepositories filmRepo, LikeRepositories likeRepo) {
+		this.filmRepo = filmRepo;
+		this.likeRepo = likeRepo;
+		cache = this.filmRepo.getStream(0).collect(Collectors.toMap(Film::getId, f -> f));
+	}
+
+	public Long create(FilmDto.Request.Create filmDto) {
+		Film film = FilmDtoMapper.returnFilm(filmDto);
+		Long id = filmRepo.add(film)
+				.orElseThrow(() -> new InternalServerException("Error - when adding a film to the database!"));
+		film.setId(id);
+		cache.put(id, film);
+		return id;
+	}
+
+	public Collection<Private> read() {
+		return cache.values().stream().map(FilmDtoMapper::returnPrivate).toList();
+	}
+
+	public Collection<Long> findTopFilms(Integer count) {
+		return likeRepo.getTopFilms(count).keySet();
+	}
+
+	public Private update(FilmDto.Request.Update filmDto) {
+		Long id = filmDto.getId();
+		if (cache.containsKey(id)) {
+			Film film = FilmDtoMapper.returnFilm(filmDto);
+			filmRepo.update(film).orElseThrow(() -> new InternalServerException("Failed! Update film in data base!"));
+			cache.put(id, film);
+			return FilmDtoMapper.returnPrivate(film);
+		}
+		throw new NotFoundException("Failed update film! Film not found!");
+	}
+
+	public Private findById(Long id) {
+		Film film = cache.get(id);
+		if (film == null)
+			throw new NotFoundException("Film not found!");
+		return FilmDtoMapper.returnPrivate(film);
+	}
+
+	public void addLike(Long id, Long userId) {
+		Like like = Like.builder().filmId(id).userId(userId).build();
+		likeRepo.add(like);
+	}
+
+	public void deleteLike(Long id, Long userId) {
+		if (cache.containsKey(id))
+			likeRepo.remove(id, userId);
+	}
 }

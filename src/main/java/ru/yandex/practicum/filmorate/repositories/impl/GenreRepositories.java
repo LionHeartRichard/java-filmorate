@@ -44,11 +44,6 @@ public class GenreRepositories extends BaseRepo<Genre> implements Repositories<G
 		return Optional.empty();
 	}
 
-	@Override
-	public Stream<Genre> getStream(Integer offset) {
-		return super.getStreamByTable(offset);
-	}
-
 	public Optional<Integer> remove(String genreName) {
 		String queryDelete = "DELETE FROM genre WHERE name = ?";
 		PreparedStatementSetter pss = new PreparedStatementSetter() {

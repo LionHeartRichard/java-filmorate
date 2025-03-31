@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.model.WebModel;
 
 @Data
 @Builder(toBuilder = true)
-public class FilmUser implements WebModel {
+public class Like implements WebModel {
 	private Long filmId;
 	private Long userId;
 }

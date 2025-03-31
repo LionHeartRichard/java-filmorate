@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.repositories.impl;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -60,5 +61,12 @@ public class FriendRepositoriesAppTest {
 
 		assertTrue(actual.isPresent());
 		assertTrue(actual.get().equals(1));
+	}
+
+	@Test
+	void getFriendsWhenValidDataThenReturnFriendsId() {
+		Collection<Long> actual = rep.getFriends(1L);
+
+		assertTrue(!actual.isEmpty());
 	}
 }
