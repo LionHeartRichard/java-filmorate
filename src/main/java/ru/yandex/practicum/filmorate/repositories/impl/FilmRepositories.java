@@ -3,51 +3,42 @@ package ru.yandex.practicum.filmorate.repositories.impl;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.Film;
-import ru.yandex.practicum.filmorate.repositories.BaseOperations;
+import ru.yandex.practicum.filmorate.repositories.BaseRepo;
 import ru.yandex.practicum.filmorate.repositories.Repositories;
-import ru.yandex.practicum.filmorate.repositories.specific.byfilm.TableFilmSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byfilm.FilmIdSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byfilm.FilmNameSpecification;
+import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmRowMapper;
 
 @Slf4j
 @Repository
-@RequiredArgsConstructor
-public class FilmRepositories implements Repositories<Film> {
+public class FilmRepositories extends BaseRepo<Film> implements Repositories<Film> {
 
-	private final TableFilmSpecification tableFilmSpecification;
-	private final FilmNameSpecification filmFindByName;
-	private final FilmIdSpecification filmFindByid;
-	private final BaseOperations<Film> operations;
-
-	private static final String TBALE_NAME = "film";
-	private static final String ID = "film_id";
+	@Autowired
+	public FilmRepositories(JdbcTemplate jdbc, FilmRowMapper rowMapper) {
+		super(jdbc, rowMapper, "film", "film_id");
+	}
 
 	@Override
 	public Optional<Long> add(Film film) {
 		log.trace("add film: {}", Optional.ofNullable(film).map(Film::toString).orElse("null"));
 		String queryInsert = "INSERT INTO film (name,description,release_date,duration,rating_name) VALUES (?,?,?,?,?)";
-		Object[] params = {film.getName(), 
-				film.getDescription(), 
-				film.getReleaseDate(), 
-				film.getDuration(),
+		Object[] params = {film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
 				film.getRatingName()};
-		return operations.add(queryInsert, params);
+		return super.addByGeneratedKey(queryInsert, params);
 	}
 
-	@Override
 	public Optional<Integer> remove(Long id) {
 		log.trace("remove film, id: {}", id);
-		return operations.remove(id, TBALE_NAME, ID);
+		return super.remove(id);
 	}
 
 	@Override
@@ -65,23 +56,19 @@ public class FilmRepositories implements Repositories<Film> {
 				ps.setLong(6, film.getId());
 			}
 		};
-		return operations.update(updateFilm, pss);
+		return super.update(updateFilm, pss);
 	}
 
 	@Override
-	public Collection<Film> query(Integer offset) {
+	public Collection<Film> getTable(Integer offset) {
 		log.trace("film find all, OFFSET: {}", offset);
-		return tableFilmSpecification.specified(offset, new ArrayList<>());
+		return super.getTable(offset);
 	}
 
-	public Collection<Film> query(String name) {
-		log.trace("film find by name: {}", name);
-		return filmFindByName.specified(name, new ArrayList<>());
-	}
-
-	public Optional<Film> query(Long id) {
-		log.trace("film find by id: {}", id);
-		return filmFindByid.specified(id, Optional.empty());
+	@Override
+	public Stream<Film> getStream(Integer offset) {
+		log.trace("film find all STREAM, OFFSET: {}", offset);
+		return super.getStreamByTable(offset);
 	}
 
 }

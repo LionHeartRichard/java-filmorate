@@ -13,7 +13,7 @@ public class StatusRowMapper implements RowMapper<Status> {
 
 	@Override
 	public Status mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Status status = new Status(rs.getString("name"));
+		Status status = Status.builder().name(rs.getString("name")).build();
 		return status;
 	}
 

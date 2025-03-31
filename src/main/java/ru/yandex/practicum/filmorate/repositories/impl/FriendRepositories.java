@@ -2,36 +2,46 @@ package ru.yandex.practicum.filmorate.repositories.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.Friend;
-import ru.yandex.practicum.filmorate.repositories.BaseOperations;
+import ru.yandex.practicum.filmorate.repositories.BaseRepo;
 import ru.yandex.practicum.filmorate.repositories.Repositories;
-import ru.yandex.practicum.filmorate.repositories.specific.byfriend.TableFriendSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byfriend.GetAllFrienIdSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byfriend.GetStatusFriendSpecification;
+import ru.yandex.practicum.filmorate.repositories.rowmapper.FriendRowMapper;
 
 @Slf4j
 @Repository
-@RequiredArgsConstructor
-public class FriendRepositories implements Repositories<Friend> {
+public class FriendRepositories extends BaseRepo<Friend> implements Repositories<Friend> {
 
-	private final BaseOperations<Friend> baseOperations;
-	private final TableFriendSpecification tableFriendSpecification;
-	private final GetAllFrienIdSpecification getAllFriendSpecification;
-	private final GetStatusFriendSpecification getStatusFriendSpecification;
+	@Autowired
+	public FriendRepositories(JdbcTemplate jdbc, FriendRowMapper rowMapper) {
+		super(jdbc, rowMapper, "friend", "person_id");
+	}
 
-	private static final String ID = "person_id";
-	private static final String TABLE_NAME = "friend";
+	public Optional<Integer> remove(Long userId) {
+		log.trace("remove userId: {}", userId);
+		return super.remove(userId);
+	}
+
+	public Optional<Integer> remove(Long userId, Long friendId) {
+		log.trace("remove userId: {}, friendId: {}", userId, friendId);
+		String removeFriend = "DELETE FROM friend WHERE person_id = ? AND friend_id = ?";
+		PreparedStatementSetter pss = new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setLong(1, userId);
+				ps.setLong(2, friendId);
+			}
+		};
+		return super.update(removeFriend, pss);
+	}
 
 	@Override
 	public Optional<Long> add(Friend friend) {
@@ -47,26 +57,7 @@ public class FriendRepositories implements Repositories<Friend> {
 			}
 		};
 		log.trace("PreparedStatementSetter: {}", pss.toString());
-		return baseOperations.add(insertFriend, pss);
-	}
-
-	@Override
-	public Optional<Integer> remove(Long userId) {
-		log.trace("remove id: {}", userId);
-		return baseOperations.remove(userId, TABLE_NAME, ID);
-	}
-
-	public Optional<Integer> remove(Long userId, Long friendId) {
-		log.trace("remove userId: {}, friendId: {}", userId, friendId);
-		String removeFriend = "DELETE FROM friend WHERE person_id = ? AND friend_id = ?";
-		PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setLong(1, userId);
-				ps.setLong(2, friendId);
-			}
-		};
-		return baseOperations.update(removeFriend, pss);
+		return super.add(insertFriend, pss);
 	}
 
 	@Override
@@ -81,22 +72,12 @@ public class FriendRepositories implements Repositories<Friend> {
 				ps.setLong(3, friend.getFriendId());
 			}
 		};
-		return baseOperations.update(updateFriend, pss);
+		return super.update(updateFriend, pss);
 	}
 
 	@Override
-	public Collection<Friend> query(Integer offset) {
-		return tableFriendSpecification.specified(offset, new ArrayList<>());
-	}
-
-	public Map<Long, String> query(Long userId, Integer offset) {
-		log.trace("userId: {}, offset: {}", userId, offset);
-		Long[] params = new Long[] {userId, offset.longValue()};
-		return getAllFriendSpecification.specified(params, new HashMap<>());
-	}
-
-	public Optional<Friend> query(Long userId, Long friendId) {
-		return getStatusFriendSpecification.specified(new Long[] {userId, friendId}, Optional.empty());
+	public Stream<Friend> getStream(Integer offset) {
+		return super.getStreamByTable(offset);
 	}
 
 }

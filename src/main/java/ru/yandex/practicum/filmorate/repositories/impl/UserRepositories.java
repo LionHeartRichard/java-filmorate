@@ -3,47 +3,40 @@ package ru.yandex.practicum.filmorate.repositories.impl;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.User;
-import ru.yandex.practicum.filmorate.repositories.BaseOperations;
+import ru.yandex.practicum.filmorate.repositories.BaseRepo;
 import ru.yandex.practicum.filmorate.repositories.Repositories;
-import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserEmailSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byuser.TableUserSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserIdSpecification;
+import ru.yandex.practicum.filmorate.repositories.rowmapper.UserRowMapper;
 
 @Slf4j
 @Repository
-@RequiredArgsConstructor
-public class UserRepositories implements Repositories<User> {
+public class UserRepositories extends BaseRepo<User> implements Repositories<User> {
 
-	private final TableUserSpecification userFindAll;
-	private final UserEmailSpecification userFindByEmail;
-	private final UserIdSpecification userFindByid;
-	private final BaseOperations<User> operations;
+	@Autowired
+	public UserRepositories(JdbcTemplate jdbc, UserRowMapper rowMapper) {
+		super(jdbc, rowMapper, "person", "person_id");
+	}
 
-	private static final String TABLE_NAME = "person";
-	private static final String ID = "person_id";
+	public Optional<Integer> remove(Long id) {
+		log.trace("remove user, id: {}", id);
+		return super.remove(id);
+	}
 
 	@Override
 	public Optional<Long> add(User user) {
 		log.trace("add user: {}", Optional.ofNullable(user).map(User::toString).orElse("null"));
 		String queryInsert = "INSERT INTO person (email,login,name,birthday) VALUES (?,?,?,?)";
-		Object[] params = {user.getEmail(), user.getLogin(), user.getName(), user.getBirthday()};
-		return operations.add(queryInsert, params);
-	}
-
-	@Override
-	public Optional<Integer> remove(Long id) {
-		log.trace("remove user, id: {}", id);
-		return operations.remove(id, TABLE_NAME, ID);
+		Object[] fileds = {user.getEmail(), user.getLogin(), user.getName(), user.getBirthday()};
+		return super.addByGeneratedKey(queryInsert, fileds);
 	}
 
 	@Override
@@ -60,23 +53,11 @@ public class UserRepositories implements Repositories<User> {
 				ps.setLong(5, user.getId());
 			}
 		};
-		return operations.update(updateUser, pss);
+		return super.update(updateUser, pss);
 	}
 
 	@Override
-	public Collection<User> query(Integer offset) {
-		log.trace("user find all, OFFSET: {}", offset);
-		return userFindAll.specified(offset, new ArrayList<>());
+	public Stream<User> getStream(Integer offset) {
+		return super.getStreamByTable(offset);
 	}
-
-	public Optional<User> query(String email) {
-		log.trace("user find by email: {}", email);
-		return userFindByEmail.specified(email, Optional.empty());
-	}
-
-	public Optional<User> query(Long id) {
-		log.trace("user find by id: {}", id);
-		return userFindByid.specified(id, Optional.empty());
-	}
-
 }

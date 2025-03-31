@@ -15,17 +15,12 @@ import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.impl.User;
-import ru.yandex.practicum.filmorate.repositories.BaseOperations;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.UserRowMapper;
-import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserEmailSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byuser.TableUserSpecification;
-import ru.yandex.practicum.filmorate.repositories.specific.byuser.UserIdSpecification;
 
 @JdbcTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Import({TableUserSpecification.class, UserEmailSpecification.class, UserIdSpecification.class, BaseOperations.class,
-		UserRepositories.class, UserRowMapper.class})
+@Import({UserRepositories.class, UserRowMapper.class})
 public class UserRepositoriesAppTest {
 
 	private final UserRepositories userRepositories;
