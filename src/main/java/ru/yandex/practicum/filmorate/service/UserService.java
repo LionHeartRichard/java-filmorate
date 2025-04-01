@@ -71,16 +71,34 @@ public class UserService {
 	}
 
 	public FriendDto.Response.Private addFriend(Long id, Long friendId) {
-		Friend friend = Friend.builder().userId(id).friendId(friendId).build();
-		friendRepo.add(friend).orElseThrow(() -> new InternalServerException("Failed! Add friend in data base!"));
-		return FriendDtoMapper.returnDto(friend);
+		if (cache.containsKey(id) && cache.containsKey(friendId)) {
+			Friend friend = Friend.builder().userId(id).friendId(friendId).build();
+			friendRepo.add(friend).orElseThrow(() -> new InternalServerException("Failed! Add friend in data base!"));
+			return FriendDtoMapper.returnDto(friend);
+		}
+		throw new NotFoundException("Faild: friends not found!");
 	}
 
 	public void deleteFriend(Long id, Long friendId) {
-		friendRepo.remove(id, friendId);
+		if (cache.containsKey(id) && cache.containsKey(friendId))
+			friendRepo.remove(id, friendId);
+		else
+			throw new NotFoundException("Failed! Friends not found!!!");
 	}
 
 	public Collection<Long> getFriends(Long id) {
-		return friendRepo.getFriends(id);
+		if (cache.containsKey(id))
+			return friendRepo.getFriends(id);
+		throw new NotFoundException("Failed! User not found!");
+	}
+
+	public Collection<Long> getCommonFriends(Long id, Long otherId) {
+		if (cache.containsKey(id) && cache.containsKey(otherId)) {
+			Set<Long> idx = friendRepo.getFriends(id);
+			Set<Long> otherIdx = friendRepo.getFriends(otherId);
+			if (!idx.isEmpty() && !otherIdx.isEmpty())
+				return otherIdx.stream().filter(i -> idx.contains(i)).collect(Collectors.toSet());
+		}
+		throw new NotFoundException("Failed! Friends not found!!!");
 	}
 }

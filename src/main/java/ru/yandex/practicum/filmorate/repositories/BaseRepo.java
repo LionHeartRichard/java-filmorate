@@ -25,7 +25,7 @@ public abstract class BaseRepo<T> {
 	protected final RowMapper<T> rowMapper;
 	protected final String nameTable;
 	protected final String namePk;
-	protected Integer limit = 200;
+	protected Integer limit = 1000;
 
 	public Optional<Long> addByGeneratedKey(String queryInsert, Object[] fields) {
 		log.trace("SQL: ", queryInsert);

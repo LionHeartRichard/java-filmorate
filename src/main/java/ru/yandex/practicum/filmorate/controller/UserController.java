@@ -77,4 +77,13 @@ public class UserController {
 		return userService.getFriends(id);
 	}
 
+	@GetMapping("/{id}/friends/common/{other_id}")
+	public Collection<Long> getCommonFriends(@PathVariable final Long id,
+			@PathVariable("other_id") final Long otherId) {
+		log.trace("GET users/{id}/friends/common/{other_id}; id: {}, otherId: {}", id, otherId);
+		validator.positiveValue(id, String.format("ID cannot be negative: %d", id));
+		validator.positiveValue(otherId, String.format("ID cannot be negative: %d", otherId));
+		return userService.getCommonFriends(id, otherId);
+	}
+
 }
