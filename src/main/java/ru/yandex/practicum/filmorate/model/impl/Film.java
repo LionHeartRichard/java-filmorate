@@ -9,10 +9,9 @@ import ru.yandex.practicum.filmorate.model.WebModel;
 @Data
 @Builder(toBuilder = true)
 public class Film implements WebModel {
-	Long id;
-	String name;
-	String description;
-	LocalDate releaseDate;
-	Integer duration;
-	String ratingName;
+	private Long id;
+	private String name;
+	private String description;
+	private LocalDate releaseDate;
+	private Integer duration;
 }

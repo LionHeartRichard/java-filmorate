@@ -24,23 +24,20 @@ public class GenreRepositoriesAppTest {
 
 	private Genre genre;
 
-	private static int count = 0;
+	private static int count = 4;
 
 	@BeforeEach
 	void setUp() {
-		++count;
-		genre = Genre.builder().name("new-GENRE" + count).build();
-
-		Optional<Long> actual = rep.add(genre);
-
-		assertTrue(actual.isPresent());
+		while (count++ <= 7) {
+			genre = Genre.builder().name("new-GENRE" + count).build();
+			Optional<Long> actual = rep.add(genre);
+			assertTrue(actual.isPresent());
+		}
 	}
 
 	@Test
-	void addGenre() {
-		genre.setName("new genre - add");
-
-		Optional<Long> actual = rep.add(genre);
+	void removeGenreWhenValidDataThrenReturnNumbersRows() {
+		Optional<Integer> actual = rep.remove(5L);
 
 		assertTrue(actual.isPresent());
 	}

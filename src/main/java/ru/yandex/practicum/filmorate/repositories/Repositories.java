@@ -12,4 +12,6 @@ public interface Repositories<T> {
 	Collection<T> getTable(Integer offset);
 
 	Stream<T> getStream(Integer offset);
+
+	Optional<T> getById(Long id);
 }

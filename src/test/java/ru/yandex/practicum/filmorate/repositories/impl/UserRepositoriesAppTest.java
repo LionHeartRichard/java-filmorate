@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +25,7 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.UserRowMapper;
 @Import({UserRepositories.class, UserRowMapper.class})
 public class UserRepositoriesAppTest {
 
-	private final UserRepositories userRepositories;
+	private final UserRepositories userRepo;
 
 	private User user;
 
@@ -35,7 +37,7 @@ public class UserRepositoriesAppTest {
 
 	@Test
 	void addWhenUserInsertDbReturnId() {
-		Optional<Long> actual = userRepositories.add(user);
+		Optional<Long> actual = userRepo.add(user);
 
 		assertTrue(actual.isPresent());
 	}
@@ -45,7 +47,7 @@ public class UserRepositoriesAppTest {
 		Optional<Integer> expected = Optional.ofNullable(1);
 		user.setId(2L);
 
-		Optional<Integer> actual = userRepositories.remove(user.getId());
+		Optional<Integer> actual = userRepo.remove(user.getId());
 
 		assertEquals(expected, actual);
 	}
@@ -55,7 +57,7 @@ public class UserRepositoriesAppTest {
 		Optional<Integer> expected = Optional.ofNullable(null);
 		user.setId(9000L);
 
-		Optional<Integer> actual = userRepositories.remove(user.getId());
+		Optional<Integer> actual = userRepo.remove(user.getId());
 
 		assertEquals(expected, actual);
 	}
@@ -65,9 +67,30 @@ public class UserRepositoriesAppTest {
 		Optional<Integer> expected = Optional.ofNullable(1);
 		user.setId(1L);
 
-		Optional<Integer> actual = userRepositories.update(user);
+		Optional<Integer> actual = userRepo.update(user);
 
 		assertEquals(expected, actual);
+	}
+
+	@Test
+	void updateFriendsWhenValidData() {
+		Set<Long> friends = new HashSet<>();
+		friends.add(2L);
+		friends.add(3L);
+		Optional<Integer> tmp = userRepo.updateFriends(friends, 1L);
+		assertTrue(tmp.isPresent());
+
+		User user = userRepo.getById(1L).get();
+		Set<Long> actual = user.getFirends();
+
+		friends.forEach(id -> assertTrue(actual.contains(id)));
+	}
+	
+	@Test
+	void getFriendsWhenNotFoundUserThenReturnNull() {
+		Optional<User> actual = userRepo.getById(100000L);
+		
+		assertTrue(actual.isEmpty());
 	}
 
 }

@@ -19,7 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public abstract class BaseRepo<T> {
 
-	private final String SELECT_TABELE = "SELECT * FROM %s LIMIT %d OFFSET %d";
+	private static final String SELECT_TABELE = "SELECT * FROM %s LIMIT %d OFFSET %d";
+	private static final String SELECT_ID = "SELECT * FROM %s WHERE %s = %d";
 
 	protected final JdbcTemplate jdbc;
 	protected final RowMapper<T> rowMapper;
@@ -77,6 +78,12 @@ public abstract class BaseRepo<T> {
 		String query = String.format(SELECT_TABELE, nameTable, limit, offset);
 		log.trace("SQL: {}; nameTable = {}; LIMIT = {}, OFFSET = {}", query, namePk, nameTable, limit, offset);
 		return jdbc.queryForStream(query, rowMapper);
+	}
+
+	public Optional<T> getById(Long id) {
+		String query = String.format(SELECT_ID, nameTable, namePk, id);
+		log.trace("SQL: {}", query);
+		return jdbc.queryForStream(query, rowMapper).findFirst();
 	}
 
 }

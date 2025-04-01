@@ -28,8 +28,13 @@ public class FilmRepositoriesAppTest {
 
 	@BeforeEach
 	void setUp() {
-		film = Film.builder().id(null).name("name Set-Up").description("description set up")
-				.releaseDate(LocalDate.now()).duration(120).ratingName(null).build();
+		film = Film.builder()
+				.id(null)
+				.name("name Set-Up")
+				.description("description set up")
+				.releaseDate(LocalDate.now())
+				.duration(120)
+				.build();
 	}
 
 	@Test
@@ -41,7 +46,7 @@ public class FilmRepositoriesAppTest {
 
 	@Test
 	void updateWhenValidDataThenReturnNumbersRowsUpdate() {
-		film.setId(3L);
+		film.setId(1L);
 
 		Optional<Integer> actual = rep.update(film);
 
@@ -51,9 +56,16 @@ public class FilmRepositoriesAppTest {
 
 	@Test
 	void removeWhenValidDataThenReturnNumbersRowsRemove() {
-		film.setId(2L);
+		Film filmRemove = Film.builder()
+				.id(null)
+				.name("RemoveName")
+				.description("Remove desc")
+				.releaseDate(LocalDate.now())
+				.duration(50)
+				.build();
+		filmRemove.setId(rep.add(filmRemove).get());
 
-		Optional<Integer> actual = rep.remove(film.getId());
+		Optional<Integer> actual = rep.remove(filmRemove.getId());
 
 		assertTrue(actual.isPresent());
 		assertEquals(1, actual.get());

@@ -12,31 +12,37 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
-import ru.yandex.practicum.filmorate.model.impl.FilmGenre;
-import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmGenreRowMapper;
+import ru.yandex.practicum.filmorate.model.impl.Mpa;
+import ru.yandex.practicum.filmorate.repositories.rowmapper.MpaRowMapper;
 
 @JdbcTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Import({FilmGenreRepositories.class, FilmGenreRowMapper.class})
-public class FilmGenreRepositoriesAppTest {
+@Import({MpaRepositories.class, MpaRowMapper.class})
+public class MpaRepositoriesAppTest {
+	private final MpaRepositories rep;
 
-	private final FilmGenreRepositories rep;
+	private Mpa mpa;
 
-	private FilmGenre filmGenre;
+	private static int count = 1;
 
 	@BeforeEach
 	void setUp() {
-		for (Long id = 1L; id <= 3; ++id) {
-			filmGenre = FilmGenre.builder().filmId(id).genreId(id).build();
-			Optional<Long> actual = rep.add(filmGenre);
+		while (count++ <= 3) {
+			mpa = Mpa.builder()
+					.mpaId(null)
+					.filmId((long)count)
+					.name("Mpa-Name")
+					.build();
+			Optional<Long> actual = rep.add(mpa);
+			
 			assertTrue(actual.isPresent());
 		}
 	}
 
 	@Test
-	void removeByFilmIdAndGenreId() {
-		Optional<Integer> actual = rep.remove(3L, 3L);
+	void removeGenreWhenValidDataThrenReturnNumbersRows() {
+		Optional<Integer> actual = rep.remove(3L);
 
 		assertTrue(actual.isPresent());
 	}

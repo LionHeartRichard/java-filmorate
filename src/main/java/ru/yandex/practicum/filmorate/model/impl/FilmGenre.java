@@ -8,5 +8,5 @@ import ru.yandex.practicum.filmorate.model.WebModel;
 @Builder(toBuilder = true)
 public class FilmGenre implements WebModel {
 	private Long filmId;
-	private String name;
+	private Long genreId;
 }

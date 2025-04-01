@@ -24,14 +24,14 @@ public class FilmGenreRepositories extends BaseRepo<FilmGenre> implements Reposi
 		super(jdbc, rowMapper, "film_genre", "film_id");
 	}
 
-	public Optional<Integer> remove(Long id, String genre) {
-		log.trace("remove film_id: {}, genre: {}", id, genre);
-		String queryDelete = "DELETE FROM film_genre WHERE film_id = ? AND name = ?";
+	public Optional<Integer> remove(Long filmId, Long genreId) {
+		log.trace("remove film_id: {}, genreId: {}", filmId, genreId);
+		String queryDelete = "DELETE FROM film_genre WHERE film_id = ? AND genre_id = ?";
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setLong(1, id);
-				ps.setString(2, genre);
+				ps.setLong(1, filmId);
+				ps.setLong(2, genreId);
 			}
 		};
 		return super.update(queryDelete, pss);
@@ -46,25 +46,17 @@ public class FilmGenreRepositories extends BaseRepo<FilmGenre> implements Reposi
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setLong(1, filmGenre.getFilmId());
-				ps.setString(2, filmGenre.getName());
+				ps.setLong(2, filmGenre.getGenreId());
 			}
 		};
 		log.trace("PreparedStatementSetter: {}", pss.toString());
 		return super.add(queryInsert, pss);
 	}
 
+	@Deprecated
 	@Override
 	public Optional<Integer> update(FilmGenre filmGenre) {
-		log.trace("update filmGenre: {}", Optional.ofNullable(filmGenre).map(FilmGenre::toString).orElse("null"));
-		String queryUpdate = "UPDATE film_genre SET name = ? WHERE film_id = ?";
-		PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setString(1, filmGenre.getName());
-				ps.setLong(2, filmGenre.getFilmId());
-			}
-		};
-		return super.update(queryUpdate, pss);
+		return null;
 	}
 
 }
