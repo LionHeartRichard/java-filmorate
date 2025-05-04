@@ -19,14 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public abstract class BaseRepo<T> {
 
-	private static final String SELECT_TABELE = "SELECT * FROM %s LIMIT %d OFFSET %d";
+	private static final String SELECT_TABELE = "SELECT * FROM %s";
 	private static final String SELECT_ID = "SELECT * FROM %s WHERE %s = %d";
 
 	protected final JdbcTemplate jdbc;
 	protected final RowMapper<T> rowMapper;
 	protected final String nameTable;
 	protected final String namePk;
-	protected Integer limit = 1000;
 
 	public Optional<Long> addByGeneratedKey(String queryInsert, Object[] fields) {
 		log.trace("SQL: ", queryInsert);
@@ -68,15 +67,15 @@ public abstract class BaseRepo<T> {
 		return Optional.ofNullable(rowsDeleted);
 	}
 
-	public Collection<T> getTable(Integer offset) {
-		String query = String.format(SELECT_TABELE, nameTable, limit, offset);
-		log.trace("SQL: {}; nameTable = {}; LIMIT = {}, OFFSET = {}", query, namePk, nameTable, limit, offset);
+	public Collection<T> getTable() {
+		String query = String.format(SELECT_TABELE, nameTable);
+		log.trace("SQL: {}", query);
 		return jdbc.queryForStream(query, rowMapper).toList();
 	}
 
-	public Stream<T> getStream(Integer offset) {
-		String query = String.format(SELECT_TABELE, nameTable, limit, offset);
-		log.trace("SQL: {}; nameTable = {}; LIMIT = {}, OFFSET = {}", query, namePk, nameTable, limit, offset);
+	public Stream<T> getStream() {
+		String query = String.format(SELECT_TABELE, nameTable);
+		log.trace("SQL: {}", query);
 		return jdbc.queryForStream(query, rowMapper);
 	}
 

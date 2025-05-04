@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model.impl;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +14,4 @@ public class User implements WebModel {
 	private String login;
 	private String name;
 	private LocalDate birthday;
-	private Set<Long> firends;
 }

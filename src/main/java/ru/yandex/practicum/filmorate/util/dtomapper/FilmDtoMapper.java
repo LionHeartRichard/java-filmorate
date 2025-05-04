@@ -13,13 +13,13 @@ public class FilmDtoMapper {
 
 	public static Film returnFilm(Create dto) {
 		Film film = Film.builder().id(null).name(dto.getName()).description(dto.getDescription())
-				.releaseDate(dto.getReleaseDate()).duration(dto.getDuration()).ratingName("rating").build();
+				.releaseDate(dto.getReleaseDate()).duration(dto.getDuration()).build();
 		return film;
 	}
 
 	public static Film returnFilm(Update dto) {
 		Film film = Film.builder().id(dto.getId()).name(dto.getName()).description(dto.getDescription())
-				.releaseDate(dto.getReleaseDate()).duration(dto.getDuration()).ratingName("rating").build();
+				.releaseDate(dto.getReleaseDate()).duration(dto.getDuration()).build();
 		return film;
 	}
 

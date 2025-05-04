@@ -19,21 +19,21 @@ public class LocalValidator {
 	}
 
 	public void positiveValue(Long value, String message) {
-		if (value < 0) {
+		if (value == null || value < 0) {
 			log.warn("Не пройдена валидация. {}", message);
 			throw new ConditionsNotMetException(message);
 		}
 	}
 
 	public void positiveValue(Integer value, String message) {
-		if (value < 0) {
+		if (value == null || value < 0) {
 			log.warn("Не пройдена валидация. {}", message);
 			throw new ConditionsNotMetException(message);
 		}
 	}
 
 	public void positiveValue(Double value, String message) {
-		if (value < 0) {
+		if (value == null || value < 0) {
 			log.warn("Не пройдена валидация. {}", message);
 			throw new ConditionsNotMetException(message);
 		}

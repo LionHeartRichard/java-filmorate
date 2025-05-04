@@ -2,54 +2,26 @@ package ru.yandex.practicum.filmorate.dto;
 
 import java.time.LocalDate;
 
-import org.springframework.validation.annotation.Validated;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
-import lombok.Value;
-
+import lombok.Builder;
+import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.Login;
 
-@Validated
-public enum UserDto {;
-	    private interface Id { @Min(value=0) Long getId(); }
-	    private interface UserEmail { @Email String getEmail(); }
-	    private interface UserLogin { @Login String getLogin(); }
-	    private interface Name { @Size(max=100) String getName(); }
-	    private interface Birthday { @Past LocalDate getBirthday(); }
-
-	    public enum Request{;
-	        @Value public static class Create implements UserEmail, UserLogin, Name, Birthday {
-	            String email;
-	            String login;
-	            String name;
-	            LocalDate birthday;
-	        }
-	        
-	        @Value public static class Update implements Id, UserEmail, UserLogin, Name, Birthday {
-	        	Long id;
-	        	String email;
-	            String login;
-	            String name;
-	            LocalDate birthday;
-	        }
-	    }
-	  
-
-	    public enum Response{;
-	        @Value public static class Public implements UserLogin, Name {
-	            String login;
-	            String name;
-	        }
-
-	        @Value public static class Private implements Id, UserEmail, UserLogin, Name, Birthday {
-	        	Long id;
-	        	String email;
-	            String login;
-	            String name;
-	            LocalDate birthday;
-	        }
-	    }
+@Data
+@Builder
+public class UserDto {
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	private Long id;
+	@Email
+	private String email;
+	@Login
+	private String login;
+	@Size(max = 100)
+	private String name;
+	@Past
+	private LocalDate birthday;
 }

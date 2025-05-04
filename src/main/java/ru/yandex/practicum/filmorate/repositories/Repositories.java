@@ -9,9 +9,9 @@ public interface Repositories<T> {
 
 	Optional<Integer> update(T t);
 
-	Collection<T> getTable(Integer offset);
+	Collection<T> getTable();
 
-	Stream<T> getStream(Integer offset);
+	Stream<T> getStream();
 
 	Optional<T> getById(Long id);
 }

@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.util.LocalValidator;
-import ru.yandex.practicum.filmorate.dto.FriendDto;
 import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 
 @Slf4j
 @RestController
@@ -54,12 +54,15 @@ public class UserController {
 	}
 
 	@PutMapping("/{id}/friends/{friend_id}")
-	public FriendDto.Response.Private addFriend(@PathVariable Long id,
-			@PathVariable(value = "friend_id") Long friendId) {
+	public void addFriend(@PathVariable Long id, @PathVariable(value = "friend_id") Long friendId) {
 		log.trace("PUT /id/friend/friend_id");
 		validator.positiveValue(id, String.format("ID cannot be negative: %d", id));
 		validator.positiveValue(friendId, String.format("ID cannot be negative: %d", friendId));
-		return userService.addFriend(id, friendId);
+		if (id.equals(friendId)) {
+			log.warn("Failed! Identifiers cannot be equal");
+			throw new ConditionsNotMetException("Failed! Identifiers cannot be equal");
+		}
+		userService.addFriend(id, friendId);
 	}
 
 	@DeleteMapping("/{id}/friends/{friend_id}")

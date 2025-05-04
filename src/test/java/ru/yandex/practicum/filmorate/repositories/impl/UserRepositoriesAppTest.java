@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,27 +68,6 @@ public class UserRepositoriesAppTest {
 		Optional<Integer> actual = userRepo.update(user);
 
 		assertEquals(expected, actual);
-	}
-
-	@Test
-	void updateFriendsWhenValidData() {
-		Set<Long> friends = new HashSet<>();
-		friends.add(2L);
-		friends.add(3L);
-		Optional<Integer> tmp = userRepo.updateFriends(friends, 1L);
-		assertTrue(tmp.isPresent());
-
-		User user = userRepo.getById(1L).get();
-		Set<Long> actual = user.getFirends();
-
-		friends.forEach(id -> assertTrue(actual.contains(id)));
-	}
-	
-	@Test
-	void getFriendsWhenNotFoundUserThenReturnNull() {
-		Optional<User> actual = userRepo.getById(100000L);
-		
-		assertTrue(actual.isEmpty());
 	}
 
 }

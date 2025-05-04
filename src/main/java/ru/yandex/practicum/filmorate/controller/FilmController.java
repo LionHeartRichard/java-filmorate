@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.util.LocalValidator;
+import ru.yandex.practicum.filmorate.util.dtomapper.FilmDtoMapper;
 import ru.yandex.practicum.filmorate.util.GetConstants;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
@@ -30,7 +31,7 @@ public class FilmController {
 	private final FilmService filmService;
 
 	@PostMapping
-	public Long create(@Valid @RequestBody FilmDto.Request.Create filmDto) {
+	public FilmDto.Response.Private create(@Valid @RequestBody FilmDto.Request.Create filmDto) {
 		log.trace("POST /films");
 		return filmService.create(filmDto);
 	}

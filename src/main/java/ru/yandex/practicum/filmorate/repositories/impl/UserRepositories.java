@@ -1,19 +1,15 @@
 package ru.yandex.practicum.filmorate.repositories.impl;
 
-import java.sql.Array;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.repositories.BaseRepo;
@@ -52,21 +48,5 @@ public class UserRepositories extends BaseRepo<User> implements Repositories<Use
 			}
 		};
 		return super.update(updateUser, pss);
-	}
-
-	@SneakyThrows
-	public Optional<Integer> updateFriends(Set<Long> friends, Long userId) {
-		log.trace("UPDATE friends in DB, for userId: {}", userId);
-		String upFriends = "UPDATE person SET friends = ?  WHERE person_id = ?";
-		Connection connect = jdbc.getDataSource().getConnection();
-		Array array = connect.createArrayOf("bigint", friends.toArray());
-		PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setArray(1, array);
-				ps.setLong(2, userId);
-			}
-		};
-		return super.update(upFriends, pss);
 	}
 }
