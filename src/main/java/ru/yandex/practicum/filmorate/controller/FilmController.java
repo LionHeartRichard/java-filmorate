@@ -31,13 +31,13 @@ public class FilmController {
 	private final FilmService filmService;
 
 	@PostMapping
-	public FilmDto.Response.Private create(@Valid @RequestBody FilmDto.Request.Create filmDto) {
+	public FilmDto create(@Valid @RequestBody FilmDto filmDto) {
 		log.trace("POST /films");
 		return filmService.create(filmDto);
 	}
 
 	@GetMapping
-	public Collection<FilmDto.Response.Private> read() {
+	public Collection<FilmDto> read() {
 		log.trace("GET /films");
 		return filmService.read();
 	}
@@ -49,13 +49,13 @@ public class FilmController {
 	}
 
 	@PutMapping
-	public FilmDto.Response.Private update(@Valid @RequestBody final FilmDto.Request.Update filmDto) {
+	public FilmDto update(@Valid @RequestBody final FilmDto filmDto) {
 		log.trace("PUT /films");
 		return filmService.update(filmDto);
 	}
 
 	@GetMapping("/{id}")
-	public FilmDto.Response.Private findById(@PathVariable final Long id) {
+	public FilmDto findById(@PathVariable final Long id) {
 		log.trace("GET /films/{id}");
 		validator.positiveValue(id, String.format("ID cannot be negative, filmId: %d", id));
 		return filmService.findById(id);

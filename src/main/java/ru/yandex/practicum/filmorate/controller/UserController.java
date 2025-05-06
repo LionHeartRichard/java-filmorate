@@ -29,25 +29,25 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping
-	public UserDto.Response.Private create(@Valid @RequestBody UserDto.Request.Create userDto) {
+	public UserDto create(@Valid @RequestBody UserDto userDto) {
 		log.trace("POST /users; userDto:", userDto.toString());
 		return userService.create(userDto);
 	}
 
 	@PutMapping
-	public UserDto.Response.Private update(@Valid @RequestBody UserDto.Request.Update userDto) {
+	public UserDto update(@Valid @RequestBody UserDto userDto) {
 		log.trace("PUT /users; userDto: {}", userDto.toString());
 		return userService.update(userDto);
 	}
 
 	@GetMapping
-	public Collection<UserDto.Response.Private> read() {
+	public Collection<UserDto> read() {
 		log.trace("GET /users");
 		return userService.read();
 	}
 
 	@GetMapping("/{id}")
-	public UserDto.Response.Private findById(@PathVariable final Long id) {
+	public UserDto findById(@PathVariable final Long id) {
 		log.trace("GET /id: {}", id);
 		validator.positiveValue(id, String.format("ID cannot be negative: %d", id));
 		return userService.findById(id);
