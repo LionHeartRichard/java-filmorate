@@ -1,14 +1,13 @@
-package ru.yandex.practicum.filmorate.model.impl;
+package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.model.WebModel;
 
 @Data
 @Builder(toBuilder = true)
-public class User implements WebModel {
+public class User {
 	private Long id;
 	private String email;
 	private String login;

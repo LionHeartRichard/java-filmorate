@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
-import ru.yandex.practicum.filmorate.model.impl.FilmGenre;
+import ru.yandex.practicum.filmorate.model.FilmGenre;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmGenreRowMapper;
 
 @JdbcTest

@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.impl.User;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repositories.impl.FriendRepositories;
 import ru.yandex.practicum.filmorate.repositories.impl.UserRepositories;
 import ru.yandex.practicum.filmorate.util.dtomapper.UserDtoMapper;

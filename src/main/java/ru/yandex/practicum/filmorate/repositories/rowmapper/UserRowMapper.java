@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import ru.yandex.practicum.filmorate.model.impl.User;
+import ru.yandex.practicum.filmorate.model.User;
 
 @Repository
 public class UserRowMapper implements RowMapper<User> {

@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
-import ru.yandex.practicum.filmorate.model.impl.User;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.UserRowMapper;
 
 @JdbcTest

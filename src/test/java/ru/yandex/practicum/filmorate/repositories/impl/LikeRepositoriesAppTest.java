@@ -13,7 +13,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
-import ru.yandex.practicum.filmorate.model.impl.Like;
+import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.LikeRowMapper;
 
 @JdbcTest

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import ru.yandex.practicum.filmorate.model.impl.Mpa;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 @Repository
 public class MpaRowMapper implements RowMapper<Mpa> {

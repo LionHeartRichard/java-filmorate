@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.util.dtomapper;
 
-import ru.yandex.practicum.filmorate.model.impl.User;
 import ru.yandex.practicum.filmorate.dto.UserDto.Request.Create;
 import ru.yandex.practicum.filmorate.dto.UserDto.Request.Update;
 import ru.yandex.practicum.filmorate.dto.UserDto.Response.Public;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.dto.UserDto.Response.Private;
 
 public class UserDtoMapper {

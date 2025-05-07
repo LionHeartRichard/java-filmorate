@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import ru.yandex.practicum.filmorate.model.impl.Genre;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 @Repository
 public class GenreRowMapper implements RowMapper<Genre>{

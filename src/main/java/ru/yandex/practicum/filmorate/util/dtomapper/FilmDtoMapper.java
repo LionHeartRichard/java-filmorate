@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.util.dtomapper;
 
-import ru.yandex.practicum.filmorate.model.impl.Film;
-
 import ru.yandex.practicum.filmorate.dto.FilmDto.Request.Create;
 import ru.yandex.practicum.filmorate.dto.FilmDto.Request.Update;
 import ru.yandex.practicum.filmorate.dto.FilmDto.Response.Public;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.dto.FilmDto.Response.Private;
 
 public class FilmDtoMapper {

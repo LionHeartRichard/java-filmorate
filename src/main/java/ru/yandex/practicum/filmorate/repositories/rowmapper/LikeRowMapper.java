@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import ru.yandex.practicum.filmorate.model.impl.Like;
+import ru.yandex.practicum.filmorate.model.Like;
 
 @Repository
 public class LikeRowMapper implements RowMapper<Like> {

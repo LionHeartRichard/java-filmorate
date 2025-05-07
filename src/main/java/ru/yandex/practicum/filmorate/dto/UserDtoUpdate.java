@@ -13,7 +13,8 @@ import ru.yandex.practicum.filmorate.validation.Login;
 
 @Data
 @Builder
-public class UserDto {
+public class UserDtoUpdate {
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private Long id;
 	private String email;
 	private String login;
