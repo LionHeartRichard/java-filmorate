@@ -16,8 +16,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.util.LocalValidator;
-import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.dto.UserDtoCreate;
+import ru.yandex.practicum.filmorate.dto.UserDtoUpdate;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.model.User;
 
 @Slf4j
 @RestController
@@ -29,25 +31,25 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping
-	public UserDto create(@Valid @RequestBody UserDto userDto) {
-		log.trace("POST /users; userDto:", userDto.toString());
-		return userService.create(userDto);
+	public User create(@Valid @RequestBody UserDtoCreate dto) {
+		log.trace("POST /users; userDto:", dto.toString());
+		return userService.create(dto);
 	}
 
 	@PutMapping
-	public UserDto update(@Valid @RequestBody UserDto userDto) {
-		log.trace("PUT /users; userDto: {}", userDto.toString());
-		return userService.update(userDto);
+	public User update(@Valid @RequestBody UserDtoUpdate dto) {
+		log.trace("PUT /users; userDto: {}", dto.toString());
+		return userService.update(dto);
 	}
 
 	@GetMapping
-	public Collection<UserDto> read() {
+	public Collection<User> read() {
 		log.trace("GET /users");
 		return userService.read();
 	}
 
 	@GetMapping("/{id}")
-	public UserDto findById(@PathVariable final Long id) {
+	public User findById(@PathVariable final Long id) {
 		log.trace("GET /id: {}", id);
 		validator.positiveValue(id, String.format("ID cannot be negative: %d", id));
 		return userService.findById(id);

@@ -13,13 +13,13 @@ public class FilmRowMapper implements RowMapper<Film> {
 
 	@Override
 	public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Film row = Film.builder()
-				.id(rs.getLong("film_id"))
-				.name(rs.getString("name"))
-				.description(rs.getString("description"))
-				.releaseDate(rs.getDate("release_date").toLocalDate())
-				.duration(rs.getInt("duration"))
-				.build();
+		Film row = new Film(
+				rs.getLong("film_id"),
+				rs.getString("name"),
+				rs.getString("description"),
+				rs.getDate("release_date").toLocalDate(),
+				rs.getInt("duration")
+				);
 		return row;
 	}
 

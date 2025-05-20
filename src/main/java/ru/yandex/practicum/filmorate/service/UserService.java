@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -9,61 +9,54 @@ import org.springframework.stereotype.Service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.dto.UserDtoCreate;
+import ru.yandex.practicum.filmorate.dto.UserDtoUpdate;
 import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repositories.impl.FriendRepositories;
-import ru.yandex.practicum.filmorate.repositories.impl.UserRepositories;
+import ru.yandex.practicum.filmorate.repositories.FriendRepository;
+import ru.yandex.practicum.filmorate.repositories.UserRepository;
 import ru.yandex.practicum.filmorate.util.dtomapper.UserDtoMapper;
-import ru.yandex.practicum.filmorate.dto.UserDto;
-import ru.yandex.practicum.filmorate.dto.UserDto.Response.Private;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-	private final UserRepositories userRepo;
-	private final FriendRepositories friendRepo;
+	private final UserRepository userRepo;
+	private final FriendRepository friendRepo;
 
-	public Private create(UserDto.Request.Create userDto) {
-		User user = UserDtoMapper.returnUser(userDto);
+	public User create(@Valid UserDtoCreate dto) {
+		User user = UserDtoMapper.returnUser(dto);
 		log.trace("User create: {}", user.toString());
-		Long id = userRepo.add(user)
-				.orElseThrow(() -> new InternalServerException("Error - when adding a user to the database!"));
-		user.setId(id);
-		return UserDtoMapper.returnPrivateDto(user);
+		return userRepo.save(user);
 	}
 
-	public Private update(@Valid UserDto.Request.Update userDto) {
-		Long id = userDto.getId();
-		Optional<User> userOpt = userRepo.getById(id);
-		if (userOpt.isPresent()) {
-			User user = UserDtoMapper.returnUser(userDto);
-			userRepo.update(user).orElseThrow(() -> new InternalServerException("Failed update user in data base!"));
-			log.trace("user update - done");
-			return UserDtoMapper.returnPrivateDto(user);
-		}
-		throw new NotFoundException("Failed update user! User not found!");
+	public User update(UserDtoUpdate dto) {
+		Long id = dto.getId();
+		User user = userRepo.findById(id)
+				.orElseThrow(() -> new NotFoundException("Failed update user! User not found!"));
+		user = UserDtoMapper.returnUser(user, dto);
+		userRepo.update(user);
+		log.trace("user update - done");
+		return user;
 	}
 
-	public Collection<Private> read() {
-		return userRepo.getStream().map(UserDtoMapper::returnPrivateDto).toList();
+	public List<User> read() {
+		return userRepo.findByAll();
 	}
 
-	public Private findById(Long id) {
-		User user = userRepo.getById(id).orElseThrow(() -> new NotFoundException("User not found!"));
-		return UserDtoMapper.returnPrivateDto(user);
+	public User findById(Long id) {
+		User user = userRepo.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
+		return user;
 	}
 
 	public void addFriend(Long id, Long friendId) {
 		log.trace("add friend: id: {}, friendId: {}", id, friendId);
-		Optional<User> userOpt = userRepo.getById(id);
-		Optional<User> friendOpt = userRepo.getById(friendId);
-		if (userOpt.isEmpty() || friendOpt.isEmpty()) {
-			log.warn("Failed: friend not found!");
-			throw new NotFoundException("ADD Failed: friend not found!");
-		}
+		userRepo.findById(id)
+				.orElseThrow(() -> new NotFoundException("Failed add friend in data base! User not found!"));
+		userRepo.findById(friendId)
+				.orElseThrow(() -> new NotFoundException("Failed add friend in data base! User not found!"));
 		friendRepo.add(id, friendId).orElseThrow(() -> new InternalServerException("Failed add friend in data base!"));
 	}
 

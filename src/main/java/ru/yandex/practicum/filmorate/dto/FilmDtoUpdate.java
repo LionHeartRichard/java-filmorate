@@ -4,16 +4,32 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Builder;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.util.GetConstants;
 
 @Data
-@Builder
 public class FilmDtoUpdate {
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	private Long id;
-	private String name;
-	private String description;
-	private LocalDate releaseDate;
-	private Integer duration;
+	private final Long id;
+	private final String name;
+	private final String description;
+	private final LocalDate releaseDate;
+	private final Integer duration;
+
+	public boolean hasName() {
+		return !(name == null || name.isBlank() || name.length() <= 100);
+	}
+
+	public boolean hasDescription() {
+		return !(description == null || description.isBlank() || description.length() <= 250);
+	}
+
+	public boolean hasReleaseDate() {
+		return !(releaseDate == null || releaseDate.isBefore(GetConstants.THRESHOLD_DATE));
+	}
+
+	public boolean hasDuration() {
+		return !(duration == null || duration < 1);
+	}
 }

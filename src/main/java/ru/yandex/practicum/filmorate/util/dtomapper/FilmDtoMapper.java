@@ -1,36 +1,32 @@
 package ru.yandex.practicum.filmorate.util.dtomapper;
 
-import ru.yandex.practicum.filmorate.dto.FilmDto.Request.Create;
-import ru.yandex.practicum.filmorate.dto.FilmDto.Request.Update;
-import ru.yandex.practicum.filmorate.dto.FilmDto.Response.Public;
+import ru.yandex.practicum.filmorate.dto.FilmDtoCreate;
+import ru.yandex.practicum.filmorate.dto.FilmDtoUpdate;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.dto.FilmDto.Response.Private;
 
 public class FilmDtoMapper {
+
 	private FilmDtoMapper() {
 	}
 
-	public static Film returnFilm(Create dto) {
-		Film film = Film.builder().id(null).name(dto.getName()).description(dto.getDescription())
-				.releaseDate(dto.getReleaseDate()).duration(dto.getDuration()).build();
+	public static Film returnFilm(FilmDtoCreate dto) {
+		Film film = new Film();
+		film.setDescription(dto.getDescription());
+		film.setDuration(dto.getDuration());
+		film.setName(dto.getName());
+		film.setReleaseDate(dto.getReleaseDate());
 		return film;
 	}
 
-	public static Film returnFilm(Update dto) {
-		Film film = Film.builder().id(dto.getId()).name(dto.getName()).description(dto.getDescription())
-				.releaseDate(dto.getReleaseDate()).duration(dto.getDuration()).build();
+	public static Film returnFilm(Film film, FilmDtoUpdate dto) {
+		if (dto.hasDescription())
+			film.setDescription(dto.getDescription());
+		if (dto.hasDuration())
+			film.setDuration(dto.getDuration());
+		if (dto.hasName())
+			film.setName(dto.getName());
+		if (dto.hasReleaseDate())
+			film.setReleaseDate(dto.getReleaseDate());
 		return film;
 	}
-
-	public static Public returnPublic(Film film) {
-		Public dto = new Public(film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration());
-		return dto;
-	}
-
-	public static Private returnPrivate(Film film) {
-		Private dto = new Private(film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
-				film.getDuration());
-		return dto;
-	}
-
 }

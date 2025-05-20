@@ -1,36 +1,33 @@
 package ru.yandex.practicum.filmorate.util.dtomapper;
 
-import ru.yandex.practicum.filmorate.dto.UserDto.Request.Create;
-import ru.yandex.practicum.filmorate.dto.UserDto.Request.Update;
-import ru.yandex.practicum.filmorate.dto.UserDto.Response.Public;
+import ru.yandex.practicum.filmorate.dto.UserDtoCreate;
+import ru.yandex.practicum.filmorate.dto.UserDtoUpdate;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.dto.UserDto.Response.Private;
 
 public class UserDtoMapper {
 
 	private UserDtoMapper() {
 	}
 
-	public static User returnUser(Create dto) {
-		String name = dto.getName() == null ? dto.getLogin() : dto.getName();
-		User user = User.builder().id(null).email(dto.getEmail()).login(dto.getLogin()).name(name)
-				.birthday(dto.getBirthday()).build();
+	public static User returnUser(UserDtoCreate dto) {
+		String name = dto.hasName() ? dto.getName() : dto.getLogin();
+		User user = new User();
+		user.setLogin(dto.getLogin());
+		user.setName(name);
+		user.setEmail(dto.getEmail());
+		user.setBirthday(dto.getBirthday());
 		return user;
 	}
 
-	public static User returnUser(Update dto) {
-		User user = User.builder().id(dto.getId()).email(dto.getEmail()).login(dto.getLogin())
-				.name(dto.getName()).birthday(dto.getBirthday()).build();
+	public static User returnUser(User user, UserDtoUpdate dto) {
+		if (dto.hasBirthday())
+			user.setBirthday(dto.getBirthday());
+		if (dto.hasEmail())
+			user.setEmail(dto.getEmail());
+		if (dto.hasLogin())
+			user.setLogin(dto.getLogin());
+		if (dto.hasName())
+			user.setName(dto.getName());
 		return user;
-	}
-
-	public static Public returnPublicDto(User user) {
-		Public dto = new Public(user.getLogin(), user.getName());
-		return dto;
-	}
-
-	public static Private returnPrivateDto(User user) {
-		Private dto = new Private(user.getId(), user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
-		return dto;
 	}
 }
