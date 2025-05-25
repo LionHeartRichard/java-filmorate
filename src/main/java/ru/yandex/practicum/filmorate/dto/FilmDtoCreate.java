@@ -2,12 +2,15 @@ package ru.yandex.practicum.filmorate.dto;
 
 import java.time.LocalDate;
 
+import org.springframework.validation.annotation.Validated;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.ThisAfter1895;
 
+@Validated
 @Data
 public class FilmDtoCreate {
 	@NotBlank

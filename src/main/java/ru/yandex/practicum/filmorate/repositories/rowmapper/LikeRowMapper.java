@@ -13,11 +13,11 @@ public class LikeRowMapper implements RowMapper<Like> {
 
 	@Override
 	public Like mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Like row = Like
-				.builder()
-				.filmId(rs.getLong("film_id"))
-				.userId(rs.getLong("person_id"))
-				.build();
+		Like row = new Like(
+				rs.getLong("film_person_id"),
+				rs.getLong("film_id"),
+				rs.getLong("person_id")
+				);
 		return row;
 	}
 

@@ -13,11 +13,11 @@ public class FilmGenreRowMapper implements RowMapper<FilmGenre> {
 
 	@Override
 	public FilmGenre mapRow(ResultSet rs, int rowNum) throws SQLException {
-		FilmGenre row = FilmGenre
-				.builder()
-				.genreId(rs.getLong("genre_id"))
-				.filmId(rs.getLong("film_id"))
-				.build();
+		FilmGenre row = new FilmGenre(
+				rs.getLong("film_genre_id"), 
+				rs.getLong("genre_id"), 
+				rs.getLong("film_id")
+				);
 		return row;
 	}
 

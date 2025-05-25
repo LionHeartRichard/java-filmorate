@@ -2,12 +2,15 @@ package ru.yandex.practicum.filmorate.dto;
 
 import java.time.LocalDate;
 
+import org.springframework.validation.annotation.Validated;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.Login;
 
+@Validated
 @Data
 public class UserDtoCreate {
 	@Email

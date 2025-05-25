@@ -13,27 +13,40 @@ import ru.yandex.practicum.filmorate.model.User;
 public class UserRepository extends BaseRepository<User> {
 
 	private static final String FIND_ALL_QUERY = "SELECT * FROM person";
-	private static final String FIND_BY_EMAIL_QUERY = "SELECT * FROM person WHERE email = ?";
-	private static final String FIND_BY_ID_QUERY = "SELECT * FROM person WHERE person_id = ?";
+	private static final String FIND_BY_LOGIN = "SELECT * FROM person WHERE login LIKE ?";
+	private static final String FIND_BY_NAME = "SELECT * FROM person WHERE name LIKE ?";
+	private static final String FIND_BY_EMAIL = "SELECT * FROM person WHERE email = ?";
+	private static final String FIND_BY_ID = "SELECT * FROM person WHERE person_id = ?";
+
 	private static final String INSERT_QUERY = "INSERT INTO person(email, login, name, birthday)"
-			+ "VALUES (?, ?, ?, ?) returning person_id";
+			+ "VALUES (?, ?, ?, ?) RETURNING person_id";
 	private static final String UPDATE_QUERY = "UPDATE person SET email = ?, login = ?, name = ?, birthday = ? WHERE person_id = ?";
+
 	private static final String DELETE_USER_BY_ID = "DELETE FROM person WHERE person_id = ?";
+	private static final String DELETE_USER_BY_EMAIL = "DELETE FROM person WHERE email = ?";
 
 	public UserRepository(JdbcTemplate jdbc, RowMapper<User> mapper) {
 		super(jdbc, mapper);
 	}
 
-	public List<User> findByAll() {
+	public List<User> findAll() {
 		return findMany(FIND_ALL_QUERY);
 	}
 
 	public Optional<User> findById(Long id) {
-		return findOne(FIND_BY_ID_QUERY, id);
+		return findOne(FIND_BY_ID, id);
 	}
 
 	public Optional<User> findByEmail(String email) {
-		return findOne(FIND_BY_EMAIL_QUERY, email);
+		return findOne(FIND_BY_EMAIL, email);
+	}
+
+	public List<User> findByName(String name) {
+		return findMany(FIND_BY_NAME, name);
+	}
+
+	public List<User> findByLogin(String login) {
+		return findMany(FIND_BY_LOGIN, login);
 	}
 
 	public User save(User user) {
@@ -43,12 +56,16 @@ public class UserRepository extends BaseRepository<User> {
 	}
 
 	public User update(User user) {
-		update(UPDATE_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+		update(UPDATE_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
 		return user;
 	}
 
 	public boolean deleteUserById(Long id) {
 		return delete(DELETE_USER_BY_ID, id);
+	}
+
+	public boolean deleteUserByEmail(String email) {
+		return delete(DELETE_USER_BY_EMAIL, email);
 	}
 
 }

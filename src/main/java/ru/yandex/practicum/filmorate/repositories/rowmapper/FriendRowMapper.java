@@ -13,10 +13,11 @@ public class FriendRowMapper implements RowMapper<Friend> {
 
 	@Override
 	public Friend mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Friend row = Friend.builder()
-				.userId(rs.getLong("person_id"))
-				.friendId(rs.getLong("friend_id"))
-				.build();
+		Friend row = new Friend(
+				rs.getLong("film_person_id"), 
+				rs.getLong("person_id"), 
+				rs.getLong("friend_id")
+				);
 		return row;
 	}
 

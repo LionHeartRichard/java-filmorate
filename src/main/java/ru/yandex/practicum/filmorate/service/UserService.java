@@ -43,7 +43,7 @@ public class UserService {
 	}
 
 	public List<User> read() {
-		return userRepo.findByAll();
+		return userRepo.findAll();
 	}
 
 	public User findById(Long id) {

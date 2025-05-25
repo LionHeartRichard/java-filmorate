@@ -12,7 +12,6 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.dto.FilmDto.Request.Create;
 
 @Slf4j
 public class FilmDtoRequestCreateTest {
@@ -25,9 +24,9 @@ public class FilmDtoRequestCreateTest {
 	@Test
 	public void testPositive() {
 
-		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
+		final FilmDtoCreate film = new FilmDtoCreate("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100);
 
-		Set<ConstraintViolation<Create>> violations = validator.validate(film);
+		Set<ConstraintViolation<FilmDtoCreate>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
 
 		assertTrue(violations.isEmpty());
@@ -36,9 +35,9 @@ public class FilmDtoRequestCreateTest {
 	@Test
 	public void testNegativeReleazeBefore1895() {
 
-		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(1894, 3, 25), 100);
+		final FilmDtoCreate film = new FilmDtoCreate("nisi eiusmod", "adipisicing", LocalDate.of(1894, 3, 25), 100);
 
-		Set<ConstraintViolation<Create>> violations = validator.validate(film);
+		Set<ConstraintViolation<FilmDtoCreate>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
 
 		assertTrue(!violations.isEmpty());
@@ -47,9 +46,9 @@ public class FilmDtoRequestCreateTest {
 	@Test
 	public void testNegativeDuration() {
 
-		final Create film = new Create("nisi eiusmod", "adipisicing", LocalDate.of(2000, 3, 25), -100);
+		final FilmDtoCreate film = new FilmDtoCreate("nisi eiusmod", "adipisicing", LocalDate.of(2000, 3, 25), -100);
 
-		Set<ConstraintViolation<Create>> violations = validator.validate(film);
+		Set<ConstraintViolation<FilmDtoCreate>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
 
 		assertTrue(!violations.isEmpty());
