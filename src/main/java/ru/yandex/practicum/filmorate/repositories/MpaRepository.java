@@ -18,7 +18,7 @@ public class MpaRepository extends BaseRepository<Mpa> {
 	private static final String FIND_BY_ID = "SELECT * FROM mpa WHERE mpa_id = ?";
 	private static final String FIND_BY_FILM_ID = "SELECT * FROM mpa WHERE film_id = ?";
 
-	private static final String INSERT_QUERY = "INSERT INTO mpa(film_id, name) VALUES (?, ?) RETURNING mpa_id";
+	private static final String INSERT_QUERY = "INSERT INTO mpa(film_id, name) VALUES (?, ?)";
 	private static final String UPDATE_QUERY = "UPDATE mpa SET name = ? WHERE mpa_id = ?";
 
 	private static final String DELETE_MPA_BY_ID = "DELETE FROM mpa WHERE mpa_id = ?";

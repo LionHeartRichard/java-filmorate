@@ -17,7 +17,7 @@ public class FilmGenreRepository extends BaseRepository<FilmGenre> {
 	private static final String FIND_BY_FILM_ID = "SELECT * FROM film_genre WHERE film_id = ?";
 	private static final String FIND_BY_GENRE_ID = "SELECT * FROM film_genre WHERE genre_id = ?";
 
-	private static final String INSERT_QUERY = "INSERT INTO film_genre(film_id, genre_id) VALUES (?, ?) RETURNING film_genre_id";
+	private static final String INSERT_QUERY = "INSERT INTO film_genre(film_id, genre_id) VALUES (?, ?)";
 
 	private static final String DELETE_BY_PK = "DELETE FROM film_genre WHERE film_genre_id = ?";
 	private static final String DELETE_BY_FILM_ID = "DELETE FROM film_genre WHERE film_id = ?";

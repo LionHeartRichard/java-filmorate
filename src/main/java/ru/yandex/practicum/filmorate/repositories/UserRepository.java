@@ -18,8 +18,7 @@ public class UserRepository extends BaseRepository<User> {
 	private static final String FIND_BY_EMAIL = "SELECT * FROM person WHERE email = ?";
 	private static final String FIND_BY_ID = "SELECT * FROM person WHERE person_id = ?";
 
-	private static final String INSERT_QUERY = "INSERT INTO person(email, login, name, birthday)"
-			+ "VALUES (?, ?, ?, ?) RETURNING person_id";
+	private static final String INSERT_QUERY = "INSERT INTO person(email, login, name, birthday) VALUES (?, ?, ?, ?)";
 	private static final String UPDATE_QUERY = "UPDATE person SET email = ?, login = ?, name = ?, birthday = ? WHERE person_id = ?";
 
 	private static final String DELETE_USER_BY_ID = "DELETE FROM person WHERE person_id = ?";
@@ -45,8 +44,8 @@ public class UserRepository extends BaseRepository<User> {
 		return findMany(FIND_BY_NAME, name);
 	}
 
-	public List<User> findByLogin(String login) {
-		return findMany(FIND_BY_LOGIN, login);
+	public List<User> findByLogin(String loginUser) {
+		return findMany(FIND_BY_LOGIN, loginUser);
 	}
 
 	public User save(User user) {

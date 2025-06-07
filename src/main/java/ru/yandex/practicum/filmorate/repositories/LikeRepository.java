@@ -18,7 +18,7 @@ public class LikeRepository extends BaseRepository<Like> {
 	private static final String FIND_BY_PK = "SELECT * FROM film_person WHERE film_person_id = ?";
 	private static final String FIND_LIKE = "SELECT * FROM film_person WHERE film_id = ? AND person_id = ?";
 
-	private static final String INSERT_QUERY = "INSERT INTO film_person(film_id, person_id) VALUES (?, ?) RETURNING film_person_id";
+	private static final String INSERT_QUERY = "INSERT INTO film_person(film_id, person_id) VALUES (?, ?)";
 
 	private static final String DELETE_BY_ID = "DELETE FROM film_person WHERE film_person_id = ?";
 	private static final String DELETE_BY_FILM_ID = "DELETE FROM film_person WHERE film_id = ?";

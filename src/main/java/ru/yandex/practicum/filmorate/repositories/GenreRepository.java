@@ -17,7 +17,7 @@ public class GenreRepository extends BaseRepository<Genre> {
 	private static final String FIND_BY_FULL_NAME = "SELECT * FROM genre WHERE name = ?";
 	private static final String FIND_BY_ID_QUERY = "SELECT * FROM genre WHERE genre_id = ?";
 
-	private static final String INSERT_QUERY = "INSERT INTO genre(name) VALUES (?) RETURNING genre_id";
+	private static final String INSERT_QUERY = "INSERT INTO genre(name) VALUES (?)";
 	private static final String UPDATE_QUERY = "UPDATE genre SET name = ? WHERE genre_id = ?";
 
 	private static final String DELETE_GENRE_BY_ID = "DELETE FROM genre WHERE genre_id = ?";

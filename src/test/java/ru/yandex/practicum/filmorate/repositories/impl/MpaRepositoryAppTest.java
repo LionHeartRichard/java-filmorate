@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.repositories.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -22,10 +23,9 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.MpaRowMapper;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Import({MpaRepository.class, MpaRowMapper.class})
 public class MpaRepositoryAppTest {
+
 	private final MpaRepository rep;
-
 	private Mpa mpa;
-
 	private static Long count = 1L;
 
 	@BeforeEach
@@ -70,20 +70,15 @@ public class MpaRepositoryAppTest {
 	@Test
 	void findByFilmIdTest() {
 		Long filmId = 1L;
-		Optional<Mpa> actual = rep.findByFilmId(filmId);
-		assertTrue(actual.isPresent());
+		Optional<Mpa> actualOpt = rep.findByFilmId(filmId);
+		assertTrue(actualOpt.isPresent());
 	}
 
-	public Mpa update(Mpa mpa) {
-		update(UPDATE_QUERY, mpa.getName(), mpa.getId());
-		return mpa;
-	}
-
-	public boolean deleteById(Long mpaId) {
-		return delete(DELETE_MPA_BY_ID, mpaId);
-	}
-
-	public boolean deleteByFilmId(Long filmId) {
-		return delete(DELETE_MPA_BY_FILM_ID, filmId);
+	@Test
+	void updateTest() {
+		String expected = "UPDATE_MPA_Name";
+		mpa.setName(expected);
+		Mpa actualMpa = rep.save(mpa);
+		assertEquals(expected, actualMpa.getName());
 	}
 }

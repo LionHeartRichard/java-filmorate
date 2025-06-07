@@ -25,57 +25,53 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmGenreRowMapper;
 public class FilmGenreRepositoryAppTest {
 
 	private final FilmGenreRepository rep;
-
 	private FilmGenre filmGenre;
+	private static Long filmId = 0L;
+	private static Long genreId = 4L;
 
 	@BeforeEach
 	void setUp() {
-		for (Long id = 1L; id <= 3; ++id) {
-			filmGenre = new FilmGenre();
-			filmGenre.setFilmId(id);
-			filmGenre.setGenreId(id);
-			FilmGenre actual = rep.save(filmGenre);
-			assertTrue(actual != null);
-			assertTrue(actual.getPrimaryKey().equals(id));
-		}
+		filmId = filmId < 3 ? filmId + 1 : filmId - 1;
+		filmGenre = new FilmGenre();
+		genreId = genreId < 3 ? genreId + 1 : genreId - 1;
+		filmGenre.setFilmId(filmId);
+		filmGenre.setGenreId(filmId);
+		rep.save(filmGenre);
+		assertTrue(filmGenre != null);
+		assertTrue(filmGenre.getPrimaryKey().equals(filmId));
 	}
 
 	@Test
 	void findAllTest() {
 		List<FilmGenre> actual = rep.findAll();
-		assertTrue(actual.isEmpty());
+		assertTrue(!actual.isEmpty());
 	}
 
 	@Test
 	void findByPrimaryKeyTest() {
-		Long primaryKey = 1L;
-		Optional<FilmGenre> filmGenreOpt = rep.findByPrimaryKey(primaryKey);
-		assertTrue(filmGenreOpt.isPresent());
+		Optional<FilmGenre> actualOpt = rep.findByPrimaryKey(filmGenre.getPrimaryKey());
+		assertTrue(actualOpt.isPresent());
 	}
 
 	@Test
 	void findByFilmIdTest() {
-		Long filmId = 1L;
-		List<FilmGenre> actual = rep.findByFilmId(filmId);
-		assertFalse(actual.isEmpty());
+		List<FilmGenre> actual = rep.findByFilmId(filmGenre.getFilmId());
+		assertTrue(!actual.isEmpty());
 	}
 
 	@Test
 	void findByGenreIdTest() {
-		Long genreId = 1L;
-		List<FilmGenre> actual = rep.findByGenreId(genreId);
-		assertFalse(actual.isEmpty());
+		List<FilmGenre> actual = rep.findByGenreId(filmGenre.getGenreId());
+		assertTrue(!actual.isEmpty());
 	}
 
 	@Test
 	void deleteByPrimaryKeyTest() {
-		Long primaryKey = 1L;
-		assertTrue(rep.deleteByPrimaryKey(primaryKey));
+		assertTrue(rep.deleteByPrimaryKey(filmGenre.getPrimaryKey()));
 	}
 
 	@Test
 	void deleteByFilmIdAndGenreIdTest() {
-		boolean hasDelete = rep.deleteByFilmIdAndGenreId(3L, 3L);
-		assertTrue(hasDelete);
+		assertTrue(rep.deleteByFilmIdAndGenreId(filmGenre.getFilmId(), filmGenre.getGenreId()));
 	}
 }

@@ -17,7 +17,7 @@ public class FriendRepository extends BaseRepository<Friend> {
 	private static final String FIND_BY_PK = "SELECT * FROM friend WHERE friend_id = ?";
 	private static final String FIND_FRIENDS_BY_ID_AND_OTHER_ID = "SELECT * FROM friend WHERE id = ? AND other_id = ?";
 
-	private static final String INSERT_QUERY = "INSERT INTO friend(id, other_id) VALUES (?, ?) RETURNING friend_id";
+	private static final String INSERT_QUERY = "INSERT INTO friend(id, other_id) VALUES (?, ?)";
 
 	private static final String DELETE_BY_PK = "DELETE FROM friend WHERE friend_id = ?";
 	private static final String DELETE_USER_BY_ID = "DELETE FROM friend WHERE id = ?";
