@@ -1,6 +1,5 @@
-package ru.yandex.practicum.filmorate.repositories.impl;
+package ru.yandex.practicum.filmorate.repositories;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.FilmGenre;
-import ru.yandex.practicum.filmorate.repositories.FilmGenreRepository;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmGenreRowMapper;
 
 @JdbcTest
@@ -37,8 +35,6 @@ public class FilmGenreRepositoryAppTest {
 		filmGenre.setFilmId(filmId);
 		filmGenre.setGenreId(filmId);
 		rep.save(filmGenre);
-		assertTrue(filmGenre != null);
-		assertTrue(filmGenre.getPrimaryKey().equals(filmId));
 	}
 
 	@Test

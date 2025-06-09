@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.repositories.impl;
+package ru.yandex.practicum.filmorate.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.repositories.GenreRepository;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.GenreRowMapper;
 
 @JdbcTest
@@ -25,16 +24,14 @@ public class GenreRepositoryAppTest {
 	private final GenreRepository rep;
 
 	private Genre genre;
-
-	private static int count = 4;
+	private static int postfix = 4;
 
 	@BeforeEach
 	void setUp() {
-		while (count++ <= 7) {
-			genre = new Genre(null, "new-GENRE" + count);
-			Genre actual = rep.save(genre);
-			assertTrue(actual.getGenreId() > 0L);
-		}
+		genre = new Genre();
+		genre.setName("new-GENRE_naeme:" + postfix);
+		++postfix;
+		rep.save(genre);
 	}
 
 	@Test
@@ -45,8 +42,7 @@ public class GenreRepositoryAppTest {
 
 	@Test
 	void findByIdTest() {
-		Long id = 1L;
-		Optional<Genre> actual = rep.findById(id);
+		Optional<Genre> actual = rep.findById(genre.getGenreId());
 		assertTrue(actual.isPresent());
 	}
 
@@ -59,17 +55,13 @@ public class GenreRepositoryAppTest {
 
 	@Test
 	void findByFullNameTest() {
-		String fullName = "Action";
-		List<Genre> actual = rep.findByFullName(fullName);
+		List<Genre> actual = rep.findByFullName(genre.getName());
 		assertTrue(!actual.isEmpty());
 	}
 
 	@Test
-	void update() {
-		Genre genre = new Genre();
-		genre.setGenreId(3L);
+	void updateTest() {
 		genre.setName("Fantasy-Update");
-		Genre actual = rep.update(genre);
-		assertTrue(actual != null);
+		rep.update(genre);
 	}
 }

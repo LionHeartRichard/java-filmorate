@@ -1,5 +1,6 @@
-package ru.yandex.practicum.filmorate.repositories.impl;
+package ru.yandex.practicum.filmorate.repositories;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
@@ -15,7 +16,6 @@ import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.repositories.FilmRepository;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmRowMapper;
 
 @JdbcTest
@@ -26,15 +26,18 @@ public class FilmRepositoryAppTest {
 	private final FilmRepository rep;
 
 	private Film film;
+	private static int postfix = 0;
 
 	@BeforeEach
 	void setUp() {
+		++postfix;
 		film = new Film();
 		film.setId(null);
-		film.setName("name Set-Up");
-		film.setDescription("description set up");
+		film.setName("name Set-Up" + postfix);
+		film.setDescription("description set up" + postfix);
 		film.setReleaseDate(LocalDate.now());
 		film.setDuration(120);
+		rep.save(film);
 	}
 
 	@Test
@@ -45,8 +48,7 @@ public class FilmRepositoryAppTest {
 
 	@Test
 	void findById() {
-		Long id = 1L;
-		Optional<Film> actual = rep.findById(id);
+		Optional<Film> actual = rep.findById(film.getId());
 		assertTrue(actual.isPresent());
 	}
 
@@ -59,8 +61,7 @@ public class FilmRepositoryAppTest {
 
 	@Test
 	void findByFullNameTest() {
-		String name = "D hunter vampire";
-		List<Film> actual = rep.findByFullName(name);
+		List<Film> actual = rep.findByFullName(film.getName());
 		assertTrue(!actual.isEmpty());
 	}
 
@@ -69,6 +70,12 @@ public class FilmRepositoryAppTest {
 		Film film = new Film(2L, "upName", "upDescription", LocalDate.of(2022, 2, 22), 22);
 		Film actual = rep.update(film);
 		assertTrue(actual != null);
+		assertEquals(film.getName(), actual.getName());
+	}
+
+	@Test
+	void deleteFilmByIdTest() {
+		assertTrue(rep.deleteFilmById(film.getId()));
 	}
 
 }

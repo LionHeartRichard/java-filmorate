@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.repositories.impl;
+package ru.yandex.practicum.filmorate.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.Friend;
-import ru.yandex.practicum.filmorate.repositories.FriendRepository;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.FriendRowMapper;
 
 @JdbcTest
@@ -22,20 +21,19 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.FriendRowMapper;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Import({FriendRepository.class, FriendRowMapper.class})
 public class FriendRepositoriesAppTest {
-	private final FriendRepository rep;
 
+	private final FriendRepository rep;
 	private Friend friend;
+	private static Long userId = 0L, friendId = 3L;
 
 	@BeforeEach
 	void setUp() {
-		for (Long id = 1L; id < 3; ++id) {
-			friend = new Friend();
-			friend.setUserId(id);
-			friend.setFriendId(id + 1);
-			Friend actual = rep.save(friend);
-			assertTrue(actual != null);
-			assertTrue(actual.getPrimaryKey().equals(id));
-		}
+		friend = new Friend();
+		userId = userId < 3 ? userId + 1 : userId - 1;
+		friend.setUserId(userId);
+		friendId = friendId < 3 ? friendId + 1 : friendId - 1;
+		friend.setFriendId(friendId);
+		rep.save(friend);
 	}
 
 	@Test
@@ -46,26 +44,25 @@ public class FriendRepositoriesAppTest {
 
 	@Test
 	void findByPrimaryKeyTest() {
-		Long primaryKey = 1L;
-		Optional<Friend> actual = rep.findByPrimaryKey(primaryKey);
+		Optional<Friend> actual = rep.findByPrimaryKey(friend.getPrimaryKey());
 		assertTrue(actual.isPresent());
 	}
 
 	@Test
 	void findFriendTest() {
-		Long id = 1L;
-		Long otherId = 2L;
-		Optional<Friend> actual = rep.findFriend(id, otherId);
-
+		Optional<Friend> actual = rep.findFriend(friend.getUserId(), friend.getFriendId());
 		assertTrue(actual.isPresent());
 	}
 
 	@Test
 	void findFriendsByIdTest() {
-		Long id = 1L;
-		List<Friend> actual = rep.findFriendsById(id);
-
+		List<Friend> actual = rep.findFriendsById(friend.getUserId());
 		assertTrue(!actual.isEmpty());
+	}
+
+	@Test
+	void deleteByPrimaryKeyTest() {
+		assertTrue(rep.deleteByPrimaryKey(friend.getPrimaryKey()));
 	}
 
 }

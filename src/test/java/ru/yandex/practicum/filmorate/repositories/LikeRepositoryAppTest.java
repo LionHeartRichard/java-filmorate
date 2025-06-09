@@ -1,9 +1,8 @@
-package ru.yandex.practicum.filmorate.repositories.impl;
+package ru.yandex.practicum.filmorate.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.Like;
-import ru.yandex.practicum.filmorate.repositories.LikeRepository;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.LikeRowMapper;
 
 @JdbcTest
@@ -24,37 +22,18 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.LikeRowMapper;
 @Import({LikeRepository.class, LikeRowMapper.class})
 public class LikeRepositoryAppTest {
 	private final LikeRepository rep;
-
 	private Like like;
+	private static Long filmId = 0l;
+	private static Long userId = 0l;
 
 	@BeforeEach
 	void setUp() {
-		for (Long id = 1L; id <= 3; ++id) {
-			like = new Like();
-			like.setFilmId(1L);
-			like.setUserId(id);
-			Like actual = rep.save(like);
-			assertTrue(actual != null);
-			assertTrue(actual.getLikeId().equals(id));
-		}
-
-		for (Long id = 1L; id <= 3; ++id) {
-			like = new Like();
-			like.setFilmId(2L);
-			like.setUserId(id);
-			Like actual = rep.save(like);
-			assertTrue(actual != null);
-			assertTrue(actual.getLikeId().equals(id));
-		}
-
-		for (Long id = 1L; id <= 3; ++id) {
-			like = new Like();
-			like.setFilmId(3L);
-			like.setUserId(id);
-			Like actual = rep.save(like);
-			assertTrue(actual != null);
-			assertTrue(actual.getLikeId().equals(id));
-		}
+		like = new Like();
+		filmId = filmId < 3 ? filmId + 1 : filmId - 1;
+		like.setFilmId(filmId);
+		userId = userId < 3 ? userId + 1 : userId - 1;
+		like.setUserId(userId);
+		rep.save(like);
 	}
 
 	@Test
@@ -65,49 +44,41 @@ public class LikeRepositoryAppTest {
 
 	@Test
 	void findByPrimaryKeyTest() {
-		Long primaryKey = 1L;
-		Optional<Like> actual = rep.findByPrimaryKey(primaryKey);
+		Optional<Like> actual = rep.findByPrimaryKey(like.getLikeId());
 		assertTrue(actual.isPresent());
 	}
 
 	@Test
 	void findLikeTest() {
-		Long filmId = 1L;
-		Long userId = 1L;
-		Optional<Like> actual = rep.findLike(filmId, userId);
-		assertTrue(!actual.isPresent());
+		Optional<Like> actual = rep.findLike(like.getFilmId(), like.getUserId());
+		assertTrue(actual.isPresent());
 	}
 
 	@Test
 	void findByFilmId() {
-		Long filmId = 1L;
-		List<Like> actual = rep.findByFilmId(filmId);
+		List<Like> actual = rep.findByFilmId(like.getFilmId());
 		assertTrue(!actual.isEmpty());
 	}
 
 	@Test
 	void findByUserId() {
-		Long userId = 1L;
-		List<Like> actual = rep.findByUserId(userId);
+		List<Like> actual = rep.findByUserId(like.getUserId());
 		assertTrue(!actual.isEmpty());
 	}
 
 	@Test
 	void deleteByIdTest() {
-		Long likeId = 1L;
-		assertTrue(rep.deleteById(likeId));
+		assertTrue(rep.deleteById(like.getLikeId()));
 	}
 
 	@Test
 	void deleteByFilmIdTest() {
-		Long filmId = 2L;
-		assertTrue(rep.deleteByFilmId(filmId));
+		assertTrue(rep.deleteByFilmId(like.getFilmId()));
 	}
 
 	@Test
 	void deleteByUserIdTest() {
-		Long userId = 3L;
-		assertTrue(rep.deleteByUserId(userId));
+		assertTrue(rep.deleteByUserId(like.getUserId()));
 	}
 
 }

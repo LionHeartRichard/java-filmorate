@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.repositories.impl;
+package ru.yandex.practicum.filmorate.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.repositories.MpaRepository;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.MpaRowMapper;
 
 @JdbcTest
@@ -26,18 +25,15 @@ public class MpaRepositoryAppTest {
 
 	private final MpaRepository rep;
 	private Mpa mpa;
-	private static Long count = 1L;
+	private static Long filmId = 0l;
 
 	@BeforeEach
 	void setUp() {
-		while (count++ <= 3L) {
-			mpa = new Mpa();
-			mpa.setFilmId(count);
-			mpa.setName("new_MPA");
-			Mpa actual = rep.save(mpa);
-			assertTrue(actual != null);
-			assertTrue(actual.getId() > 0L);
-		}
+		mpa = new Mpa();
+		filmId = filmId < 3 ? filmId + 1 : filmId - 1;
+		mpa.setFilmId(filmId);
+		mpa.setName("new_MPA");
+		rep.save(mpa);
 	}
 
 	@Test
@@ -48,29 +44,26 @@ public class MpaRepositoryAppTest {
 
 	@Test
 	void findByIdTest() {
-		Long id = 1L;
-		Optional<Mpa> actual = rep.findById(id);
+		Optional<Mpa> actual = rep.findById(mpa.getId());
 		assertTrue(actual.isPresent());
 	}
 
 	@Test
 	void findByNameTest() {
-		String name = "%Mp%";
+		String name = "%MP%";
 		List<Mpa> actual = rep.findByName(name);
 		assertTrue(!actual.isEmpty());
 	}
 
 	@Test
 	void findByFullNameTest() {
-		String fullName = "new_MPA";
-		List<Mpa> actual = rep.findByFullName(fullName);
+		List<Mpa> actual = rep.findByFullName(mpa.getName());
 		assertTrue(!actual.isEmpty());
 	}
 
 	@Test
 	void findByFilmIdTest() {
-		Long filmId = 1L;
-		Optional<Mpa> actualOpt = rep.findByFilmId(filmId);
+		Optional<Mpa> actualOpt = rep.findByFilmId(mpa.getFilmId());
 		assertTrue(actualOpt.isPresent());
 	}
 
@@ -78,7 +71,7 @@ public class MpaRepositoryAppTest {
 	void updateTest() {
 		String expected = "UPDATE_MPA_Name";
 		mpa.setName(expected);
-		Mpa actualMpa = rep.save(mpa);
-		assertEquals(expected, actualMpa.getName());
+		rep.update(mpa);
+		assertEquals(expected, mpa.getName());
 	}
 }

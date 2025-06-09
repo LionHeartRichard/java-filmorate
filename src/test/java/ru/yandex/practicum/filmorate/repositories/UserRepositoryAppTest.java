@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.repositories.impl;
+package ru.yandex.practicum.filmorate.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Import;
 
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repositories.UserRepository;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.UserRowMapper;
 
 @JdbcTest

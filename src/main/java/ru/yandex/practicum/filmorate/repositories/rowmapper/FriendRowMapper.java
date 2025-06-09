@@ -14,9 +14,9 @@ public class FriendRowMapper implements RowMapper<Friend> {
 	@Override
 	public Friend mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Friend row = new Friend(
-				rs.getLong("film_person_id"), 
-				rs.getLong("person_id"), 
-				rs.getLong("friend_id")
+				rs.getLong("friend_id"), 
+				rs.getLong("id"), 
+				rs.getLong("other_id")
 				);
 		return row;
 	}
