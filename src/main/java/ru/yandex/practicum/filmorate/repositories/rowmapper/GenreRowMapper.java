@@ -9,14 +9,11 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 @Repository
-public class GenreRowMapper implements RowMapper<Genre>{
+public class GenreRowMapper implements RowMapper<Genre> {
 
 	@Override
 	public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Genre row = new Genre(
-				rs.getLong("genre_id"),
-				rs.getString("name")
-				);
+		Genre row = new Genre(rs.getLong("genre_id"), rs.getString("name"));
 		return row;
 	}
 
