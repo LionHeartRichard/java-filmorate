@@ -19,7 +19,9 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 
 @Slf4j
 public class FilmDtoRequestCreateTest {
+
 	private static Validator validator;
+
 	static {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();

@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class UserDtoRequestCreateTest {
+
 	private static Validator validator;
+
 	static {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
