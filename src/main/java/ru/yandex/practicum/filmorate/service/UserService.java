@@ -1,79 +1,114 @@
 package ru.yandex.practicum.filmorate.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.dto.UserDtoCreate;
 import ru.yandex.practicum.filmorate.dto.UserDtoUpdate;
-import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repositories.FriendRepository;
 import ru.yandex.practicum.filmorate.repositories.UserRepository;
-import ru.yandex.practicum.filmorate.util.dtomapper.UserDtoMapper;
+import ru.yandex.practicum.filmorate.util.dtomapper.DtoMapperUser;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-	private final UserRepository userRepo;
-	private final FriendRepository friendRepo;
+	private static final String NOT_FOUND_ID = "Failed! User not found by id in database!";
+	private static final String EXISTS_EMAIL = "Failed! A user with this email already exists!";
+	private static final String ADD_FRIEND = "Failed add friend in data base! User not found!";
 
-	public User create(@Valid UserDtoCreate dto) {
-		User user = UserDtoMapper.returnUser(dto);
-		log.trace("User create: {}", user.toString());
-		return userRepo.save(user);
+	private final UserRepository repUser;
+	private final FriendRepository repFriend;
+
+	public User create(UserDtoCreate dto) {
+		User user = DtoMapperUser.getUser(dto);
+		user = repUser.save(user);
+		log.trace("Done: User create! {}", user.toString());
+		return user;
 	}
 
 	public User update(UserDtoUpdate dto) {
-		Long id = dto.getId();
-		User user = userRepo.findById(id)
-				.orElseThrow(() -> new NotFoundException("Failed update user! User not found!"));
-		user = UserDtoMapper.returnUser(user, dto);
-		userRepo.update(user);
-		log.trace("user update - done");
+		checkEmail(dto.getEmail());
+		User user = new User();
+		user = repUser.findById(dto.getId()).orElseThrow(() -> new NotFoundException(NOT_FOUND_ID));
+		user = DtoMapperUser.getUser(user, dto);
+		repUser.update(user);
+		log.trace("Done: User update! {}", user.toString());
 		return user;
+	}
+
+	private void checkEmail(String email) {
+		if (email != null) {
+			Optional<User> userOpt = repUser.findByEmail(email);
+			if (userOpt.isPresent())
+				throw new NotFoundException(EXISTS_EMAIL);
+		}
 	}
 
 	public List<User> read() {
-		return userRepo.findAll();
+		return repUser.findAll();
 	}
 
-	public User findById(Long id) {
-		User user = userRepo.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
-		return user;
+	public User findById(Long userId) {
+		return repUser.findById(userId).orElseThrow(() -> new NotFoundException(NOT_FOUND_ID));
 	}
 
 	public void addFriend(Long id, Long friendId) {
 		log.trace("add friend: id: {}, friendId: {}", id, friendId);
-		userRepo.findById(id)
-				.orElseThrow(() -> new NotFoundException("Failed add friend in data base! User not found!"));
-		userRepo.findById(friendId)
-				.orElseThrow(() -> new NotFoundException("Failed add friend in data base! User not found!"));
-		friendRepo.add(id, friendId).orElseThrow(() -> new InternalServerException("Failed add friend in data base!"));
+		repUser.findById(id).orElseThrow(() -> new NotFoundException(ADD_FRIEND));
+		repUser.findById(friendId).orElseThrow(() -> new NotFoundException(ADD_FRIEND));
+		Friend friend = new Friend();
+		friend.setUserId(id);
+		friend.setFriendId(friendId);
+		repFriend.save(friend);
 	}
 
 	public void deleteFriend(Long id, Long friendId) {
 		log.trace("delete friend: id: {}, friendId: {}", id, friendId);
-		friendRepo.removeRow(id, friendId).orElseThrow(() -> new NotFoundException("DELETE Failed: friend not found!"));
+		repUser.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_ID));
+		repUser.findById(friendId).orElseThrow(() -> new NotFoundException(NOT_FOUND_ID));
+		repFriend.deleteFriend(id, friendId);
 	}
 
-	public Collection<Long> getFriends(Long id) {
-		return friendRepo.getFriends(id);
+	public Friend getFriendByPrimaryKey(Long pK) {
+		return repFriend.findByPrimaryKey(pK).orElseThrow(() -> new NotFoundException(NOT_FOUND_ID));
 	}
 
-	public Collection<Long> getCommonFriends(Long id, Long otherId) {
-		Set<Long> idx = friendRepo.getFriends(id);
-		Set<Long> idxOther = friendRepo.getFriends(otherId);
-		if (idx.isEmpty() || idxOther.isEmpty())
-			return null;
-		return idxOther.stream().filter(i -> idx.contains(i)).toList();
+	public List<User> getFriends(Long id) {
+		repUser.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_ID));
+		List<Friend> swap = repFriend.findFriendsById(id);
+		List<User> ans = new ArrayList<>();
+		swap.forEach(v -> {
+			Optional<User> userOpt = repUser.findById(v.getFriendId());
+			if (userOpt.isPresent()) {
+				ans.add(userOpt.get());
+			}
+		});
+		return ans;
+	}
+
+	public Set<User> commonFriends(Long id, Long friendId) {
+		repUser.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_ID));
+		repUser.findById(friendId).orElseThrow(() -> new NotFoundException(NOT_FOUND_ID));
+		List<Friend> swap = repFriend.commonFriends(id, friendId);
+		Set<User> ans = new HashSet<>();
+		swap.forEach(v -> {
+			Optional<User> userOpt = repUser.findById(v.getFriendId());
+			if (userOpt.isPresent()) {
+				ans.add(userOpt.get());
+			}
+		});
+		return ans;
 	}
 }

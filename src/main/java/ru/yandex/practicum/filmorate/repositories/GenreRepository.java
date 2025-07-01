@@ -44,12 +44,12 @@ public class GenreRepository extends BaseRepository<Genre> {
 
 	public Genre save(Genre genre) {
 		Long id = insert(INSERT_QUERY, genre.getName());
-		genre.setGenreId(id);
+		genre.setId(id);
 		return genre;
 	}
 
 	public Genre update(Genre genre) {
-		update(UPDATE_QUERY, genre.getName(), genre.getGenreId());
+		update(UPDATE_QUERY, genre.getName(), genre.getId());
 		return genre;
 	}
 

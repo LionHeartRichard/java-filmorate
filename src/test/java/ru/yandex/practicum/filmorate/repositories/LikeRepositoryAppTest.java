@@ -81,4 +81,9 @@ public class LikeRepositoryAppTest {
 		assertTrue(rep.deleteByUserId(like.getUserId()));
 	}
 
+	@Test
+	void deleteLikeTest() {
+		assertTrue(rep.deleteLike(like.getFilmId(), like.getUserId()));
+	}
+
 }

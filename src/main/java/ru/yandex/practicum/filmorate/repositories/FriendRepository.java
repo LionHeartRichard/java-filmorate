@@ -12,6 +12,8 @@ import ru.yandex.practicum.filmorate.model.Friend;
 @Repository
 public class FriendRepository extends BaseRepository<Friend> {
 
+	private static final String COMMON_FRIENDS = "SELECT f.* FROM friend AS f WHERE f.other_id IN (SELECT sub.other_id FROM friend AS sub WHERE id IN (?, ?) GROUP BY other_id HAVING COUNT(*) > 1)";
+
 	private static final String FIND_ALL_QUERY = "SELECT * FROM friend";
 	private static final String FIND_FRIENDS_BY_ID = "SELECT * FROM friend WHERE id = ?";
 	private static final String FIND_BY_PK = "SELECT * FROM friend WHERE friend_id = ?";
@@ -59,5 +61,9 @@ public class FriendRepository extends BaseRepository<Friend> {
 
 	public boolean deleteFriend(Long id, Long friendId) {
 		return delete(DELETE_FRIEND, id, friendId);
+	}
+
+	public List<Friend> commonFriends(Long id, Long otherId) {
+		return findMany(COMMON_FRIENDS, id, otherId);
 	}
 }

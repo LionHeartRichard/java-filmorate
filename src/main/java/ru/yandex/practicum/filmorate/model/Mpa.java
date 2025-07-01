@@ -13,6 +13,5 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class Mpa {
 	private Long id;
-	private Long filmId;
 	private String name;
 }

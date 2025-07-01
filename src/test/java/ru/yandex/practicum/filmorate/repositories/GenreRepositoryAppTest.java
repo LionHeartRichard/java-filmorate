@@ -42,13 +42,13 @@ public class GenreRepositoryAppTest {
 
 	@Test
 	void findByIdTest() {
-		Optional<Genre> actual = rep.findById(genre.getGenreId());
+		Optional<Genre> actual = rep.findById(genre.getId());
 		assertTrue(actual.isPresent());
 	}
 
 	@Test
 	void findByNameTest() {
-		String name = "Thr%";
+		String name = "Ко%";
 		List<Genre> actual = rep.findByName(name);
 		assertTrue(!actual.isEmpty());
 	}

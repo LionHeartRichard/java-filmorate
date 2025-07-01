@@ -3,13 +3,11 @@ package ru.yandex.practicum.filmorate.dto;
 import java.time.LocalDate;
 import java.time.Period;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 
 @Data
 public class UserDtoUpdate {
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
 	private final Long id;
 	private final String email;
 	private final String login;

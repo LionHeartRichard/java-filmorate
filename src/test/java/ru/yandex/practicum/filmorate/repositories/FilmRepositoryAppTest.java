@@ -37,6 +37,7 @@ public class FilmRepositoryAppTest {
 		film.setDescription("description set up" + postfix);
 		film.setReleaseDate(LocalDate.now());
 		film.setDuration(120);
+		film.setMpaId(1L);
 		rep.save(film);
 	}
 
@@ -67,7 +68,7 @@ public class FilmRepositoryAppTest {
 
 	@Test
 	void updateTest() {
-		Film film = new Film(2L, "upName", "upDescription", LocalDate.of(2022, 2, 22), 22);
+		Film film = new Film(2L, "upName", "upDescription", LocalDate.of(2022, 2, 22), 22, 1L);
 		Film actual = rep.update(film);
 		assertTrue(actual != null);
 		assertEquals(film.getName(), actual.getName());

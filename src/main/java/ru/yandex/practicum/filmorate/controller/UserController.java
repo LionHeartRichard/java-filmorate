@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import ru.yandex.practicum.filmorate.util.LocalValidator;
 import ru.yandex.practicum.filmorate.dto.UserDtoCreate;
 import ru.yandex.practicum.filmorate.dto.UserDtoUpdate;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
+import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 
 @Slf4j
@@ -27,68 +29,70 @@ import ru.yandex.practicum.filmorate.model.User;
 @RequiredArgsConstructor
 public class UserController {
 
+	private static final String NOT_NEGATIVE = "ID cannot be negative: %d";
+
 	private final LocalValidator validator;
-	private final UserService userService;
+	private final UserService service;
 
 	@PostMapping
 	public User create(@Valid @RequestBody UserDtoCreate dto) {
 		log.trace("POST /users; userDto:", dto.toString());
-		return userService.create(dto);
+		return service.create(dto);
 	}
 
 	@PutMapping
-	public User update(@Valid @RequestBody UserDtoUpdate dto) {
+	public User update(@RequestBody UserDtoUpdate dto) {
 		log.trace("PUT /users; userDto: {}", dto.toString());
-		return userService.update(dto);
+		return service.update(dto);
 	}
 
 	@GetMapping
-	public Collection<User> read() {
+	public List<User> read() {
 		log.trace("GET /users");
-		return userService.read();
+		return service.read();
 	}
 
 	@GetMapping("/{id}")
 	public User findById(@PathVariable final Long id) {
-		log.trace("GET /id: {}", id);
-		validator.positiveValue(id, String.format("ID cannot be negative: %d", id));
-		return userService.findById(id);
+		log.trace("GET users/id: {}", id);
+		validator.positiveValue(id, String.format(NOT_NEGATIVE, id));
+		return service.findById(id);
 	}
 
 	@PutMapping("/{id}/friends/{friend_id}")
 	public void addFriend(@PathVariable Long id, @PathVariable(value = "friend_id") Long friendId) {
-		log.trace("PUT /id/friend/friend_id");
-		validator.positiveValue(id, String.format("ID cannot be negative: %d", id));
-		validator.positiveValue(friendId, String.format("ID cannot be negative: %d", friendId));
+		log.trace("PUT users/id/friend/friend_id");
+		validator.positiveValue(id, String.format(NOT_NEGATIVE, id));
+		validator.positiveValue(friendId, String.format(NOT_NEGATIVE, friendId));
 		if (id.equals(friendId)) {
 			log.warn("Failed! Identifiers cannot be equal");
 			throw new ConditionsNotMetException("Failed! Identifiers cannot be equal");
 		}
-		userService.addFriend(id, friendId);
+		service.addFriend(id, friendId);
 	}
 
 	@DeleteMapping("/{id}/friends/{friend_id}")
 	public void deleteFriend(@PathVariable final Long id, @PathVariable(value = "friend_id") final Long friendId) {
-		log.trace("DELETE /{id}/friends/{friend_id}");
-		validator.positiveValue(id, String.format("ID cannot be negative: %d", id));
-		validator.positiveValue(friendId, String.format("ID cannot be negative: %d", friendId));
-		userService.deleteFriend(id, friendId);
+		log.trace("DELETE users/{id}/friends/{friend_id}");
+		validator.positiveValue(id, String.format(NOT_NEGATIVE, id));
+		validator.positiveValue(friendId, String.format(NOT_NEGATIVE, friendId));
+		service.deleteFriend(id, friendId);
 	}
 
 	@GetMapping("/{id}/friends")
-	public Collection<Long> getFriends(@PathVariable final Long id) {
-		log.trace("GET /{id}/friends");
-		validator.positiveValue(id, String.format("ID cannot be negative: %d", id));
-		return userService.getFriends(id);
+	public List<User> getFriends(@PathVariable final Long id) {
+		log.trace("GET users/{id}/friends");
+		validator.positiveValue(id, String.format(NOT_NEGATIVE, id));
+		return service.getFriends(id);
 	}
 
-	@GetMapping("/{id}/friends/common/{other_id}")
-	public Collection<Long> getCommonFriends(@PathVariable final Long id,
-			@PathVariable("other_id") final Long otherId) {
-		log.trace("GET users/{id}/friends/common/{other_id}; id: {}, otherId: {}", id, otherId);
-		validator.positiveValue(id, String.format("ID cannot be negative: %d", id));
-		validator.positiveValue(otherId, String.format("ID cannot be negative: %d", otherId));
-		return userService.getCommonFriends(id, otherId);
+	@GetMapping("/{id}/friends/common/{friend_id}")
+	public Set<User> commonFriends(@PathVariable final Long id,
+			@PathVariable(value = "friend_id") final Long friendId) {
+		log.trace("COMMON users/{id}/friends/common/{friend_id}");
+		validator.positiveValue(id, String.format(NOT_NEGATIVE, id));
+		validator.positiveValue(friendId, String.format(NOT_NEGATIVE, friendId));
+		return service.commonFriends(id, friendId);
 	}
 
 }

@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.util.LocalValidator;
-import ru.yandex.practicum.filmorate.util.dtomapper.FilmDtoMapper;
 import ru.yandex.practicum.filmorate.util.GetConstants;
+import ru.yandex.practicum.filmorate.util.LocalValidator;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
+import ru.yandex.practicum.filmorate.dto.FilmDtoCreate;
+import ru.yandex.practicum.filmorate.dto.FilmDtoUpdate;
+import ru.yandex.practicum.filmorate.model.Film;
 
 @Slf4j
 @RestController
@@ -31,31 +33,25 @@ public class FilmController {
 	private final FilmService filmService;
 
 	@PostMapping
-	public FilmDto create(@Valid @RequestBody FilmDto filmDto) {
+	public FilmAnsDto create(@Valid @RequestBody FilmDtoCreate dto) {
 		log.trace("POST /films");
-		return filmService.create(filmDto);
+		return filmService.create(dto);
 	}
 
 	@GetMapping
-	public Collection<FilmDto> read() {
+	public List<Film> read() {
 		log.trace("GET /films");
 		return filmService.read();
 	}
 
-	@GetMapping("/popular")
-	public Collection<Long> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count) {
-		log.trace("GET /films/popular");
-		return filmService.findTopFilms(count);
-	}
-
 	@PutMapping
-	public FilmDto update(@Valid @RequestBody final FilmDto filmDto) {
+	public FilmAnsDto update(@Valid @RequestBody final FilmDtoUpdate dto) {
 		log.trace("PUT /films");
-		return filmService.update(filmDto);
+		return filmService.update(dto);
 	}
 
 	@GetMapping("/{id}")
-	public FilmDto findById(@PathVariable final Long id) {
+	public FilmAnsDto findById(@PathVariable final Long id) {
 		log.trace("GET /films/{id}");
 		validator.positiveValue(id, String.format("ID cannot be negative, filmId: %d", id));
 		return filmService.findById(id);
@@ -75,5 +71,11 @@ public class FilmController {
 		validator.positiveValue(id, String.format("ID cannot be negative, filmId: %d", id));
 		validator.positiveValue(userId, String.format("ID cannot be negative, userId: %d", userId));
 		filmService.deleteLike(id, userId);
+	}
+
+	@GetMapping("/popular")
+	public List<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count) {
+		log.trace("GET /films/popular");
+		return filmService.findTopFilm(count);
 	}
 }

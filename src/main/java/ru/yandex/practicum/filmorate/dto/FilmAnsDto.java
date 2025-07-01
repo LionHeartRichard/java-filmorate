@@ -3,27 +3,16 @@ package ru.yandex.practicum.filmorate.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.validation.annotation.Validated;
-
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.validation.ThisAfter1895;
 
-@Validated
 @Data
-public class FilmDtoCreate {
-	@NotBlank
-	@Size(max = 50)
+public class FilmAnsDto {
+	private final Long id;
 	private final String name;
-	@Size(min = 0, max = 200)
 	private final String description;
-	@ThisAfter1895
 	private final LocalDate releaseDate;
-	@Min(value = 1)
 	private final Integer duration;
 	private final Mpa mpa;
 	private final List<Genre> genres;

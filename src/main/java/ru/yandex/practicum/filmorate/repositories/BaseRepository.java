@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,6 +32,10 @@ public class BaseRepository<T> {
 
 	protected List<T> findMany(String query, Object... params) {
 		return jdbc.query(query, mapper, params);
+	}
+
+	protected Stream<T> findManyToStream(String query, Object... params) {
+		return jdbc.queryForStream(query, mapper, params);
 	}
 
 	protected boolean delete(String query, Object... params) {

@@ -12,6 +12,6 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 public class Genre {
-	private Long genreId;
+	private Long id;
 	private String name;
 }

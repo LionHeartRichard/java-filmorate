@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"filmId", "genreId"})
 public class FilmGenre {
 	private Long primaryKey;
 	private Long filmId;

@@ -4,12 +4,12 @@ import ru.yandex.practicum.filmorate.dto.UserDtoCreate;
 import ru.yandex.practicum.filmorate.dto.UserDtoUpdate;
 import ru.yandex.practicum.filmorate.model.User;
 
-public class UserDtoMapper {
+public class DtoMapperUser {
 
-	private UserDtoMapper() {
+	private DtoMapperUser() {
 	}
 
-	public static User returnUser(UserDtoCreate dto) {
+	public static User getUser(UserDtoCreate dto) {
 		String name = dto.hasName() ? dto.getName() : dto.getLogin();
 		User user = new User();
 		user.setLogin(dto.getLogin());
@@ -19,7 +19,7 @@ public class UserDtoMapper {
 		return user;
 	}
 
-	public static User returnUser(User user, UserDtoUpdate dto) {
+	public static User getUser(User user, UserDtoUpdate dto) {
 		if (dto.hasBirthday())
 			user.setBirthday(dto.getBirthday());
 		if (dto.hasEmail())
@@ -30,4 +30,9 @@ public class UserDtoMapper {
 			user.setName(dto.getName());
 		return user;
 	}
+
+	public static UserDtoCreate getDtoCreate(UserDtoUpdate dto) {
+		return new UserDtoCreate(dto.getEmail(), dto.getLogin(), dto.getName(), dto.getBirthday());
+	}
+
 }
