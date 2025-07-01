@@ -21,10 +21,11 @@ import ru.yandex.practicum.filmorate.repositories.rowmapper.LikeRowMapper;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Import({LikeRepository.class, LikeRowMapper.class})
 public class LikeRepositoryAppTest {
+
 	private final LikeRepository rep;
 	private Like like;
-	private static Long filmId = 0l;
-	private static Long userId = 0l;
+	private static Long filmId = 0L;
+	private static Long userId = 0L;
 
 	@BeforeEach
 	void setUp() {
