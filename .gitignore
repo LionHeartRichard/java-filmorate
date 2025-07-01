@@ -30,4 +30,4 @@ hs_err_pid*
 /bin/
 /target/
 
-/db/filmorate.trace.db
+/db/
