@@ -1,4 +1,4 @@
-logging: println!("Hello, world!");
+logging:
   level:
     org:springframework: ERROR
     ru:yandex:practicum:filmorate: TRACE
@@ -10,5 +10,5 @@ spring:
     initialization-mode: always
     url: jdbc:h2:file:./db/filmorate
     username: sa
-    password:
+    password: p_h2-Db
     driverClassName: org.h2.Driver
