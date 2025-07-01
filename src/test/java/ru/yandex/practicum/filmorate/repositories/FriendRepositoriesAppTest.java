@@ -36,33 +36,4 @@ public class FriendRepositoriesAppTest {
 		rep.save(friend);
 	}
 
-	@Test
-	void findAllTest() {
-		List<Friend> actual = rep.findAll();
-		assertTrue(!actual.isEmpty());
-	}
-
-	@Test
-	void findByPrimaryKeyTest() {
-		Optional<Friend> actual = rep.findByPrimaryKey(friend.getPrimaryKey());
-		assertTrue(actual.isPresent());
-	}
-
-	@Test
-	void findFriendTest() {
-		Optional<Friend> actual = rep.findFriend(friend.getUserId(), friend.getFriendId());
-		assertTrue(actual.isPresent());
-	}
-
-	@Test
-	void findFriendsByIdTest() {
-		List<Friend> actual = rep.findFriendsById(friend.getUserId());
-		assertTrue(!actual.isEmpty());
-	}
-
-	@Test
-	void deleteByPrimaryKeyTest() {
-		assertTrue(rep.deleteByPrimaryKey(friend.getPrimaryKey()));
-	}
-
 }

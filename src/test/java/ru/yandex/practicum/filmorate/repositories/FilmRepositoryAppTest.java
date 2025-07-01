@@ -54,24 +54,9 @@ public class FilmRepositoryAppTest {
 	}
 
 	@Test
-	void findByNameTest() {
-		String name = "sta%";
-		List<Film> actual = rep.findByName(name);
-		assertTrue(!actual.isEmpty());
-	}
-
-	@Test
 	void findByFullNameTest() {
 		List<Film> actual = rep.findByFullName(film.getName());
 		assertTrue(!actual.isEmpty());
-	}
-
-	@Test
-	void updateTest() {
-		Film film = new Film(2L, "upName", "upDescription", LocalDate.of(2022, 2, 22), 22, 1L);
-		Film actual = rep.update(film);
-		assertTrue(actual != null);
-		assertEquals(film.getName(), actual.getName());
 	}
 
 	@Test

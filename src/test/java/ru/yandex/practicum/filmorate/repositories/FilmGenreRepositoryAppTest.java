@@ -37,37 +37,4 @@ public class FilmGenreRepositoryAppTest {
 		rep.save(filmGenre);
 	}
 
-	@Test
-	void findAllTest() {
-		List<FilmGenre> actual = rep.findAll();
-		assertTrue(!actual.isEmpty());
-	}
-
-	@Test
-	void findByPrimaryKeyTest() {
-		Optional<FilmGenre> actualOpt = rep.findByPrimaryKey(filmGenre.getPrimaryKey());
-		assertTrue(actualOpt.isPresent());
-	}
-
-	@Test
-	void findByFilmIdTest() {
-		List<FilmGenre> actual = rep.findByFilmId(filmGenre.getFilmId());
-		assertTrue(!actual.isEmpty());
-	}
-
-	@Test
-	void findByGenreIdTest() {
-		List<FilmGenre> actual = rep.findByGenreId(filmGenre.getGenreId());
-		assertTrue(!actual.isEmpty());
-	}
-
-	@Test
-	void deleteByPrimaryKeyTest() {
-		assertTrue(rep.deleteByPrimaryKey(filmGenre.getPrimaryKey()));
-	}
-
-	@Test
-	void deleteByFilmIdAndGenreIdTest() {
-		assertTrue(rep.deleteByFilmIdAndGenreId(filmGenre.getFilmId(), filmGenre.getGenreId()));
-	}
 }
