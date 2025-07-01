@@ -3,7 +3,9 @@ logging:
     org:springframework: ERROR
     ru:yandex:practicum:filmorate: TRACE
 spring:
-  sql:init:mode: always
+  sql:init:
+    mode: always
+    continue-on-error: true
   datasource:
     initialization-mode: always
     url: jdbc:h2:file:./db/filmorate
