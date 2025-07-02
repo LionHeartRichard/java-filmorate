@@ -8,5 +8,5 @@ spring:
   datasource:
     url: jdbc:h2:file:./db/filmorate
     username: sa
-    password: p_h2-Db
+    password: password
     driverClassName: org.h2.Driver
