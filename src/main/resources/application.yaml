@@ -4,13 +4,27 @@ logging:
     org:springframework: ERROR
     ru:yandex:practicum:filmorate: TRACE
 spring:
-  sql:init:
-    mode: always
-    continue-on-error: false
-  jpa:hibernate:ddl-auto: none
   datasource:
     initialization-mode: always
     url: jdbc:h2:file:./db/filmorate
     username: sa
-    password: p_h2-Db
+    password: ""
     driverClassName: org.h2.Driver
+    h2:
+      console:
+        enable: true
+        path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+
+  sql:
+    init:
+      mode: always
+      platform: h2
+      encoding: UTF-8
+      separator: ;
+      continue-on-error: false
