@@ -1,3 +1,4 @@
+DB_CLOSE_DELAY: -1
 logging:
   level:
     org:springframework: ERROR
@@ -5,8 +6,11 @@ logging:
 spring:
   sql:init:
     mode: always
+    continue-on-error: false
+  jpa:hibernate:ddl-auto: none
   datasource:
+    initialization-mode: always
     url: jdbc:h2:file:./db/filmorate
     username: sa
-    password: password
+    password: p_h2-Db
     driverClassName: org.h2.Driver
