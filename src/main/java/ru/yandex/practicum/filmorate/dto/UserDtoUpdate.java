@@ -3,16 +3,19 @@ package ru.yandex.practicum.filmorate.dto;
 import java.time.LocalDate;
 import java.time.Period;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Data
 public class UserDtoUpdate {
 
-	private final Long id;
-	private final String email;
-	private final String login;
-	private final String name;
-	private final LocalDate birthday;
+	Long id;
+	String email;
+	String login;
+	String name;
+	LocalDate birthday;
 
 	public boolean hasEmail() {
 		return !(email == null || email.isBlank());

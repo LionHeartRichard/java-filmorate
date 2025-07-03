@@ -1,18 +1,21 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
 public class Friend {
-	private Long primaryKey;
-	private Long userId;
-	private Long friendId;
+	Long primaryKey;
+	Long userId;
+	Long friendId;
 }

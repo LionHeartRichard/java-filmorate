@@ -7,20 +7,23 @@ import org.springframework.validation.annotation.Validated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.validation.Login;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Validated
 @Data
 public class UserDtoCreate {
 	@Email
-	private final String email;
+	String email;
 	@Login
-	private final String login;
+	String login;
 	@Size(max = 100)
-	private final String name;
+	String name;
 	@Past
-	private final LocalDate birthday;
+	LocalDate birthday;
 
 	public boolean hasName() {
 		return !(name == null || name.isBlank());

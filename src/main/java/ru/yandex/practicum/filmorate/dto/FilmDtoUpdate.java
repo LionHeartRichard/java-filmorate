@@ -2,20 +2,23 @@ package ru.yandex.practicum.filmorate.dto;
 
 import java.time.LocalDate;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.util.GetConstants;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Data
 public class FilmDtoUpdate {
 
 	// @JsonProperty(access = JsonProperty.Access.READ_ONLY) ?!!!!!!!!!!!!!!
-	private final Long id;
-	private final String name;
-	private final String description;
-	private final LocalDate releaseDate;
-	private final Integer duration;
-	private final Mpa mpa;
+	Long id;
+	String name;
+	String description;
+	LocalDate releaseDate;
+	Integer duration;
+	Mpa mpa;
 
 	public boolean hasName() {
 		return !(name == null || name.isBlank() || name.length() > 100);

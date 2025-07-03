@@ -3,17 +3,20 @@ package ru.yandex.practicum.filmorate.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Data
 public class FilmAnsDto {
-	private final Long id;
-	private final String name;
-	private final String description;
-	private final LocalDate releaseDate;
-	private final Integer duration;
-	private final Mpa mpa;
-	private final List<Genre> genres;
+	Long id;
+	String name;
+	String description;
+	LocalDate releaseDate;
+	Integer duration;
+	Mpa mpa;
+	List<Genre> genres;
 }

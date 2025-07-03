@@ -9,7 +9,9 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
 import ru.yandex.practicum.filmorate.dto.FilmDtoCreate;
@@ -28,6 +30,7 @@ import ru.yandex.practicum.filmorate.repositories.MpaRepository;
 import ru.yandex.practicum.filmorate.repositories.UserRepository;
 import ru.yandex.practicum.filmorate.util.dtomapper.DtoMapperFilm;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -37,12 +40,12 @@ public class FilmService {
 	private static final String FILM_NOT_FOUND = "Failed in FilmService! Film not found!";
 	private static final String USER_NOT_FOUND = "Failed in FilmService! User not found";
 
-	private final FilmRepository repFilm;
-	private final LikeRepository repLike;
-	private final GenreRepository repGenre;
-	private final MpaRepository repMpa;
-	private final UserRepository repUser;
-	private final FilmGenreRepository repFilmGenre;
+	FilmRepository repFilm;
+	LikeRepository repLike;
+	GenreRepository repGenre;
+	MpaRepository repMpa;
+	UserRepository repUser;
+	FilmGenreRepository repFilmGenre;
 
 	public FilmAnsDto create(FilmDtoCreate dto) {
 
