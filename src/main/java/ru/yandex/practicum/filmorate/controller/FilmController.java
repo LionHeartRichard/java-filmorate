@@ -73,9 +73,18 @@ public class FilmController {
 		filmService.deleteLike(id, userId);
 	}
 
+	// Replace with lower one
+//	@GetMapping("/popular")
+//	public List<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count) {
+//		log.trace("GET /films/popular");
+//		return filmService.findTopFilm(count);
+//	}
+
 	@GetMapping("/popular")
-	public List<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count) {
+	public List<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count,
+											  @RequestParam(required = false) Long genreId,
+											  @RequestParam(required = false) Integer year) {
 		log.trace("GET /films/popular");
-		return filmService.findTopFilm(count);
+		return filmService.findTopFilm(count, genreId, year);
 	}
 }

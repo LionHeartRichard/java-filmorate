@@ -141,6 +141,7 @@ public class FilmService {
 		repLike.deleteLike(filmId, userId);
 	}
 
+	// Replace with filtered version
 	public List<Film> findTopFilm(Integer limit) {
 		Map<Long, Integer> swap = repLike.getTopFilms(limit);
 		List<Film> ans = new ArrayList<>();
@@ -149,6 +150,17 @@ public class FilmService {
 			if (filmOpt.isPresent()) {
 				ans.add(filmOpt.get());
 			}
+		});
+		return ans;
+	}
+
+	public List<Film> findTopFilm(Integer limit, Long genreId, Integer year) {
+		Map<Long, Integer> swap = repLike.getTopFilms(limit, genreId, year);
+		List<Film> ans = new ArrayList<>();
+		swap.forEach((k, v) -> {
+			Optional<Film> filmOpt = repFilm.findById(k);
+			if (filmOpt.isPresent())
+				ans.add(filmOpt.get());
 		});
 		return ans;
 	}
