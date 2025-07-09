@@ -5,6 +5,7 @@ import java.util.List;
 import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
 import ru.yandex.practicum.filmorate.dto.FilmDtoCreate;
 import ru.yandex.practicum.filmorate.dto.FilmDtoUpdate;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -53,8 +54,8 @@ public class DtoMapperFilm {
 		return film;
 	}
 
-	public static FilmAnsDto getAnsDtoForFilm(Film film, Mpa mpa, List<Genre> genres) {
+	public static FilmAnsDto getAnsDtoForFilm(Film film, Mpa mpa, List<Genre> genres, List<Director> directors) {
 		return new FilmAnsDto(film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
-				film.getDuration(), mpa, genres);
+				film.getDuration(), mpa, genres, directors);
 	}
 }

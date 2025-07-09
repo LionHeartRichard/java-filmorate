@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -16,18 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
 import ru.yandex.practicum.filmorate.dto.FilmDtoCreate;
 import ru.yandex.practicum.filmorate.dto.FilmDtoUpdate;
+import ru.yandex.practicum.filmorate.dto.FilmWithDirectorsDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.FilmGenre;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Like;
-import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.repositories.FilmGenreRepository;
-import ru.yandex.practicum.filmorate.repositories.FilmRepository;
-import ru.yandex.practicum.filmorate.repositories.GenreRepository;
-import ru.yandex.practicum.filmorate.repositories.LikeRepository;
-import ru.yandex.practicum.filmorate.repositories.MpaRepository;
-import ru.yandex.practicum.filmorate.repositories.UserRepository;
+import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.repositories.*;
 import ru.yandex.practicum.filmorate.util.dtomapper.DtoMapperFilm;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -46,6 +39,7 @@ public class FilmService {
 	MpaRepository repMpa;
 	UserRepository repUser;
 	FilmGenreRepository repFilmGenre;
+	DirectorRepository repDirector;
 
 	public FilmAnsDto create(FilmDtoCreate dto) {
 
@@ -76,7 +70,12 @@ public class FilmService {
 			});
 			log.trace("Done: save genres in DB");
 		}
-		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres);
+
+		List<Director> directors = dto.getDirectors();
+		repFilm.saveFilmDirectors(film, directors);
+		directors = repDirector.findByFilmId(film.getId());
+
+		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors);
 		return ans;
 	}
 
@@ -101,7 +100,11 @@ public class FilmService {
 				genres.add(genreOpt.get());
 		}
 
-		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres);
+		List<Director> directors = dto.getDirectors();
+		repFilm.saveFilmDirectors(film, directors);
+		directors = repDirector.findByFilmId(film.getId());
+
+		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors);
 		return ans;
 	}
 
@@ -120,7 +123,9 @@ public class FilmService {
 				genres.add(genreOpt.get());
 		});
 
-		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres);
+		List<Director> directors = repDirector.findByFilmId(film.getId());
+
+		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors);
 		return ans;
 	}
 
@@ -151,6 +156,25 @@ public class FilmService {
 			}
 		});
 		return ans;
+	}
+
+	public List<FilmWithDirectorsDto> findByDirector(Long directorId, String sortBy) {
+		repDirector.findById(directorId).orElseThrow(() -> new NotFoundException("Director not found"));
+
+		List<Film> films = repFilm.findByDirector(directorId, sortBy);
+
+        return films.stream()
+                .map(film -> {
+                    FilmWithDirectorsDto dto = new FilmWithDirectorsDto();
+                    dto.setId(film.getId());
+                    dto.setName(film.getName());
+                    dto.setDescription(film.getDescription());
+                    dto.setReleaseDate(film.getReleaseDate());
+                    dto.setDuration(film.getDuration());
+                    dto.setDirectors(repDirector.findByFilmId(film.getId()));
+                    return dto;
+                })
+                .collect(Collectors.toList());
 	}
 
 	private void validationForLike(Long filmId, Long userId) {

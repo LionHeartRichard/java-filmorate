@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.dto.FilmWithDirectorsDto;
 import ru.yandex.practicum.filmorate.util.GetConstants;
 import ru.yandex.practicum.filmorate.util.LocalValidator;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -77,5 +78,14 @@ public class FilmController {
 	public List<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count) {
 		log.trace("GET /films/popular");
 		return filmService.findTopFilm(count);
+	}
+
+	@GetMapping("/director/{directorId}")
+	public List<FilmWithDirectorsDto> findByDirector(
+			@PathVariable("directorId") Long directorId,
+			@RequestParam (value = "sortBy", required = false) String sortBy
+	) {
+		log.trace("GET /director/{directorId}");
+		return filmService.findByDirector(directorId, sortBy);
 	}
 }

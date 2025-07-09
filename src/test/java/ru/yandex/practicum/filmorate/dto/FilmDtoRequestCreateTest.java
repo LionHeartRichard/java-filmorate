@@ -14,6 +14,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
@@ -32,8 +33,9 @@ public class FilmDtoRequestCreateTest {
 
 		Mpa mpa = new Mpa();
 		List<Genre> genres = new ArrayList<>();
+		List<Director> directors = new ArrayList<>();
 		final FilmDtoCreate film = new FilmDtoCreate("nisi eiusmod", "adipisicing", LocalDate.of(1967, 3, 25), 100, mpa,
-				genres);
+				genres, directors);
 
 		Set<ConstraintViolation<FilmDtoCreate>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
@@ -46,8 +48,9 @@ public class FilmDtoRequestCreateTest {
 
 		Mpa mpa = new Mpa();
 		List<Genre> genres = new ArrayList<>();
+		List<Director> directors = new ArrayList<>();
 		final FilmDtoCreate film = new FilmDtoCreate("nisi eiusmod", "adipisicing", LocalDate.of(1894, 3, 25), 100, mpa,
-				genres);
+				genres, directors);
 
 		Set<ConstraintViolation<FilmDtoCreate>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));
@@ -60,8 +63,9 @@ public class FilmDtoRequestCreateTest {
 
 		Mpa mpa = new Mpa();
 		List<Genre> genres = new ArrayList<>();
+		List<Director> directors = new ArrayList<>();
 		final FilmDtoCreate film = new FilmDtoCreate("nisi eiusmod", "adipisicing", LocalDate.of(2000, 3, 25), -100,
-				mpa, genres);
+				mpa, genres, directors);
 
 		Set<ConstraintViolation<FilmDtoCreate>> violations = validator.validate(film);
 		violations.forEach(violation -> log.error(violation.getMessage()));

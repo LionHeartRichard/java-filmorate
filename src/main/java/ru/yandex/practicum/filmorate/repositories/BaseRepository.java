@@ -64,4 +64,8 @@ public class BaseRepository<T> {
 			throw new InternalServerException("Failed! Data is not saved! Error: generated id == null");
 		return id;
 	}
+
+	protected void batchInsert(String query) {
+		jdbc.update(query);
+	}
 }
