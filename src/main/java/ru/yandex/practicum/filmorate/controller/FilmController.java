@@ -73,13 +73,14 @@ public class FilmController {
 		filmService.deleteLike(id, userId);
 	}
 
-	// Replace with lower one
+	// TODO: Remove and replace with lower one
 //	@GetMapping("/popular")
 //	public List<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count) {
 //		log.trace("GET /films/popular");
 //		return filmService.findTopFilm(count);
 //	}
 
+	//TODO: Write tests, and remove unnecessary function that were replaced
 	@GetMapping("/popular")
 	public List<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count,
 											  @RequestParam(required = false) Long genreId,
