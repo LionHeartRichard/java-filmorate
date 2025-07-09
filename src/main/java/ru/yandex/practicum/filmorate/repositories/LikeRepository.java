@@ -75,24 +75,6 @@ public class LikeRepository extends BaseRepository<Like> {
 		return delete(DELETE_LIKE, filmId, userId);
 	}
 
-
-	// TODO: Remove
-	public Map<Long, Integer> getTopFilms(int limit) {
-		String queryCount = String.format(
-				"SELECT film_id, COUNT(*) AS like_count FROM film_person GROUP BY film_id ORDER BY like_count DESC LIMIT %d",
-				limit);
-
-		return jdbc.query(queryCount, (rs) -> {
-			Map<Long, Integer> result = new LinkedHashMap<>();
-			while (rs.next()) {
-				Long filmId = rs.getLong("film_id");
-				Integer likeCount = rs.getInt("like_count");
-				result.put(filmId, likeCount);
-			}
-			return result;
-		});
-	}
-
 	public Map<Long, Integer> getTopFilms(int limit, Long genreId, Integer year) {
 		final String queryStart = "SELECT fp.film_id, COUNT(*) AS like_count FROM FILM_PERSON fp " +
 				"JOIN FILM f ON f.film_id = fp.film_id JOIN FILM_GENRE fg ON fg.film_id = f.film_id ";
