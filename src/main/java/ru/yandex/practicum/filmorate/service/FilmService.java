@@ -141,14 +141,13 @@ public class FilmService {
 		repLike.deleteLike(filmId, userId);
 	}
 
-	public List<Film> findTopFilm(Integer limit) {
-		Map<Long, Integer> swap = repLike.getTopFilms(limit);
+	public List<Film> findTopFilm(Integer limit, Long genreId, Integer year) {
+		Map<Long, Integer> swap = repLike.getTopFilms(limit, genreId, year);
 		List<Film> ans = new ArrayList<>();
 		swap.forEach((k, v) -> {
 			Optional<Film> filmOpt = repFilm.findById(k);
-			if (filmOpt.isPresent()) {
+			if (filmOpt.isPresent())
 				ans.add(filmOpt.get());
-			}
 		});
 		return ans;
 	}
