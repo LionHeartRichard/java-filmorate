@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.util.GetConstants;
 
@@ -19,6 +21,8 @@ public class FilmDtoUpdate {
 	LocalDate releaseDate;
 	Integer duration;
 	Mpa mpa;
+
+	List<Director> directors;
 
 	public boolean hasName() {
 		return !(name == null || name.isBlank() || name.length() > 100);
