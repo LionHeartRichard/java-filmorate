@@ -24,19 +24,13 @@ public class FilmRepository extends BaseRepository<Film> {
 
 	private static final String DELETE_FILM_BY_ID = "DELETE FROM film WHERE film_id = ?";
 
-	private static final String FIND_BY_DIRECTOR_QUERY =
+	private static final String FIND_BY_DIRECTOR_QUERY_BASE =
 			"SELECT f.* FROM film f " +
 			"JOIN film_director fd ON f.film_id = fd.film_id " +
-			"WHERE fd.director_id = ?";
-	private static final String FIND_BY_DIRECTOR_ORDER_BY_YEAR_QUERY =
-			"SELECT f.* FROM film f " +
-			"JOIN film_director fd ON f.film_id = fd.film_id " +
-			"WHERE fd.director_id = ? " +
+			"WHERE fd.director_id = ? ";
+	private static final String ORDER_BY_YEAR =
 			"ORDER BY f.release_date";
-	private static final String FIND_BY_DIRECTOR_ORDER_BY_LIKES_QUERY =
-			"SELECT f.* FROM film f " +
-			"JOIN film_director fd ON f.film_id = fd.film_id " +
-			"WHERE fd.director_id = ? " +
+	private static final String ORDER_BY_LIKES =
 			"ORDER BY (SELECT COUNT(*) FROM film_person WHERE film_id = f.film_id) DESC";
 
 	private static final String INSERT_FILM_DIRECTOR_QUERY =
@@ -85,15 +79,15 @@ public class FilmRepository extends BaseRepository<Film> {
 	public List<Film> findByDirector(Long directorId, String sortBy) {
 
 		if (sortBy == null || sortBy.isEmpty()) {
-			return findMany(FIND_BY_DIRECTOR_QUERY, directorId);
+			return findMany(FIND_BY_DIRECTOR_QUERY_BASE, directorId);
 		}
 
 		if (sortBy.equals("year")) {
-			return findMany(FIND_BY_DIRECTOR_ORDER_BY_YEAR_QUERY, directorId);
+			return findMany(FIND_BY_DIRECTOR_QUERY_BASE + ORDER_BY_YEAR, directorId);
 		} else if (sortBy.equals("likes")) {
-			return findMany(FIND_BY_DIRECTOR_ORDER_BY_LIKES_QUERY, directorId);
+			return findMany(FIND_BY_DIRECTOR_QUERY_BASE + ORDER_BY_LIKES, directorId);
 		} else {
-			return findMany(FIND_BY_DIRECTOR_QUERY, directorId);
+			return findMany(FIND_BY_DIRECTOR_QUERY_BASE, directorId);
 		}
 	}
 

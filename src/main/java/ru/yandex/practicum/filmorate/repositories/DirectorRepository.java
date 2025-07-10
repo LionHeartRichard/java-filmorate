@@ -12,23 +12,23 @@ import java.util.Optional;
 public class DirectorRepository extends BaseRepository<Director> {
 
     private static final String FIND_ALL_QUERY =
-        "SELECT d.* FROM director d";
+            "SELECT d.* FROM director d";
 
     private static final String FIND_BY_ID =
-        "SELECT d.* FROM director d WHERE director_id = ?";
+            "SELECT d.* FROM director d WHERE director_id = ?";
 
     private static final String FIND_DIRECTORS_BY_FILM_ID =
             "SELECT d.* FROM director d " +
-            "JOIN film_director fd ON d.director_id = fd.director_id " +
-            "WHERE fd.film_id = ?";
+                    "JOIN film_director fd ON d.director_id = fd.director_id " +
+                    "WHERE fd.film_id = ?";
 
     private static final String INSERT_QUERY =
-        "INSERT INTO director(name) VALUES (?)";
+            "INSERT INTO director(name) VALUES (?)";
     private static final String UPDATE_QUERY =
-        "UPDATE director SET name = ? WHERE director_id = ?";
+            "UPDATE director SET name = ? WHERE director_id = ?";
 
     private static final String DELETE_DIRECTOR_BY_ID =
-        "DELETE FROM director WHERE director_id = ?";
+            "DELETE FROM director WHERE director_id = ?";
 
     public DirectorRepository(JdbcTemplate jdbc, RowMapper<Director> mapper) {
         super(jdbc, mapper);
@@ -57,6 +57,4 @@ public class DirectorRepository extends BaseRepository<Director> {
     public List<Director> findByFilmId(Long id) {
         return findMany(FIND_DIRECTORS_BY_FILM_ID, id);
     }
-
-
 }
