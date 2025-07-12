@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import java.util.List;
 
+import jakarta.validation.constraints.Pattern;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.dto.FilmWithDirectorsDto;
 import ru.yandex.practicum.filmorate.util.GetConstants;
 import ru.yandex.practicum.filmorate.util.LocalValidator;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -83,11 +83,20 @@ public class FilmController {
 	}
 
 	@GetMapping("/director/{directorId}")
-	public List<FilmWithDirectorsDto> findByDirector(
+	public List<FilmAnsDto> findByDirector(
 			@PathVariable("directorId") Long directorId,
 			@RequestParam (value = "sortBy", required = false) String sortBy
 	) {
 		log.trace("GET /director/{directorId}");
 		return filmService.findByDirector(directorId, sortBy);
+	}
+
+	@GetMapping("/search")
+	public List<FilmAnsDto> searchFilms(
+			@RequestParam(required = false) String query,
+			@RequestParam(required = false) @Pattern(regexp = "title|director|title,director|director,title") String by
+	) {
+		log.trace("GET /films/search");
+		return filmService.searchFilms(query, by);
 	}
 }
