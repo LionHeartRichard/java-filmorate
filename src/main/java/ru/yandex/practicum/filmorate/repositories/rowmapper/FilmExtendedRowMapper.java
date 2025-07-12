@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class FilmExtendedRowMapper implements RowMapper<FilmAnsDto>  {
+public class FilmExtendedRowMapper implements RowMapper<FilmAnsDto> {
 
     public FilmAnsDto mapRow(ResultSet rs, int rowNum) throws SQLException {
         FilmAnsDto row = new FilmAnsDto();
@@ -47,9 +47,9 @@ public class FilmExtendedRowMapper implements RowMapper<FilmAnsDto>  {
         String directorsString = rs.getString("directors");
         String cleanDirectorsString = directorsString.replaceAll("\\[|\\]", "");
         List<Director> directors = new ArrayList<>();
-        if(directorsString != null) {
+        if (directorsString != null) {
             String[] directorPairs = cleanDirectorsString.split(",");
-            for (String pair: directorPairs) {
+            for (String pair : directorPairs) {
                 if (pair.equals("null")) continue;
                 String[] parts = pair.split(":");
                 Director director = new Director();
