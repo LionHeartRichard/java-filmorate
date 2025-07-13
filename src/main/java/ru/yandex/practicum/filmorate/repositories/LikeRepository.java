@@ -77,17 +77,12 @@ public class LikeRepository extends BaseRepository<Like> {
 
 	public Map<Long, Integer> getTopFilms(int limit, Long genreId, Integer year) {
 
-		final String beginQuery = 
-				"SELECT fp.film_id, COUNT(*) AS like_count "
-				+ "FROM FILM_PERSON fp, FILM f, FILM_GENRE fg "
-				+ "WHERE f.film_id = fp.film_id "
+		final String beginQuery = "SELECT fp.film_id, COUNT(*) AS like_count "
+				+ "FROM FILM_PERSON fp, FILM f, FILM_GENRE fg " + "WHERE f.film_id = fp.film_id "
 				+ "AND fg.film_id = f.film_id ";
-				
-		
-		final String endQuery = String.format(
-				" GROUP BY fp.film_id "
-				+ "ORDER BY like_count DESC "
-				+ "LIMIT %d", limit);
+
+		final String endQuery = String.format(" GROUP BY fp.film_id " + "ORDER BY like_count DESC " + "LIMIT %d",
+				limit);
 
 		final String query;
 
