@@ -93,11 +93,12 @@ public class FilmService {
 
 		List<Genre> genres = new ArrayList<>();
 		List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(film.getId());
-		for (FilmGenre v : filmGenres) {
+
+		filmGenres.forEach(v -> {
 			Optional<Genre> genreOpt = repGenre.findById(v.getGenreId());
 			if (genreOpt.isPresent())
 				genres.add(genreOpt.get());
-		}
+		});
 
 		List<Director> directors = dto.getDirectors();
 		repFilm.saveFilmDirectors(film, directors);
@@ -116,8 +117,8 @@ public class FilmService {
 
 		List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(film.getId());
 		List<Genre> genres = new ArrayList<>();
-		filmGenres.forEach(v -> {
-			Optional<Genre> genreOpt = repGenre.findById(v.getGenreId());
+		filmGenres.forEach(value -> {
+			Optional<Genre> genreOpt = repGenre.findById(value.getGenreId());
 			if (genreOpt.isPresent())
 				genres.add(genreOpt.get());
 		});
@@ -145,13 +146,29 @@ public class FilmService {
 		repLike.deleteLike(filmId, userId);
 	}
 
-	public List<Film> findTopFilm(Integer limit, Long genreId, Integer year) {
+	public List<FilmAnsDto> findTopFilm(Integer limit, Long genreId, Integer year) {
 		Map<Long, Integer> swap = repLike.getTopFilms(limit, genreId, year);
-		List<Film> ans = new ArrayList<>();
+		List<FilmAnsDto> ans = new ArrayList<>();
 		swap.forEach((k, v) -> {
 			Optional<Film> filmOpt = repFilm.findById(k);
-			if (filmOpt.isPresent())
-				ans.add(filmOpt.get());
+			if (filmOpt.isPresent()) {
+				Film film = filmOpt.get();
+
+				Mpa mpa = repMpa.findById(film.getMpaId()).orElseThrow(() -> new NotFoundException(MPA_NOT_FOUND));
+
+				List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(film.getId());
+				List<Genre> genres = new ArrayList<>();
+				filmGenres.forEach(value -> {
+					Optional<Genre> genreOpt = repGenre.findById(value.getGenreId());
+					if (genreOpt.isPresent())
+						genres.add(genreOpt.get());
+				});
+
+				List<Director> directors = repDirector.findByFilmId(film.getId());
+
+				ans.add(DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors));
+			}
+
 		});
 		return ans;
 	}

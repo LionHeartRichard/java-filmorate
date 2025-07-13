@@ -78,7 +78,7 @@ public class FilmController {
 	}
 
 	@GetMapping("/popular")
-	public List<Film> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count,
+	public List<FilmAnsDto> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count,
 			@RequestParam(required = false) Long genreId, @RequestParam(required = false) Integer year) {
 		log.trace("GET /films/popular");
 		return filmService.findTopFilm(count, genreId, year);
