@@ -3,16 +3,16 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
-import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.dto.FilmRecommendationResponse;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.repositories.FilmGenreRepository;
 import ru.yandex.practicum.filmorate.repositories.FilmRepository;
 import ru.yandex.practicum.filmorate.repositories.LikeRepository;
+import ru.yandex.practicum.filmorate.util.dtomapper.DtoMapperFilm;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static ru.yandex.practicum.filmorate.util.dtomapper.DtoMapperFilm.getAnsDtoForFilm;
 
 @Slf4j
 @Service
@@ -26,7 +26,7 @@ public class RecommendationsService {
     private final MpaService mpaService;
     private final GenreService genreService;
 
-    public List<FilmAnsDto> getFilmRecommendations(Long userId) {
+    public List<FilmRecommendationResponse> getFilmRecommendations(Long userId) {
         log.info("Starting search recommendations for user {}", userId);
         userService.findById(userId);
 
@@ -36,7 +36,7 @@ public class RecommendationsService {
         List<Long> similarUsers = findSimilarUsers(userId, userLikes);
         log.info("Found {} similar users for user {}", similarUsers.size(), userId);
 
-        List<FilmAnsDto> recommendations = getRecommendedFilms(userId, similarUsers, userLikes);
+        List<FilmRecommendationResponse> recommendations = getRecommendedFilms(userId, similarUsers, userLikes);
         log.info("Generated {} recommendations for user {}", recommendations.size(), userId);
 
         return recommendations;
@@ -91,12 +91,12 @@ public class RecommendationsService {
         return count;
     }
 
-    private List<FilmAnsDto> getRecommendedFilms(Long userId, List<Long> similarUsers, Map<Long, List<Long>> userLikes) {
+    private List<FilmRecommendationResponse> getRecommendedFilms(Long userId, List<Long> similarUsers, Map<Long, List<Long>> userLikes) {
         log.trace("Getting recommended films for user {}", userId);
         Set<Long> recommendedFilmIds = getRecommendedFilmIds(userId, similarUsers, userLikes);
         log.debug("Found {} unique recommended film IDs", recommendedFilmIds.size());
 
-        return prepareFilmAnsDtos(recommendedFilmIds);
+        return getFilmRecommendationResponses(recommendedFilmIds);
     }
 
     private Set<Long> getRecommendedFilmIds(Long userId, List<Long> similarUsers, Map<Long, List<Long>> userLikes) {
@@ -116,50 +116,17 @@ public class RecommendationsService {
         return recommendations;
     }
 
-    private List<FilmAnsDto> prepareFilmAnsDtos(Set<Long> filmIds) {
+    private List<FilmRecommendationResponse> getFilmRecommendationResponses(Set<Long> filmIds) {
         if (filmIds.isEmpty()) {
             log.debug("No film IDs provided for DTO preparation");
             return Collections.emptyList();
         }
 
-        log.trace("Preparing FilmAnsDtos for {} films", filmIds.size());
         List<Film> films = filmRepository.findFilmsByIds(filmIds);
         log.debug("Retrieved {} films from repository", films.size());
 
-        List<FilmGenre> filmGenres = filmGenreRepository.findFilmGenresByIds(filmIds);
-        log.debug("Retrieved {} film-genre relations", filmGenres.size());
-
-        List<Mpa> mpaList = mpaService.read();
-        List<Genre> genreList = genreService.read();
-        log.trace("Retrieved MPA and genre lists");
-
-        Map<Long, Mpa> mpaMap = new HashMap<>();
-        for (Mpa mpa : mpaList) {
-            mpaMap.put(mpa.getId(), mpa);
-        }
-
-        Map<Long, Genre> genreMap = new HashMap<>();
-        for (Genre genre : genreList) {
-            genreMap.put(genre.getId(), genre);
-        }
-
-        Map<Long, List<Genre>> filmGenresMap = new HashMap<>();
-        for (FilmGenre filmGenre : filmGenres) {
-            Genre genre = genreMap.get(filmGenre.getGenreId());
-            if (genre != null) {
-                List<Genre> genres = filmGenresMap.computeIfAbsent(filmGenre.getFilmId(), k -> new ArrayList<>());
-                genres.add(genre);
-            }
-        }
-        log.trace("Processed film-genre mappings");
-
-        List<FilmAnsDto> filmAnsDtos = new ArrayList<>();
-        for (Film film : films) {
-            Mpa mpa = mpaMap.get(film.getMpaId());
-            List<Genre> genres = filmGenresMap.getOrDefault(film.getId(), Collections.emptyList());
-            filmAnsDtos.add(getAnsDtoForFilm(film, mpa, genres));
-        }
-
-        return filmAnsDtos;
+        return films.stream()
+                .map(DtoMapperFilm::getFilmRecommendationResponse)
+                .collect(Collectors.toList());
     }
 }
