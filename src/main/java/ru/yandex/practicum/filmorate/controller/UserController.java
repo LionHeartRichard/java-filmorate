@@ -94,4 +94,11 @@ public class UserController {
 		return service.commonFriends(id, friendId);
 	}
 
+	@DeleteMapping("/{id}")
+	public void deleteUser(@PathVariable final Long id) {
+		log.trace("DELETE users/{id}");
+		validator.positiveValue(id, String.format(NOT_NEGATIVE, id));
+		service.deleteUser(id);
+	}
+
 }

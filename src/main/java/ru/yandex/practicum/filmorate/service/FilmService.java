@@ -169,4 +169,12 @@ public class FilmService {
 		repFilm.findById(filmId).orElseThrow(() -> new NotFoundException(FILM_NOT_FOUND));
 		repUser.findById(userId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 	}
+
+	public void deleteFilm(Long id) {
+		repFilm.findById(id).orElseThrow(() -> new NotFoundException("Failed delete film! Film not found!"));
+		repLike.deleteByFilmId(id);
+		repFilmGenre.deleteByFilmId(id);
+		repDirector.deleteByFilmId(id);
+		repFilm.deleteFilmById(id);
+	}
 }
