@@ -21,7 +21,6 @@ public class FilmDtoUpdate {
 	LocalDate releaseDate;
 	Integer duration;
 	Mpa mpa;
-
 	List<Director> directors;
 
 	public boolean hasName() {

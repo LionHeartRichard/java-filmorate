@@ -43,7 +43,7 @@ public class FilmController {
 	}
 
 	@GetMapping
-	public List<Film> read() {
+	public List<FilmAnsDto> read() {
 		log.trace("GET /films");
 		return filmService.read();
 	}
