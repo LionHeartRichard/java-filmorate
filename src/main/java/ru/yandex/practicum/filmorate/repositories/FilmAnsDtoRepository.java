@@ -81,6 +81,7 @@ public class FilmAnsDtoRepository extends BaseRepository<FilmAnsDto> {
 
     public List<FilmAnsDto> getFilms() {
         String query = String.join(" ", SELECT, GROUP);
-        return findMany(query);
+        List<FilmAnsDto> filmAnsDtos = findMany(query);
+        return filmAnsDtos;
     }
 }
