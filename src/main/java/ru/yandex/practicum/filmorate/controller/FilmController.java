@@ -78,4 +78,12 @@ public class FilmController {
 		log.trace("GET /films/popular");
 		return filmService.findTopFilm(count);
 	}
+
+	@GetMapping("/common")
+	public List<Film> findCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) {
+		log.trace("GET /films/common");
+		validator.positiveValue(userId, String.format("ID cannot be negative, userId: %d", userId));
+		validator.positiveValue(friendId, String.format("ID cannot be negative, filmId: %d", friendId));
+		return filmService.findCommonFilms(userId, friendId);
+	}
 }
