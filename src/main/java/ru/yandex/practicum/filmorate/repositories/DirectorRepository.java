@@ -27,6 +27,9 @@ public class DirectorRepository extends BaseRepository<Director> {
     private static final String UPDATE_QUERY =
             "UPDATE director SET name = ? WHERE director_id = ?";
 
+    private static final String DELETE_FILM_DIRECTOR_BY_DIRECTOR_ID =
+            "DELETE FROM film_director WHERE director_id = ?";
+
     private static final String DELETE_DIRECTOR_BY_ID =
             "DELETE FROM director WHERE director_id = ?";
 
@@ -51,6 +54,7 @@ public class DirectorRepository extends BaseRepository<Director> {
     }
 
     public boolean deleteById(Long id) {
+        delete(DELETE_FILM_DIRECTOR_BY_DIRECTOR_ID, id);
         return delete(DELETE_DIRECTOR_BY_ID, id);
     }
 

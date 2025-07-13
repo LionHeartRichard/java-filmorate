@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
 import ru.yandex.practicum.filmorate.dto.FilmDtoCreate;
 import ru.yandex.practicum.filmorate.dto.FilmDtoUpdate;
-import ru.yandex.practicum.filmorate.dto.FilmWithDirectorsDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.repositories.*;
@@ -40,6 +38,7 @@ public class FilmService {
 	UserRepository repUser;
 	FilmGenreRepository repFilmGenre;
 	DirectorRepository repDirector;
+	FilmExtendedRepository repFilmExtended;
 
 	public FilmAnsDto create(FilmDtoCreate dto) {
 
@@ -157,23 +156,13 @@ public class FilmService {
 		return ans;
 	}
 
-	public List<FilmWithDirectorsDto> findByDirector(Long directorId, String sortBy) {
+	public List<FilmAnsDto> findByDirector(Long directorId, String sortBy) {
 		repDirector.findById(directorId).orElseThrow(() -> new NotFoundException("Director not found"));
+		return repFilmExtended.getFilmsByDirectorId(directorId, sortBy);
+	}
 
-		List<Film> films = repFilm.findByDirector(directorId, sortBy);
-
-        return films.stream()
-                .map(film -> {
-                    FilmWithDirectorsDto dto = new FilmWithDirectorsDto();
-                    dto.setId(film.getId());
-                    dto.setName(film.getName());
-                    dto.setDescription(film.getDescription());
-                    dto.setReleaseDate(film.getReleaseDate());
-                    dto.setDuration(film.getDuration());
-                    dto.setDirectors(repDirector.findByFilmId(film.getId()));
-                    return dto;
-                })
-                .collect(Collectors.toList());
+	public List<FilmAnsDto> searchFilms(String subString, String by) {
+		return repFilmExtended.searchFilms(subString, by);
 	}
 
 	private void validationForLike(Long filmId, Long userId) {

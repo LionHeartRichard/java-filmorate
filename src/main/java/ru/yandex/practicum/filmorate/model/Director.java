@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,6 +11,8 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @EqualsAndHashCode
 public class Director {
-    private Long id;
-    private String name;
+    Long id;
+
+    @NotBlank(message = "Имя режиссера не может быть пустым")
+    String name;
 }
