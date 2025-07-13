@@ -31,50 +31,48 @@ public class FilmExtendedRepository {
                     "LEFT JOIN film_genre fg ON f.film_id = fg.film_id " +
                     "LEFT JOIN genre g ON fg.genre_id = g.genre_id " +
                     "LEFT JOIN film_director fd ON f.film_id = fd.film_id " +
-                    "LEFT JOIN director d ON fd.director_id = d.director_id ";
+                    "LEFT JOIN director d ON fd.director_id = d.director_id";
     private static final String WHERE =
-            "WHERE ";
-    private static final String CONDITION_BY_TITLE = "UPPER(f.name) LIKE UPPER(?) ";
-    private static final String OR = "OR ";
-    private static final String CONDITION_BY_DIRECTOR = "UPPER(d.name) LIKE UPPER(?) ";
-    private static final String CONDITION_BY_DIRECTOR_ID = "d.director_id = ? ";
-    private static final String GROUP = "GROUP BY f.film_id, f.name, f.description, f.release_date, f.duration, m.id, m.name ";
-    private static final String ORDER_BY_LIKES = "ORDER BY (SELECT COUNT(*) FROM film_person WHERE film_id = f.film_id) DESC ";
+            "WHERE";
+    private static final String CONDITION_BY_TITLE = "UPPER(f.name) LIKE UPPER(?)";
+    private static final String OR = "OR";
+    private static final String CONDITION_BY_DIRECTOR = "UPPER(d.name) LIKE UPPER(?)";
+    private static final String CONDITION_BY_DIRECTOR_ID = "d.director_id = ?";
+    private static final String GROUP = "GROUP BY f.film_id, f.name, f.description, f.release_date, f.duration, m.id, m.name";
+    private static final String ORDER_BY_LIKES = "ORDER BY (SELECT COUNT(*) FROM film_person WHERE film_id = f.film_id) DESC";
     private static final String ORDER_BY_YEAR = "ORDER BY f.release_date";
 
     public List<FilmAnsDto> getFilmsByDirectorId(Long directorId, String sortBy) {
-        String query = "";
+        String query = String.join(" ", SELECT, WHERE, CONDITION_BY_DIRECTOR_ID, GROUP);
 
-        if (sortBy == null || sortBy.isEmpty()) {
-            query = SELECT + WHERE + CONDITION_BY_DIRECTOR_ID + GROUP;
+        if (sortBy == null) {
             return jdbc.query(query, mapper, directorId);
         }
 
         if (sortBy.equals("year")) {
-            query = SELECT + WHERE + CONDITION_BY_DIRECTOR_ID + GROUP + ORDER_BY_YEAR;
+            query = String.join(" ", query, ORDER_BY_YEAR);
             return jdbc.query(query, mapper, directorId);
         } else if (sortBy.equals("likes")) {
-            query = SELECT + WHERE + CONDITION_BY_DIRECTOR_ID + GROUP + ORDER_BY_LIKES;
-            return jdbc.query(query, mapper, directorId);
-        } else {
-            query = SELECT + WHERE + CONDITION_BY_DIRECTOR_ID + GROUP;
+            query = String.join(" ", query, ORDER_BY_LIKES);
             return jdbc.query(query, mapper, directorId);
         }
+
+        return jdbc.query(query, mapper, directorId);
     }
 
     public List<FilmAnsDto> searchFilms(String subString, String by) {
-        String query = "";
+        String query = String.join(" ", SELECT, WHERE);
 
         switch (by) {
             case "title":
-                query = SELECT + WHERE + CONDITION_BY_TITLE + GROUP + ORDER_BY_LIKES;
+                query = String.join(" ", query, CONDITION_BY_TITLE, GROUP, ORDER_BY_LIKES);
                 return jdbc.query(query, mapper, "%" + subString + "%");
             case "director":
-                query = SELECT + WHERE + CONDITION_BY_DIRECTOR + GROUP + ORDER_BY_LIKES;
+                query = String.join(" ", query, CONDITION_BY_DIRECTOR, GROUP, ORDER_BY_LIKES);
                 return jdbc.query(query, mapper, "%" + subString + "%");
             case "title,director":
             case "director,title":
-                query = SELECT + WHERE + CONDITION_BY_TITLE + OR + CONDITION_BY_DIRECTOR + GROUP + ORDER_BY_LIKES;
+                query = String.join(" ", query, CONDITION_BY_TITLE, OR, CONDITION_BY_DIRECTOR, GROUP, ORDER_BY_LIKES);
                 return jdbc.query(query, mapper, "%" + subString + "%", "%" + subString + "%");
             default:
                 return Collections.emptyList();
