@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @ComponentScan("ru.yandex.practicum.filmorate")
-public class FilmExtendedRepositoryAppTest {
+public class FilmAnsDtoRepositoryAppTest {
 
     @Autowired
     private final FilmRepository filmRepository;
 
     @Autowired
-    private final FilmExtendedRepository filmExtendedRepository;
+    private final FilmAnsDtoRepository filmAnsDtoRepository;
 
     @Autowired
     private final DirectorRepository directorRepository;
@@ -57,13 +57,13 @@ public class FilmExtendedRepositoryAppTest {
     void getFilmsByDirectorIdTest() {
         List<Director> directors = directorRepository.findAll();
 
-        List<FilmAnsDto> result = filmExtendedRepository.getFilmsByDirectorId(directors.getFirst().getId(), "year");
+        List<FilmAnsDto> result = filmAnsDtoRepository.getFilmsByDirectorId(directors.getFirst().getId(), "year");
         assertTrue(!result.isEmpty());
     }
 
     @Test
     void searchFilmsTest() {
-        List<FilmAnsDto> result = filmExtendedRepository.searchFilms("am", "title");
+        List<FilmAnsDto> result = filmAnsDtoRepository.searchFilms("am", "title");
         assertTrue(!result.isEmpty());
     }
 

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class FilmExtendedRowMapper implements RowMapper<FilmAnsDto> {
+public class FilmAnsDtoRowMapper implements RowMapper<FilmAnsDto> {
 
     public FilmAnsDto mapRow(ResultSet rs, int rowNum) throws SQLException {
         FilmAnsDto row = new FilmAnsDto();
