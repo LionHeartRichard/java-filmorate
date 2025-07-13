@@ -4,10 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
 import ru.yandex.practicum.filmorate.dto.UserDtoCreate;
 import ru.yandex.practicum.filmorate.dto.UserDtoUpdate;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.RecommendationsService;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -90,7 +90,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/recommendations")
-    public List<Film> getFilmRecommendations(@PathVariable final Long id) {
+    public List<FilmAnsDto> getFilmRecommendations(@PathVariable final Long id) {
         log.trace("GET users/{id}/recommendations");
         validator.positiveValue(id, String.format(NOT_NEGATIVE, id));
         return recommendationsService.getFilmRecommendations(id);

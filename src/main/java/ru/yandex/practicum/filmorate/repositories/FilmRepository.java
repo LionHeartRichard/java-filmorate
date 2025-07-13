@@ -1,13 +1,14 @@
 package ru.yandex.practicum.filmorate.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import ru.yandex.practicum.filmorate.model.Film;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class FilmRepository extends BaseRepository<Film> {
@@ -16,6 +17,7 @@ public class FilmRepository extends BaseRepository<Film> {
 	private static final String FIND_BY_NAME = "SELECT * FROM film WHERE name LIKE ?";
 	private static final String FIND_BY_FULL_NAME = "SELECT * FROM film WHERE name = ?";
 	private static final String FIND_BY_ID_QUERY = "SELECT * FROM film WHERE film_id = ?";
+	private static final String FIND_BY_IDS_QUERY = "SELECT * FROM film WHERE film_id IN (%s)";
 
 	private static final String INSERT_QUERY = "INSERT INTO film(name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
 	private static final String UPDATE_QUERY = "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE film_id = ?";
@@ -59,4 +61,9 @@ public class FilmRepository extends BaseRepository<Film> {
 		return delete(DELETE_FILM_BY_ID, id);
 	}
 
+	public List<Film> findFilmsByIds(Set<Long> filmIds) {
+		String params = String.join(",", Collections.nCopies(filmIds.size(), "?"));
+		String sql = String.format(FIND_BY_IDS_QUERY, params);
+		return findMany(sql, filmIds.toArray());
+	}
 }
