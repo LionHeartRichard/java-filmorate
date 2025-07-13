@@ -5,10 +5,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.FilmGenre;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public class FilmGenreRepository extends BaseRepository<FilmGenre> {
@@ -17,7 +15,6 @@ public class FilmGenreRepository extends BaseRepository<FilmGenre> {
 	private static final String FIND_BY_PK = "SELECT * FROM film_genre WHERE film_genre_id = ?";
 	private static final String FIND_BY_FILM_ID = "SELECT * FROM film_genre WHERE film_id = ?";
 	private static final String FIND_BY_GENRE_ID = "SELECT * FROM film_genre WHERE genre_id = ?";
-	private static final String FIND_BY_IDS_QUERY = "SELECT * FROM film_genre WHERE film_id IN (%s)";
 
 	private static final String INSERT_QUERY = "INSERT INTO film_genre(film_id, genre_id) VALUES (?, ?)";
 
@@ -66,11 +63,5 @@ public class FilmGenreRepository extends BaseRepository<FilmGenre> {
 
 	public boolean deleteByFilmIdAndGenreId(Long filmId, Long genreId) {
 		return delete(DELETE_BY_FILM_ID_AND_GENRE_ID, filmId, genreId);
-	}
-
-	public List<FilmGenre> findFilmGenresByIds(Set<Long> filmIds) {
-		String params = String.join(",", Collections.nCopies(filmIds.size(), "?"));
-		String sql = String.format(FIND_BY_IDS_QUERY, params);
-		return findMany(sql, filmIds.toArray());
 	}
 }
