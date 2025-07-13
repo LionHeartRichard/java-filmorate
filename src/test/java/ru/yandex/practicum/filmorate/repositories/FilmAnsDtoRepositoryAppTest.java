@@ -67,4 +67,10 @@ public class FilmAnsDtoRepositoryAppTest {
         assertTrue(!result.isEmpty());
     }
 
+    @Test
+    void getFilmsTest() {
+        List<FilmAnsDto> actual = filmAnsDtoRepository.getFilms();
+        assertTrue(!actual.isEmpty());
+    }
+
 }

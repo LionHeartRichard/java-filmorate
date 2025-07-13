@@ -37,7 +37,7 @@ public class FilmAnsDtoRowMapper implements RowMapper<FilmAnsDto> {
                 if (pair.equals("null")) continue;
                 String[] parts = pair.split(":");
                 Genre genre = new Genre();
-                genre.setId(Long.parseLong(parts[0]));
+                genre.setId(Long.parseLong(parts[0].trim()));
                 genre.setName(parts[1]);
                 genres.add(genre);
             }
@@ -53,7 +53,7 @@ public class FilmAnsDtoRowMapper implements RowMapper<FilmAnsDto> {
                 if (pair.equals("null")) continue;
                 String[] parts = pair.split(":");
                 Director director = new Director();
-                director.setId(Long.parseLong(parts[0]));
+                director.setId(Long.parseLong(parts[0].trim()));
                 director.setName(parts[1]);
                 directors.add(director);
             }
