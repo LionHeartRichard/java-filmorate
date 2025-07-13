@@ -1,19 +1,15 @@
 package ru.yandex.practicum.filmorate.repositories;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
-import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmExtendedRowMapper;
 
 import java.util.Collections;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
-public class FilmExtendedRepository {
-    protected final JdbcTemplate jdbc;
-    protected final FilmExtendedRowMapper mapper;
+public class FilmAnsDtoRepository extends BaseRepository<FilmAnsDto> {
 
     private static final String SELECT =
             "SELECT " +
@@ -42,22 +38,26 @@ public class FilmExtendedRepository {
     private static final String ORDER_BY_LIKES = "ORDER BY (SELECT COUNT(*) FROM film_person WHERE film_id = f.film_id) DESC";
     private static final String ORDER_BY_YEAR = "ORDER BY f.release_date";
 
+    public FilmAnsDtoRepository(JdbcTemplate jdbc, RowMapper<FilmAnsDto> mapper) {
+        super(jdbc, mapper);
+    }
+
     public List<FilmAnsDto> getFilmsByDirectorId(Long directorId, String sortBy) {
         String query = String.join(" ", SELECT, WHERE, CONDITION_BY_DIRECTOR_ID, GROUP);
 
         if (sortBy == null) {
-            return jdbc.query(query, mapper, directorId);
+            return findMany(query, directorId);
         }
 
         if (sortBy.equals("year")) {
             query = String.join(" ", query, ORDER_BY_YEAR);
-            return jdbc.query(query, mapper, directorId);
+            return findMany(query, directorId);
         } else if (sortBy.equals("likes")) {
             query = String.join(" ", query, ORDER_BY_LIKES);
-            return jdbc.query(query, mapper, directorId);
+            return findMany(query, directorId);
         }
 
-        return jdbc.query(query, mapper, directorId);
+        return findMany(query, directorId);
     }
 
     public List<FilmAnsDto> searchFilms(String subString, String by) {
@@ -66,14 +66,14 @@ public class FilmExtendedRepository {
         switch (by) {
             case "title":
                 query = String.join(" ", query, CONDITION_BY_TITLE, GROUP, ORDER_BY_LIKES);
-                return jdbc.query(query, mapper, "%" + subString + "%");
+                return findMany(query, "%" + subString + "%");
             case "director":
                 query = String.join(" ", query, CONDITION_BY_DIRECTOR, GROUP, ORDER_BY_LIKES);
-                return jdbc.query(query, mapper, "%" + subString + "%");
+                return findMany(query, "%" + subString + "%");
             case "title,director":
             case "director,title":
                 query = String.join(" ", query, CONDITION_BY_TITLE, OR, CONDITION_BY_DIRECTOR, GROUP, ORDER_BY_LIKES);
-                return jdbc.query(query, mapper, "%" + subString + "%", "%" + subString + "%");
+                return findMany(query, "%" + subString + "%", "%" + subString + "%");
             default:
                 return Collections.emptyList();
         }

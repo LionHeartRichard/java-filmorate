@@ -38,7 +38,7 @@ public class FilmService {
 	UserRepository repUser;
 	FilmGenreRepository repFilmGenre;
 	DirectorRepository repDirector;
-	FilmExtendedRepository repFilmExtended;
+	FilmAnsDtoRepository repFilmAnsDto;
 
 	public FilmAnsDto create(FilmDtoCreate dto) {
 
@@ -158,11 +158,11 @@ public class FilmService {
 
 	public List<FilmAnsDto> findByDirector(Long directorId, String sortBy) {
 		repDirector.findById(directorId).orElseThrow(() -> new NotFoundException("Director not found"));
-		return repFilmExtended.getFilmsByDirectorId(directorId, sortBy);
+		return repFilmAnsDto.getFilmsByDirectorId(directorId, sortBy);
 	}
 
 	public List<FilmAnsDto> searchFilms(String subString, String by) {
-		return repFilmExtended.searchFilms(subString, by);
+		return repFilmAnsDto.searchFilms(subString, by);
 	}
 
 	private void validationForLike(Long filmId, Long userId) {
