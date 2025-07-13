@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.util.GetConstants;
 
@@ -21,7 +22,6 @@ public class FilmDtoUpdate {
 	LocalDate releaseDate;
 	Integer duration;
 	Mpa mpa;
-
 	List<Director> directors;
 
 	public boolean hasName() {

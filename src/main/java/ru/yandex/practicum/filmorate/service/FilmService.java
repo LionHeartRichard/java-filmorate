@@ -78,8 +78,8 @@ public class FilmService {
 		return ans;
 	}
 
-	public List<Film> read() {
-		return repFilm.findAll();
+	public List<FilmAnsDto> read() {
+		return repFilmAnsDto.getFilms();
 	}
 
 	public FilmAnsDto update(FilmDtoUpdate dto) {

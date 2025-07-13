@@ -78,4 +78,9 @@ public class FilmAnsDtoRepository extends BaseRepository<FilmAnsDto> {
                 return Collections.emptyList();
         }
     }
+
+    public List<FilmAnsDto> getFilms() {
+        String query = String.join(" ", SELECT, GROUP);
+        return findMany(query);
+    }
 }
