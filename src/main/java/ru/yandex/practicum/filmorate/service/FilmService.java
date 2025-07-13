@@ -91,15 +91,7 @@ public class FilmService {
 		Optional<Mpa> mpaOpt = repMpa.findById(film.getMpaId());
 		Mpa mpa = mpaOpt.isPresent() ? mpaOpt.get() : null;
 
-		List<Genre> genres = new ArrayList<>();
-		List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(film.getId());
-
-		filmGenres.forEach(v -> {
-			Optional<Genre> genreOpt = repGenre.findById(v.getGenreId());
-			if (genreOpt.isPresent())
-				genres.add(genreOpt.get());
-		});
-
+		List<Genre> genres = getGenres(film.getId());
 		List<Director> directors = dto.getDirectors();
 		repFilm.saveFilmDirectors(film, directors);
 		directors = repDirector.findByFilmId(film.getId());
@@ -114,15 +106,7 @@ public class FilmService {
 		Mpa mpa = new Mpa();
 		Optional<Mpa> mpaOpt = repMpa.findById(film.getMpaId());
 		mpa = mpaOpt.isPresent() ? mpaOpt.get() : mpa;
-
-		List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(film.getId());
-		List<Genre> genres = new ArrayList<>();
-		filmGenres.forEach(value -> {
-			Optional<Genre> genreOpt = repGenre.findById(value.getGenreId());
-			if (genreOpt.isPresent())
-				genres.add(genreOpt.get());
-		});
-
+		List<Genre> genres = getGenres(film.getId());
 		List<Director> directors = repDirector.findByFilmId(film.getId());
 
 		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors);
@@ -153,19 +137,9 @@ public class FilmService {
 			Optional<Film> filmOpt = repFilm.findById(k);
 			if (filmOpt.isPresent()) {
 				Film film = filmOpt.get();
-
 				Mpa mpa = repMpa.findById(film.getMpaId()).orElseThrow(() -> new NotFoundException(MPA_NOT_FOUND));
-
-				List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(film.getId());
-				List<Genre> genres = new ArrayList<>();
-				filmGenres.forEach(value -> {
-					Optional<Genre> genreOpt = repGenre.findById(value.getGenreId());
-					if (genreOpt.isPresent())
-						genres.add(genreOpt.get());
-				});
-
+				List<Genre> genres = getGenres(film.getId());
 				List<Director> directors = repDirector.findByFilmId(film.getId());
-
 				ans.add(DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors));
 			}
 
@@ -189,9 +163,24 @@ public class FilmService {
 
 	public void deleteFilm(Long id) {
 		repFilm.findById(id).orElseThrow(() -> new NotFoundException("Failed delete film! Film not found!"));
-		repLike.deleteByFilmId(id);
-		repFilmGenre.deleteByFilmId(id);
-		repDirector.deleteByFilmId(id);
-		repFilm.deleteFilmById(id);
+		boolean isDelete = repLike.deleteByFilmId(id);
+		System.out.println(isDelete);
+		isDelete = repFilmGenre.deleteByFilmId(id);
+		System.out.println(isDelete);
+		isDelete = repDirector.deleteByFilmId(id);
+		System.out.println(isDelete);
+		isDelete = repFilm.deleteFilmById(id);
+		System.out.println(isDelete);
+	}
+
+	private List<Genre> getGenres(Long filmId) {
+		List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(filmId);
+		List<Genre> genres = new ArrayList<>();
+		filmGenres.forEach(value -> {
+			Optional<Genre> genreOpt = repGenre.findById(value.getGenreId());
+			if (genreOpt.isPresent())
+				genres.add(genreOpt.get());
+		});
+		return genres;
 	}
 }

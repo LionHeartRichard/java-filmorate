@@ -22,7 +22,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
 import ru.yandex.practicum.filmorate.dto.FilmDtoCreate;
 import ru.yandex.practicum.filmorate.dto.FilmDtoUpdate;
-import ru.yandex.practicum.filmorate.model.Film;
 
 @Slf4j
 @RestController
