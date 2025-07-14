@@ -64,9 +64,4 @@ public class FilmRepositoryAppTest {
 		assertTrue(rep.deleteFilmById(film.getId()));
 	}
 
-	@Test
-	void findCommonFilms() {
-		System.err.println(rep.findCommonFilms(24L, 25L));
-	}
-
 }
