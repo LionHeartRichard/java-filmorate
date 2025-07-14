@@ -98,6 +98,14 @@ public class FilmController {
 		return filmService.searchFilms(query, by);
 	}
 
+	@GetMapping("/common")
+	public List<FilmAnsDto> findCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) {
+		log.trace("GET /films/common");
+		validator.positiveValue(userId, String.format("ID cannot be negative, userId: %d", userId));
+		validator.positiveValue(friendId, String.format("ID cannot be negative, filmId: %d", friendId));
+		return filmService.findCommonFilms(userId, friendId);
+	}
+
 	@DeleteMapping("/{id}")
 	public void deleteFilm(@PathVariable final Long id) {
 		log.trace("DELETE /films/{id}");
