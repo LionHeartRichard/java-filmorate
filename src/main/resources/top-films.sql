@@ -30,3 +30,19 @@ AND YEAR(f.release_date) = 2000
 GROUP BY fp.film_id 
 ORDER BY like_count DESC 
 LIMIT 10;
+
+SELECT * 
+FROM film 
+WHERE film_id IN (
+	SELECT film_id 
+	FROM film_person 
+	GROUP BY film_id ORDER BY COUNT(person_id) DESC LIMIT 10
+);
+
+SELECT * FROM film WHERE film_id NOT IN (3,2);
+
+SELECT COUNT(*) AS count_rows FROM film;
+
+SELECT * FROM FILM_PERSON fp;
+
+SELECT * FROM FILM f;

@@ -132,6 +132,7 @@ public class FilmService {
 
 	public List<FilmAnsDto> findTopFilm(Integer limit, Long genreId, Integer year) {
 		Map<Long, Integer> swap = repLike.getTopFilms(limit, genreId, year);
+		Integer countRows = repFilm.getCountRows();
 		List<FilmAnsDto> ans = new ArrayList<>();
 		swap.forEach((k, v) -> {
 			Optional<Film> filmOpt = repFilm.findById(k);
@@ -142,8 +143,16 @@ public class FilmService {
 				List<Director> directors = repDirector.findByFilmId(film.getId());
 				ans.add(DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors));
 			}
-
 		});
+		if (countRows <= limit) {
+			List<Film> films = repFilm.getAllNotIdTopFilms(swap.keySet());
+			films.forEach(film -> {
+				Mpa mpa = repMpa.findById(film.getMpaId()).orElseThrow(() -> new NotFoundException(MPA_NOT_FOUND));
+				List<Genre> genres = getGenres(film.getId());
+				List<Director> directors = repDirector.findByFilmId(film.getId());
+				ans.add(DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors));
+			});
+		}
 		return ans;
 	}
 
@@ -162,15 +171,12 @@ public class FilmService {
 	}
 
 	public void deleteFilm(Long id) {
+		System.out.println(id);
 		repFilm.findById(id).orElseThrow(() -> new NotFoundException("Failed delete film! Film not found!"));
-		boolean isDelete = repLike.deleteByFilmId(id);
-		System.out.println(isDelete);
-		isDelete = repFilmGenre.deleteByFilmId(id);
-		System.out.println(isDelete);
-		isDelete = repDirector.deleteByFilmId(id);
-		System.out.println(isDelete);
-		isDelete = repFilm.deleteFilmById(id);
-		System.out.println(isDelete);
+		repLike.deleteByFilmId(id);
+		repFilmGenre.deleteByFilmId(id);
+		repDirector.deleteByFilmId(id);
+		repFilm.deleteFilmById(id);
 	}
 
 	private List<Genre> getGenres(Long filmId) {
