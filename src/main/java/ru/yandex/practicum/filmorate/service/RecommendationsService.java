@@ -83,15 +83,8 @@ public class RecommendationsService {
 
 	private int countCommonLikes(List<Long> userLikes, List<Long> targetLikes) {
 		Set<Long> targetSet = new HashSet<>(targetLikes);
-		int count = 0;
-		for (Long like : userLikes) {
-			if (targetSet.contains(like)) {
-				count++;
-			}
-		}
-
-		log.trace("Counted {} common likes between users", count);
-		return count;
+		targetSet.retainAll(userLikes);
+		return targetSet.size();
 	}
 
 	private List<FilmRecommendationResponse> getRecommendedFilms(Long userId, List<Long> similarUsers,

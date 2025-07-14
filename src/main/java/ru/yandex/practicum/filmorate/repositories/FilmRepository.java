@@ -97,10 +97,10 @@ public class FilmRepository extends BaseRepository<Film> {
 
 	public List<Film> getAllNotIdTopFilms(Set<Long> idexes) {
 		StringBuilder buiderQuery = new StringBuilder(SELECT_NOT_IN);
-		int[] id = {idexes.size()};
+		int[] idx = {idexes.size()};
 		idexes.forEach(v -> {
-			--id[0];
-			if (id[0] != 0) {
+			--idx[0];
+			if (idx[0] != 0) {
 				buiderQuery.append(v + ",");
 			} else {
 				buiderQuery.append(v + ")");
