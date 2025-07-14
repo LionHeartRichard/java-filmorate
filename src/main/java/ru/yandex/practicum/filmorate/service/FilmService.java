@@ -1,11 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -132,6 +135,9 @@ public class FilmService {
 
 	public List<FilmAnsDto> findTopFilm(Integer limit, Long genreId, Integer year) {
 		Map<Long, Integer> swap = repLike.getTopFilms(limit, genreId, year);
+		if (swap == null || swap.isEmpty()) {
+			return Collections.emptyList();
+		}
 		Integer countRows = repFilm.getCountRows();
 		List<FilmAnsDto> ans = new ArrayList<>();
 		swap.forEach((k, v) -> {
