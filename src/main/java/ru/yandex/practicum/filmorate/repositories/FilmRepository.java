@@ -22,11 +22,13 @@ public class FilmRepository extends BaseRepository<Film> {
 
 	private static final String DELETE_FILM_BY_ID = "DELETE FROM film WHERE film_id = ?";
 
-	private static final String INSERT_FILM_DIRECTOR_QUERY =
-			"INSERT INTO film_director(film_id, director_id) VALUES ";
+	private static final String INSERT_FILM_DIRECTOR_QUERY = "INSERT INTO film_director(film_id, director_id) VALUES ";
 
-	private static final String DELETE_FILM_DIRECTOR_BY_FILM_ID_QUERY =
-			"DELETE FROM film_director WHERE film_id = ?";
+	private static final String DELETE_FILM_DIRECTOR_BY_FILM_ID_QUERY = "DELETE FROM film_director WHERE film_id = ?";
+
+	private static final String SELECT_NOT_IN = "SELECT * FROM film WHERE film_id NOT IN (";
+
+	private static final String COUNT_ROWS = "SELECT COUNT(*) AS count_rows FROM film";
 
 	public FilmRepository(JdbcTemplate jdbc, RowMapper<Film> mapper) {
 		super(jdbc, mapper);
@@ -103,5 +105,29 @@ public class FilmRepository extends BaseRepository<Film> {
 		String params = String.join(",", Collections.nCopies(filmIds.size(), "?"));
 		String sql = String.format(FIND_BY_IDS_QUERY, params);
 		return findMany(sql, filmIds.toArray());
+	}
+
+	public List<Film> getAllNotIdTopFilms(Set<Long> idexes) {
+		StringBuilder buiderQuery = new StringBuilder(SELECT_NOT_IN);
+		int[] idx = {idexes.size()};
+		idexes.forEach(v -> {
+			--idx[0];
+			if (idx[0] != 0) {
+				buiderQuery.append(v + ",");
+			} else {
+				buiderQuery.append(v + ")");
+			}
+		});
+		return findMany(buiderQuery.toString());
+	}
+
+	public Integer getCountRows() {
+		int[] ans = {0};
+		return jdbc.query(COUNT_ROWS, rs -> {
+			while (rs.next()) {
+				ans[0] = rs.getInt("count_rows");
+			}
+			return ans[0];
+		});
 	}
 }

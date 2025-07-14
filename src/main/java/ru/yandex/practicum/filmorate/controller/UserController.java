@@ -89,6 +89,13 @@ public class UserController {
         return userService.commonFriends(id, friendId);
     }
 
+	@DeleteMapping("/{id}")
+	public void deleteUser(@PathVariable final Long id) {
+		log.trace("DELETE users/{id}");
+		validator.positiveValue(id, String.format(NOT_NEGATIVE, id));
+		userService.deleteUser(id);
+	}
+
     @GetMapping("/{id}/recommendations")
     public List<FilmRecommendationResponse> getFilmRecommendations(@PathVariable final Long id) {
         log.trace("GET users/{id}/recommendations");
@@ -96,3 +103,4 @@ public class UserController {
         return recommendationsService.getFilmRecommendations(id);
     }
 }
+
