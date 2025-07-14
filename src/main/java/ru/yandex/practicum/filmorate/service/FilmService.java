@@ -145,6 +145,7 @@ public class FilmService {
 		repLike.deleteLike(filmId, userId);
 	}
 
+	// TODO: Спросить зачем возвращается Map
 	public List<Film> findTopFilm(Integer limit, Long genreId, Integer year) {
 		Map<Long, Integer> swap = repLike.getTopFilms(limit, genreId, year);
 		List<Film> ans = new ArrayList<>();
