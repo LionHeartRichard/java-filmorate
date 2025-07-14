@@ -142,7 +142,8 @@ public class FilmService {
 			Optional<Film> filmOpt = repFilm.findById(k);
 			if (filmOpt.isPresent()) {
 				Film film = filmOpt.get();
-				Mpa mpa = repMpa.findById(film.getMpaId()).orElseThrow(() -> new NotFoundException(MPA_NOT_FOUND));
+				Mpa mpa = new Mpa();
+				mpa.setId(film.getMpaId());
 				List<Genre> genres = getGenres(film.getId());
 				List<Director> directors = repDirector.findByFilmId(film.getId());
 				ans.add(DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors));
@@ -151,7 +152,8 @@ public class FilmService {
 		if (countRows <= limit) {
 			List<Film> films = repFilm.getAllNotIdTopFilms(swap.keySet());
 			films.forEach(film -> {
-				Mpa mpa = repMpa.findById(film.getMpaId()).orElseThrow(() -> new NotFoundException(MPA_NOT_FOUND));
+				Mpa mpa = new Mpa();
+				mpa.setId(film.getMpaId());
 				List<Genre> genres = getGenres(film.getId());
 				List<Director> directors = repDirector.findByFilmId(film.getId());
 				ans.add(DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors));
