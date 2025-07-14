@@ -79,7 +79,8 @@ public class FilmRepository extends BaseRepository<Film> {
 				list.add(rs.getLong("film_id"));
 			return list;
 		});
-	 }
+	}
+
 	public void saveFilmDirectors(Film film, List<Director> directors) {
 
 		deleteFilmDirectorsByFilmId(film.getId());
