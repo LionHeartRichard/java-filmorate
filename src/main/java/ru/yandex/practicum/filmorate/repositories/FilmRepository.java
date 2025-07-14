@@ -104,16 +104,4 @@ public class FilmRepository extends BaseRepository<Film> {
 		String sql = String.format(FIND_BY_IDS_QUERY, params);
 		return findMany(sql, filmIds.toArray());
 	}
-	public List<Long> findCommonFilms(Long userId, Long friendId) {
-		String query = "SELECT fp.FILM_ID FROM FILM_PERSON fp WHERE fp.FILM_ID IN (" +
-				"SELECT FILM_ID FROM FILM_PERSON WHERE PERSON_ID IN (%d, %d) GROUP BY FILM_ID HAVING COUNT(*) = 2)" +
-				" GROUP BY fp.FILM_ID ORDER BY COUNT(*) DESC";
-		return jdbc.query(String.format(query, userId, friendId),
-				(rs) -> {
-			List<Long> list = new LinkedList<>();
-			while (rs.next())
-				list.add(rs.getLong("film_id"));
-			return list;
-		});
-	 }
 }
