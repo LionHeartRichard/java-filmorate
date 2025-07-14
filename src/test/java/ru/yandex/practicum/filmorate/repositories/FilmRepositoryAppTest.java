@@ -1,8 +1,7 @@
 package ru.yandex.practicum.filmorate.repositories;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +15,8 @@ import org.springframework.context.annotation.Import;
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.repositories.rowmapper.FilmRowMapper;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @JdbcTest
 @AutoConfigureTestDatabase
@@ -61,11 +62,6 @@ public class FilmRepositoryAppTest {
 	@Test
 	void deleteFilmByIdTest() {
 		assertTrue(rep.deleteFilmById(film.getId()));
-	}
-
-	@Test
-	void findCommonFilms() {
-		System.err.println(rep.findCommonFilms(24L, 25L));
 	}
 
 }
