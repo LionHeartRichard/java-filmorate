@@ -145,7 +145,6 @@ public class FilmService {
 		repLike.deleteLike(filmId, userId);
 	}
 
-	// TODO: Спросить зачем возвращается Map
 	public List<Film> findTopFilm(Integer limit, Long genreId, Integer year) {
 		Map<Long, Integer> swap = repLike.getTopFilms(limit, genreId, year);
 		List<Film> ans = new ArrayList<>();
@@ -171,14 +170,12 @@ public class FilmService {
 		repUser.findById(userId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 	}
 
-	public List<Film> findCommonFilms(Long userId, Long friendId) {
+	public List<FilmAnsDto> findCommonFilms(Long userId, Long friendId) {
 		repUser.findById(userId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 		repUser.findById(friendId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 		return repFilm.findCommonFilms(userId, friendId)
 				.stream()
-				.map(repFilm::findById)
-				.filter(Optional::isPresent)
-				.map(Optional::get)
+				.map(this::findById)
 				.toList();
 	}
 }

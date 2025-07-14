@@ -101,7 +101,7 @@ public class FilmController {
 	}
 
 	@GetMapping("/common")
-	public List<Film> findCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) {
+	public List<FilmAnsDto> findCommonFilms(@RequestParam Long userId, @RequestParam Long friendId) {
 		log.trace("GET /films/common");
 		validator.positiveValue(userId, String.format("ID cannot be negative, userId: %d", userId));
 		validator.positiveValue(friendId, String.format("ID cannot be negative, filmId: %d", friendId));
