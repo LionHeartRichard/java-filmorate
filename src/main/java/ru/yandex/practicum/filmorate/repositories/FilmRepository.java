@@ -68,6 +68,19 @@ public class FilmRepository extends BaseRepository<Film> {
 		return delete(DELETE_FILM_BY_ID, id);
 	}
 
+	public List<Long> findCommonFilms(Long userId, Long friendId) {
+		String query = "SELECT fp.FILM_ID FROM FILM_PERSON fp WHERE fp.FILM_ID IN (" +
+				"SELECT FILM_ID FROM FILM_PERSON WHERE PERSON_ID IN (%d, %d) GROUP BY FILM_ID HAVING COUNT(*) = 2)" +
+				" GROUP BY fp.FILM_ID ORDER BY COUNT(*) DESC";
+		return jdbc.query(String.format(query, userId, friendId),
+				(rs) -> {
+			List<Long> list = new LinkedList<>();
+			while (rs.next())
+				list.add(rs.getLong("film_id"));
+			return list;
+		});
+	}
+
 	public void saveFilmDirectors(Film film, List<Director> directors) {
 
 		deleteFilmDirectorsByFilmId(film.getId());
