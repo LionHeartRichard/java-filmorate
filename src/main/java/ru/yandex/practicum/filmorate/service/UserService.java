@@ -8,7 +8,9 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.dto.UserDtoCreate;
 import ru.yandex.practicum.filmorate.dto.UserDtoUpdate;
@@ -16,9 +18,11 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repositories.FriendRepository;
+import ru.yandex.practicum.filmorate.repositories.LikeRepository;
 import ru.yandex.practicum.filmorate.repositories.UserRepository;
 import ru.yandex.practicum.filmorate.util.dtomapper.DtoMapperUser;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,8 +32,9 @@ public class UserService {
 	private static final String EXISTS_EMAIL = "Failed! A user with this email already exists!";
 	private static final String ADD_FRIEND = "Failed add friend in data base! User not found!";
 
-	private final UserRepository repUser;
-	private final FriendRepository repFriend;
+	UserRepository repUser;
+	FriendRepository repFriend;
+	LikeRepository repLike;
 
 	public User create(UserDtoCreate dto) {
 		User user = DtoMapperUser.getUser(dto);
@@ -110,5 +115,13 @@ public class UserService {
 			}
 		});
 		return ans;
+	}
+
+	public void deleteUser(Long id) {
+		log.trace("delete user: id: {}", id);
+		repUser.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_ID));
+		repFriend.deleteUserById(id);
+		repLike.deleteByUserId(id);
+		repUser.deleteUserById(id);
 	}
 }

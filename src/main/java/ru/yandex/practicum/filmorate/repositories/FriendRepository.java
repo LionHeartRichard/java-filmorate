@@ -22,7 +22,7 @@ public class FriendRepository extends BaseRepository<Friend> {
 	private static final String INSERT_QUERY = "INSERT INTO friend(id, other_id) VALUES (?, ?)";
 
 	private static final String DELETE_BY_PK = "DELETE FROM friend WHERE friend_id = ?";
-	private static final String DELETE_USER_BY_ID = "DELETE FROM friend WHERE id = ?";
+	private static final String DELETE_USER_BY_ID = "DELETE FROM friend WHERE id = ? OR other_id = ?";
 	private static final String DELETE_FRIEND = "DELETE FROM friend WHERE id = ? AND other_id = ?";
 
 	public FriendRepository(JdbcTemplate jdbc, RowMapper<Friend> mapper) {
@@ -56,7 +56,7 @@ public class FriendRepository extends BaseRepository<Friend> {
 	}
 
 	public boolean deleteUserById(Long id) {
-		return delete(DELETE_USER_BY_ID, id);
+		return delete(DELETE_USER_BY_ID, id, id);
 	}
 
 	public boolean deleteFriend(Long id, Long friendId) {

@@ -26,8 +26,9 @@ public class LikeRepository extends BaseRepository<Like> {
 
 	private static final String DELETE_LIKE = "DELETE FROM film_person WHERE film_id = ? AND person_id = ?";
 	private static final String DELETE_BY_ID = "DELETE FROM film_person WHERE film_person_id = ?";
-	private static final String DELETE_BY_FILM_ID = "DELETE FROM film_person WHERE film_id = ?";
 	private static final String DELETE_BY_USER_ID = "DELETE FROM film_person WHERE person_id = ?";
+
+	private static final String DELETE_BY_FILM_ID = "DELETE FROM film_person WHERE film_id = ?";
 
 	public LikeRepository(JdbcTemplate jdbc, RowMapper<Like> mapper) {
 		super(jdbc, mapper);
@@ -75,19 +76,36 @@ public class LikeRepository extends BaseRepository<Like> {
 		return delete(DELETE_LIKE, filmId, userId);
 	}
 
-	public Map<Long, Integer> getTopFilms(int limit) {
-		String queryCount = String.format(
-				"SELECT film_id, COUNT(*) AS like_count FROM film_person GROUP BY film_id ORDER BY like_count DESC LIMIT %d",
+	public Map<Long, Integer> getTopFilms(int limit, Long genreId, Integer year) {
+
+		final String beginQuery = "SELECT fp.film_id, COUNT(*) AS like_count "
+				+ "FROM FILM_PERSON fp, FILM f, FILM_GENRE fg " + "WHERE f.film_id = fp.film_id "
+				+ "AND fg.film_id = f.film_id ";
+
+		final String endQuery = String.format(" GROUP BY fp.film_id " + "ORDER BY like_count DESC " + "LIMIT %d",
 				limit);
 
-		return jdbc.query(queryCount, (rs) -> {
-			Map<Long, Integer> result = new LinkedHashMap<>();
+		final String query;
+
+		if (genreId != null && year != null) {
+			query = beginQuery + String.format(" AND fg.genre_id = %d AND YEAR(f.release_date) = %d", genreId, year)
+					+ endQuery;
+		} else if (genreId != null) {
+			query = beginQuery + String.format(" AND fg.genre_id = %d", genreId) + endQuery;
+		} else if (year != null) {
+			query = beginQuery + String.format(" AND YEAR(f.release_date) = %d", year) + endQuery;
+		} else {
+			query = beginQuery + endQuery;
+		}
+
+		Map<Long, Integer> ans = new LinkedHashMap<>();
+		return jdbc.query(query, (rs) -> {
 			while (rs.next()) {
 				Long filmId = rs.getLong("film_id");
 				Integer likeCount = rs.getInt("like_count");
-				result.put(filmId, likeCount);
+				ans.put(filmId, likeCount);
 			}
-			return result;
+			return ans;
 		});
 	}
 }
