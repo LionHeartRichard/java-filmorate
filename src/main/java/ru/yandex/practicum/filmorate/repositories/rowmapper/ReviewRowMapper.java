@@ -38,6 +38,7 @@ public class ReviewRowMapper implements RowMapper<Review> {
         List<Long> userIds = jdbcTemplate.queryForList(sql, Long.class, reviewId);
         return new HashSet<>(userIds);
     }
+
     private Set<Long> getDislikes(long reviewId) {
         String sql = "SELECT USER_ID FROM REVIEW_LIKES WHERE REVIEW_ID = ? AND IS_LIKE = false";
         List<Long> userIds = jdbcTemplate.queryForList(sql, Long.class, reviewId);
