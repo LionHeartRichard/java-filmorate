@@ -17,8 +17,6 @@ import ru.yandex.practicum.filmorate.repositories.ReviewLikeRepository;
 import ru.yandex.practicum.filmorate.repositories.ReviewRepository;
 import ru.yandex.practicum.filmorate.repositories.UserRepository;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
