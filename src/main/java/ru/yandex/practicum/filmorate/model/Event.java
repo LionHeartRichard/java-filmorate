@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,11 +18,12 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Film {
-	Long id;
-	String name;
-	String description;
-	LocalDate releaseDate;
-	Integer duration;
-	Long mpaId;
+public class Event {
+	@JsonFormat(shape = JsonFormat.Shape.NUMBER)
+	Timestamp timestamp;
+	Long userId;
+	EventType eventType;
+	Operation operation;
+	Long eventId; // primary key
+	Long entityId; // идентификатор сущности, с которой произошло событие
 }
