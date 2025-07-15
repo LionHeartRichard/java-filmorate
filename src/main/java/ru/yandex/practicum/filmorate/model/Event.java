@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
-import java.sql.Timestamp;
+//import java.sql.Timestamp;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+//import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,17 +13,19 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
 public class Event {
-	@JsonFormat(shape = JsonFormat.Shape.NUMBER)
-	Timestamp timestamp;
+
+	// @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+	Long timestamp;
 	Long userId;
 	EventType eventType;
 	Operation operation;
 	Long eventId; // primary key
 	Long entityId; // идентификатор сущности, с которой произошло событие
+
 }
