@@ -104,7 +104,7 @@ public class UserService {
 		event.setUserId(id);
 		event.setEventType(EventType.FRIEND);
 		event.setOperation(Operation.REMOVE);
-		event.setEntityId(id);
+		event.setEntityId(friendId);
 
 		repEvent.save(event);
 	}

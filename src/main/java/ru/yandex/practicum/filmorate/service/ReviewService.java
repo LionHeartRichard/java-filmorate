@@ -111,15 +111,6 @@ public class ReviewService {
 		validateUserId(userId);
 		likeRepository.addOrUpdate(reviewId, userId, true);
 		recalcUseful(reviewId);
-
-		Event event = new Event();
-		event.setTimestamp(System.currentTimeMillis());
-		event.setUserId(userId);
-		event.setEventType(EventType.REVIEW);
-		event.setOperation(Operation.ADD);
-		event.setEntityId(reviewId);
-
-		eventRepository.save(event);
 	}
 
 	@Transactional
@@ -129,15 +120,6 @@ public class ReviewService {
 		validateUserId(userId);
 		likeRepository.addOrUpdate(reviewId, userId, false);
 		recalcUseful(reviewId);
-
-		Event event = new Event();
-		event.setTimestamp(System.currentTimeMillis());
-		event.setUserId(userId);
-		event.setEventType(EventType.REVIEW);
-		event.setOperation(Operation.ADD);
-		event.setEntityId(reviewId);
-
-		eventRepository.save(event);
 	}
 
 	@Transactional
@@ -147,15 +129,6 @@ public class ReviewService {
 		validateUserId(userId);
 		likeRepository.remove(reviewId, userId);
 		recalcUseful(reviewId);
-
-		Event event = new Event();
-		event.setTimestamp(System.currentTimeMillis());
-		event.setUserId(userId);
-		event.setEventType(EventType.REVIEW);
-		event.setOperation(Operation.REMOVE);
-		event.setEntityId(reviewId);
-
-		eventRepository.save(event);
 	}
 
 	@Transactional
