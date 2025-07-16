@@ -40,6 +40,7 @@ public class FilmService {
 	FilmGenreRepository repFilmGenre;
 	DirectorRepository repDirector;
 	FilmAnsDtoRepository repFilmAnsDto;
+	EventRepository repEvent;
 
 	public FilmAnsDto create(FilmDtoCreate dto) {
 
@@ -120,6 +121,15 @@ public class FilmService {
 		like.setFilmId(filmId);
 		like.setUserId(userId);
 		repLike.save(like);
+
+		Event event = new Event();
+		event.setTimestamp(System.currentTimeMillis());
+		event.setUserId(userId);
+		event.setEventType(EventType.LIKE);
+		event.setOperation(Operation.ADD);
+		event.setEntityId(filmId);
+
+		repEvent.save(event);
 	}
 
 	public void deleteLike(Long likeId) {
@@ -129,9 +139,17 @@ public class FilmService {
 	public void deleteLike(Long filmId, Long userId) {
 		validationForLike(filmId, userId);
 		repLike.deleteLike(filmId, userId);
+
+		Event event = new Event();
+		event.setTimestamp(System.currentTimeMillis());
+		event.setUserId(userId);
+		event.setEventType(EventType.LIKE);
+		event.setOperation(Operation.REMOVE);
+		event.setEntityId(filmId);
+
+		repEvent.save(event);
 	}
 
-	// TODO: Спросить зачем возвращается Map
 	public List<FilmAnsDto> findTopFilm(Integer limit, Long genreId, Integer year) {
 		Map<Long, Integer> swap = repLike.getTopFilms(limit, genreId, year);
 		if (swap == null || swap.isEmpty()) {
@@ -180,10 +198,7 @@ public class FilmService {
 	public List<FilmAnsDto> findCommonFilms(Long userId, Long friendId) {
 		repUser.findById(userId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 		repUser.findById(friendId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
-		return repFilm.findCommonFilms(userId, friendId)
-				.stream()
-				.map(this::findById)
-				.toList();
+		return repFilm.findCommonFilms(userId, friendId).stream().map(this::findById).toList();
 	}
 
 	public void deleteFilm(Long id) {
