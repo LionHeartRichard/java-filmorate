@@ -24,6 +24,7 @@ public class FilmDtoUpdate {
 	Integer duration;
 	Mpa mpa;
 	List<Director> directors;
+	List<Genre> genres;
 
 	public boolean hasName() {
 		return !(name == null || name.isBlank() || name.length() > 100);
