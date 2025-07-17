@@ -1,15 +1,14 @@
 package ru.yandex.practicum.filmorate.util.dtomapper;
 
-import java.util.List;
-
 import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
 import ru.yandex.practicum.filmorate.dto.FilmDtoCreate;
 import ru.yandex.practicum.filmorate.dto.FilmDtoUpdate;
-import ru.yandex.practicum.filmorate.dto.FilmRecommendationResponse;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+
+import java.util.List;
 
 public class DtoMapperFilm {
 
@@ -58,15 +57,5 @@ public class DtoMapperFilm {
 	public static FilmAnsDto getAnsDtoForFilm(Film film, Mpa mpa, List<Genre> genres, List<Director> directors) {
 		return new FilmAnsDto(film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
 				film.getDuration(), mpa, genres, directors);
-	}
-
-	public static FilmRecommendationResponse getFilmRecommendationResponse(Film film) {
-		return FilmRecommendationResponse.builder()
-				.id(film.getId())
-				.name(film.getName())
-				.description(film.getDescription())
-				.releaseDate(film.getReleaseDate())
-				.duration(film.getDuration())
-				.build();
 	}
 }
