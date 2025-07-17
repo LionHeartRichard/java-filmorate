@@ -165,8 +165,8 @@ public class FilmService {
 	}
 
 	public List<FilmAnsDto> findTopFilm(Integer limit, Long genreId, Integer year) {
-		List<Long> swap = repLike.getTopFilms(limit, genreId, year);
-		return swap.stream()
+		return repLike.getTopFilms(limit, genreId, year)
+				.stream()
 				.map(this::findById)
 				.toList();
 	}

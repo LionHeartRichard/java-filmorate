@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.repositories;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -108,14 +106,14 @@ public class LikeRepository extends BaseRepository<Like> {
 //		});
 //	}
 
-	public List<Long> getTopFilms(int limit, Long genreId, Integer year) {
+	public Set<Long> getTopFilms(int limit, Long genreId, Integer year) {
 		String format =
 				"SELECT f.FILM_ID FROM FILM f" +
 				" LEFT JOIN FILM_GENRE fg ON f.FILM_ID = fg.FILM_ID" +
 				" LEFT JOIN (SELECT fp.FILM_ID, count(*) AS likes FROM FILM_PERSON fp GROUP BY fp.FILM_ID) AS lf" +
 				" ON f.FILM_ID = lf.FILM_ID" +
 				" %s" +
-				" ORDER BY f.FILM_ID DESC" +
+				" ORDER BY lf.likes DESC" +
 				" LIMIT %d;";
 		String query;
 		if (genreId != null && year != null)
@@ -127,6 +125,6 @@ public class LikeRepository extends BaseRepository<Like> {
 			query = String.format(format, String.format("WHERE YEAR(f.RELEASE_DATE) = %d", year), limit);
 		else
 			query = String.format(format, "", limit);
-		return jdbc.query(query, (rs, rowNum) -> rs.getLong("film_id"));
+		return new HashSet<>(jdbc.query(query, (rs, rowNum) -> rs.getLong("film_id")));
 	}
 }
