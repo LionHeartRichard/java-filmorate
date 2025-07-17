@@ -1,12 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 
@@ -151,34 +145,10 @@ public class FilmService {
 	}
 
 	public List<FilmAnsDto> findTopFilm(Integer limit, Long genreId, Integer year) {
-		Map<Long, Integer> swap = repLike.getTopFilms(limit, genreId, year);
-		if (swap == null || swap.isEmpty()) {
-			return Collections.emptyList();
-		}
-		Integer countRows = repFilm.getCountRows();
-		List<FilmAnsDto> ans = new ArrayList<>();
-		swap.forEach((k, v) -> {
-			Optional<Film> filmOpt = repFilm.findById(k);
-			if (filmOpt.isPresent()) {
-				Film film = filmOpt.get();
-				Mpa mpa = new Mpa();
-				mpa.setId(film.getMpaId());
-				List<Genre> genres = getGenres(film.getId());
-				List<Director> directors = repDirector.findByFilmId(film.getId());
-				ans.add(DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors));
-			}
-		});
-		if (countRows <= limit) {
-			List<Film> films = repFilm.getAllNotIdTopFilms(swap.keySet());
-			films.forEach(film -> {
-				Mpa mpa = new Mpa();
-				mpa.setId(film.getMpaId());
-				List<Genre> genres = getGenres(film.getId());
-				List<Director> directors = repDirector.findByFilmId(film.getId());
-				ans.add(DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors));
-			});
-		}
-		return ans;
+		List<Long> swap = repLike.getTopFilms(limit, genreId, year);
+		return swap.stream()
+				.map(this::findById)
+				.toList();
 	}
 
 	public List<FilmAnsDto> findByDirector(Long directorId, String sortBy) {
