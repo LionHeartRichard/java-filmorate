@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.dto;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import lombok.AccessLevel;
 import lombok.Data;
