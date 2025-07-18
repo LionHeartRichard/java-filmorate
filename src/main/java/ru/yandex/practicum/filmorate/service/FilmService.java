@@ -1,11 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 
@@ -17,17 +12,8 @@ import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
 import ru.yandex.practicum.filmorate.dto.FilmDtoCreate;
 import ru.yandex.practicum.filmorate.dto.FilmDtoUpdate;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.FilmGenre;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Like;
-import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.repositories.FilmGenreRepository;
-import ru.yandex.practicum.filmorate.repositories.FilmRepository;
-import ru.yandex.practicum.filmorate.repositories.GenreRepository;
-import ru.yandex.practicum.filmorate.repositories.LikeRepository;
-import ru.yandex.practicum.filmorate.repositories.MpaRepository;
-import ru.yandex.practicum.filmorate.repositories.UserRepository;
+import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.repositories.*;
 import ru.yandex.practicum.filmorate.util.dtomapper.DtoMapperFilm;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -46,6 +32,9 @@ public class FilmService {
 	MpaRepository repMpa;
 	UserRepository repUser;
 	FilmGenreRepository repFilmGenre;
+	DirectorRepository repDirector;
+	FilmAnsDtoRepository repFilmAnsDto;
+	EventRepository repEvent;
 
 	public FilmAnsDto create(FilmDtoCreate dto) {
 
@@ -76,12 +65,17 @@ public class FilmService {
 			});
 			log.trace("Done: save genres in DB");
 		}
-		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres);
+
+		List<Director> directors = dto.getDirectors();
+		repFilm.saveFilmDirectors(film, directors);
+		directors = repDirector.findByFilmId(film.getId());
+
+		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors);
 		return ans;
 	}
 
-	public List<Film> read() {
-		return repFilm.findAll();
+	public List<FilmAnsDto> read() {
+		return repFilmAnsDto.getFilms();
 	}
 
 	public FilmAnsDto update(FilmDtoUpdate dto) {
@@ -90,18 +84,35 @@ public class FilmService {
 		film = DtoMapperFilm.getFilm(film, dto);
 		repFilm.update(film);
 
-		Optional<Mpa> mpaOpt = repMpa.findById(film.getMpaId());
-		Mpa mpa = mpaOpt.isPresent() ? mpaOpt.get() : null;
-
+		repFilmGenre.deleteByFilmId(film.getId());
 		List<Genre> genres = new ArrayList<>();
-		List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(film.getId());
-		for (FilmGenre v : filmGenres) {
-			Optional<Genre> genreOpt = repGenre.findById(v.getGenreId());
-			if (genreOpt.isPresent())
-				genres.add(genreOpt.get());
+		Set<FilmGenre> cache = new HashSet<>();
+		if (dto.getGenres() != null) {
+			Film finalFilm = film;
+			dto.getGenres().forEach(v -> {
+				if (v.getId() != null) {
+					Genre genre = repGenre.findById(v.getId())
+							.orElseThrow(() -> new NotFoundException("Genre not found!"));
+					FilmGenre filmGenre = new FilmGenre();
+					filmGenre.setFilmId(finalFilm.getId());
+					filmGenre.setGenreId(genre.getId());
+					if (!cache.contains(filmGenre)) {
+						cache.add(filmGenre);
+						repFilmGenre.save(filmGenre);
+						genres.add(genre);
+					}
+				}
+			});
 		}
 
-		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres);
+		Optional<Mpa> mpaOpt = repMpa.findById(film.getMpaId());
+		Mpa mpa = mpaOpt.orElse(null);
+
+		List<Director> directors = dto.getDirectors();
+		repFilm.saveFilmDirectors(film, directors);
+		directors = repDirector.findByFilmId(film.getId());
+
+		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors);
 		return ans;
 	}
 
@@ -111,16 +122,10 @@ public class FilmService {
 		Mpa mpa = new Mpa();
 		Optional<Mpa> mpaOpt = repMpa.findById(film.getMpaId());
 		mpa = mpaOpt.isPresent() ? mpaOpt.get() : mpa;
+		List<Genre> genres = getGenres(film.getId());
+		List<Director> directors = repDirector.findByFilmId(film.getId());
 
-		List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(film.getId());
-		List<Genre> genres = new ArrayList<>();
-		filmGenres.forEach(v -> {
-			Optional<Genre> genreOpt = repGenre.findById(v.getGenreId());
-			if (genreOpt.isPresent())
-				genres.add(genreOpt.get());
-		});
-
-		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres);
+		FilmAnsDto ans = DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors);
 		return ans;
 	}
 
@@ -130,6 +135,15 @@ public class FilmService {
 		like.setFilmId(filmId);
 		like.setUserId(userId);
 		repLike.save(like);
+
+		Event event = new Event();
+		event.setTimestamp(System.currentTimeMillis());
+		event.setUserId(userId);
+		event.setEventType(EventType.LIKE);
+		event.setOperation(Operation.ADD);
+		event.setEntityId(filmId);
+
+		repEvent.save(event);
 	}
 
 	public void deleteLike(Long likeId) {
@@ -139,22 +153,60 @@ public class FilmService {
 	public void deleteLike(Long filmId, Long userId) {
 		validationForLike(filmId, userId);
 		repLike.deleteLike(filmId, userId);
+
+		Event event = new Event();
+		event.setTimestamp(System.currentTimeMillis());
+		event.setUserId(userId);
+		event.setEventType(EventType.LIKE);
+		event.setOperation(Operation.REMOVE);
+		event.setEntityId(filmId);
+
+		repEvent.save(event);
 	}
 
-	public List<Film> findTopFilm(Integer limit) {
-		Map<Long, Integer> swap = repLike.getTopFilms(limit);
-		List<Film> ans = new ArrayList<>();
-		swap.forEach((k, v) -> {
-			Optional<Film> filmOpt = repFilm.findById(k);
-			if (filmOpt.isPresent()) {
-				ans.add(filmOpt.get());
-			}
-		});
-		return ans;
+	public List<FilmAnsDto> findTopFilm(Integer limit, Long genreId, Integer year) {
+		return repLike.getTopFilms(limit, genreId, year)
+				.stream()
+				.map(this::findById)
+				.toList();
+	}
+
+	public List<FilmAnsDto> findByDirector(Long directorId, String sortBy) {
+		repDirector.findById(directorId).orElseThrow(() -> new NotFoundException("Director not found"));
+		return repFilmAnsDto.getFilmsByDirectorId(directorId, sortBy);
+	}
+
+	public List<FilmAnsDto> searchFilms(String subString, String by) {
+		return repFilmAnsDto.searchFilms(subString, by);
 	}
 
 	private void validationForLike(Long filmId, Long userId) {
 		repFilm.findById(filmId).orElseThrow(() -> new NotFoundException(FILM_NOT_FOUND));
 		repUser.findById(userId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+	}
+
+	public List<FilmAnsDto> findCommonFilms(Long userId, Long friendId) {
+		repUser.findById(userId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+		repUser.findById(friendId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+		return repFilm.findCommonFilms(userId, friendId).stream().map(this::findById).toList();
+	}
+
+	public void deleteFilm(Long id) {
+		System.out.println(id);
+		repFilm.findById(id).orElseThrow(() -> new NotFoundException("Failed delete film! Film not found!"));
+		repLike.deleteByFilmId(id);
+		repFilmGenre.deleteByFilmId(id);
+		repDirector.deleteByFilmId(id);
+		repFilm.deleteFilmById(id);
+	}
+
+	private List<Genre> getGenres(Long filmId) {
+		List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(filmId);
+		List<Genre> genres = new ArrayList<>();
+		filmGenres.forEach(value -> {
+			Optional<Genre> genreOpt = repGenre.findById(value.getGenreId());
+            genreOpt.ifPresent(genres::add);
+		});
+		return genres;
 	}
 }

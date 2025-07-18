@@ -1,13 +1,12 @@
 package ru.yandex.practicum.filmorate.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import ru.yandex.practicum.filmorate.model.FilmGenre;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class FilmGenreRepository extends BaseRepository<FilmGenre> {
@@ -65,5 +64,4 @@ public class FilmGenreRepository extends BaseRepository<FilmGenre> {
 	public boolean deleteByFilmIdAndGenreId(Long filmId, Long genreId) {
 		return delete(DELETE_BY_FILM_ID_AND_GENRE_ID, filmId, genreId);
 	}
-
 }

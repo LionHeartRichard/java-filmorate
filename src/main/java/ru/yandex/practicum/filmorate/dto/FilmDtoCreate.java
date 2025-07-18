@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.validation.ThisAfter1895;
@@ -30,4 +31,5 @@ public class FilmDtoCreate {
 	Integer duration;
 	Mpa mpa;
 	List<Genre> genres;
+	List<Director> directors;
 }
