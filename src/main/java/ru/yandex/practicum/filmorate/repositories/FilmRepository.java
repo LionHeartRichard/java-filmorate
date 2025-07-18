@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 @Repository
 public class FilmRepository extends BaseRepository<Film> {
