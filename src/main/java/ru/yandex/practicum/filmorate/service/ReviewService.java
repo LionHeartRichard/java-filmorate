@@ -149,7 +149,7 @@ public class ReviewService {
 	@Transactional(readOnly = true)
 	protected void validateReviewId(Long id) {
 		if (reviewRepository.findById(id).isEmpty()) {
-			String msg = "Review with this ID not found: " + id;
+			String msg = String.format("Review with this ID not found: %d", id);
 			log.warn(msg);
 			throw new NotFoundException(msg);
 		}
