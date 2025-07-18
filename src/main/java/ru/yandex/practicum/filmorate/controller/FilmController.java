@@ -29,8 +29,8 @@ import ru.yandex.practicum.filmorate.dto.FilmDtoUpdate;
 @RequiredArgsConstructor
 public class FilmController {
 
-	private static final String NEGATIVE_FILM_ID = "Film ID cannot be negative!";
-	private static final String NEGATIVE_USER_ID = "User ID cannot be negative!";
+	private static final String negativeFilmId = "Film ID cannot be negative!";
+	private static final String negativeUserId = "User ID cannot be negative!";
 
 	private final LocalValidator validator;
 	private final FilmService filmService;
@@ -56,29 +56,28 @@ public class FilmController {
 	@GetMapping("/{id}")
 	public FilmAnsDto findById(@PathVariable final Long id) {
 		log.trace("GET /films/{id}");
-		validator.positiveValue(id, NEGATIVE_FILM_ID);
+		validator.positiveValue(id, negativeFilmId);
 		return filmService.findById(id);
 	}
 
 	@PutMapping("/{id}/like/{user_id}")
 	public void addLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
 		log.trace("PUT /films/{id}/like/{user_id}");
-		validator.positiveValue(id, NEGATIVE_FILM_ID);
-		validator.positiveValue(userId, NEGATIVE_USER_ID);
+		validator.positiveValue(id, negativeFilmId);
+		validator.positiveValue(userId, negativeUserId);
 		filmService.addLike(id, userId);
 	}
 
 	@DeleteMapping("/{id}/like/{user_id}")
 	public void deleteLike(@PathVariable final Long id, @PathVariable("user_id") final Long userId) {
 		log.trace("DELETE /films/{id}/like/{user_id}");
-		validator.positiveValue(id, NEGATIVE_FILM_ID);
-		validator.positiveValue(userId, NEGATIVE_USER_ID);
+		validator.positiveValue(id, negativeFilmId);
+		validator.positiveValue(userId, negativeUserId);
 		filmService.deleteLike(id, userId);
 	}
 
 	@GetMapping("/popular")
-	public List<FilmAnsDto> findTopFilms(
-			@RequestParam(defaultValue = GetConstants.COUNT) Integer count,
+	public List<FilmAnsDto> findTopFilms(@RequestParam(defaultValue = GetConstants.COUNT) Integer count,
 			@RequestParam(required = false) Long genreId, @RequestParam(required = false) Integer year) {
 		log.trace("GET /films/popular");
 		return filmService.findTopFilm(count, genreId, year);
@@ -109,7 +108,7 @@ public class FilmController {
 	@DeleteMapping("/{id}")
 	public void deleteFilm(@PathVariable final Long id) {
 		log.trace("DELETE /films/{id}");
-		validator.positiveValue(id, NEGATIVE_FILM_ID);
+		validator.positiveValue(id, negativeFilmId);
 		filmService.deleteFilm(id);
 	}
 }

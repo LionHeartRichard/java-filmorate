@@ -59,10 +59,7 @@ public class ReviewService {
 		Review existing = reviewRepository.findById(review.getReviewId())
 				.orElseThrow(() -> new NotFoundException("Review not found: " + review.getReviewId()));
 		// собираем новый объект, оставляем userId, filmId и useful из existing
-		Review toSave = existing.toBuilder()
-				.content(review.getContent())
-				.isPositive(review.getIsPositive())
-				.build();
+		Review toSave = existing.toBuilder().content(review.getContent()).isPositive(review.getIsPositive()).build();
 		// сохраняем и возвращаем
 		Review saved = reviewRepository.save(toSave);
 
@@ -150,7 +147,7 @@ public class ReviewService {
 
 	// валидации
 	@Transactional(readOnly = true)
-    protected void validateReviewId(Long id) {
+	protected void validateReviewId(Long id) {
 		if (reviewRepository.findById(id).isEmpty()) {
 			String msg = "Review with this ID not found: " + id;
 			log.warn(msg);
@@ -159,18 +156,18 @@ public class ReviewService {
 	}
 
 	@Transactional(readOnly = true)
-    protected void validateFilmId(Long id) {
+	protected void validateFilmId(Long id) {
 		if (filmRepository.findById(id).isEmpty()) {
-			String msg = "Film with this ID not found: " + id;
+			String msg = String.format("Film with this ID not found: %d", id);
 			log.warn(msg);
 			throw new NotFoundException(msg);
 		}
 	}
 
 	@Transactional(readOnly = true)
-    protected void validateUserId(Long userId) {
+	protected void validateUserId(Long userId) {
 		if (userRepository.findById(userId).isEmpty()) {
-			String msg = "User with this ID not found: " + userId;
+			String msg = String.format("User with this ID not found: %d", +userId);
 			log.warn(msg);
 			throw new NotFoundException(msg);
 		}
