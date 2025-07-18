@@ -5,23 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.FilmRecommendationResponse;
+import ru.yandex.practicum.filmorate.dto.FilmAnsDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Like;
-import ru.yandex.practicum.filmorate.repositories.FilmRepository;
-import ru.yandex.practicum.filmorate.repositories.LikeRepository;
-import ru.yandex.practicum.filmorate.repositories.UserRepository;
+import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.repositories.*;
 import ru.yandex.practicum.filmorate.util.dtomapper.DtoMapperFilm;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,8 +23,12 @@ public class RecommendationsService {
 	LikeRepository repLike;
 	FilmRepository repFilm;
 	UserRepository repUser;
+	DirectorRepository repDirector;
+	MpaRepository repMpa;
+	FilmGenreRepository repFilmGenre;
+	GenreRepository repGenre;
 
-	public List<FilmRecommendationResponse> getFilmRecommendations(Long userId) {
+	public List<FilmAnsDto> getFilmRecommendations(Long userId) {
 		log.info("Starting search recommendations for user {}", userId);
 		repUser.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
 
@@ -44,7 +38,7 @@ public class RecommendationsService {
 		List<Long> similarUsers = findSimilarUsers(userId, userLikes);
 		log.info("Found {} similar users for user {}", similarUsers.size(), userId);
 
-		List<FilmRecommendationResponse> recommendations = getRecommendedFilms(userId, similarUsers, userLikes);
+		List<FilmAnsDto> recommendations = getRecommendedFilms(userId, similarUsers, userLikes);
 		log.info("Generated {} recommendations for user {}", recommendations.size(), userId);
 
 		return recommendations;
@@ -87,7 +81,7 @@ public class RecommendationsService {
 		return targetSet.size();
 	}
 
-	private List<FilmRecommendationResponse> getRecommendedFilms(Long userId, List<Long> similarUsers,
+	private List<FilmAnsDto> getRecommendedFilms(Long userId, List<Long> similarUsers,
 			Map<Long, List<Long>> userLikes) {
 		log.trace("Getting recommended films for user {}", userId);
 		Set<Long> recommendedFilmIds = getRecommendedFilmIds(userId, similarUsers, userLikes);
@@ -113,7 +107,7 @@ public class RecommendationsService {
 		return recommendations;
 	}
 
-	private List<FilmRecommendationResponse> getFilmRecommendationResponses(Set<Long> filmIds) {
+	private List<FilmAnsDto> getFilmRecommendationResponses(Set<Long> filmIds) {
 		if (filmIds.isEmpty()) {
 			log.debug("No film IDs provided for DTO preparation");
 			return Collections.emptyList();
@@ -122,6 +116,22 @@ public class RecommendationsService {
 		List<Film> films = repFilm.findFilmsByIds(filmIds);
 		log.debug("Retrieved {} films from repository", films.size());
 
-		return films.stream().map(DtoMapperFilm::getFilmRecommendationResponse).collect(Collectors.toList());
+		return films.stream()
+				.map(film -> {
+					Mpa mpa = repMpa.findById(film.getMpaId()).orElse(null);
+					List<Genre> genres = getGenresForFilm(film.getId());
+					List<Director> directors = repDirector.findByFilmId(film.getId());
+					return DtoMapperFilm.getAnsDtoForFilm(film, mpa, genres, directors);
+				})
+				.collect(Collectors.toList());
+	}
+
+	private List<Genre> getGenresForFilm(Long filmId) {
+		List<FilmGenre> filmGenres = repFilmGenre.findByFilmId(filmId);
+		return filmGenres.stream()
+				.map(fg -> repGenre.findById(fg.getGenreId()))
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(Collectors.toList());
 	}
 }

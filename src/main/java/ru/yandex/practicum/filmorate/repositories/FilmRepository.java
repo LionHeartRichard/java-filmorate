@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 @Repository
 public class FilmRepository extends BaseRepository<Film> {
@@ -108,18 +109,25 @@ public class FilmRepository extends BaseRepository<Film> {
 		return findMany(sql, filmIds.toArray());
 	}
 
-	public List<Film> getAllNotIdTopFilms(Set<Long> idexes) {
-		StringBuilder buiderQuery = new StringBuilder(SELECT_NOT_IN);
-		int[] idx = {idexes.size()};
-		idexes.forEach(v -> {
-			--idx[0];
-			if (idx[0] != 0) {
-				buiderQuery.append(v + ",");
-			} else {
-				buiderQuery.append(v + ")");
-			}
-		});
-		return findMany(buiderQuery.toString());
+//	public List<Film> getAllNotIdTopFilms(Set<Long> idexes) {
+	public List<Long> getAllNotIdTopFilms(Set<Long> idexes, int limit) {
+//		StringBuilder buiderQuery = new StringBuilder(SELECT_NOT_IN);
+//		int[] idx = {idexes.size()};
+//		idexes.forEach(v -> {
+//			--idx[0];
+//			if (idx[0] != 0) {
+//				buiderQuery.append(v + ",");
+//			} else {
+//				buiderQuery.append(v + ")");
+//			}
+//		});
+//		return findMany(buiderQuery.toString());
+		StringBuilder builderQuery = new StringBuilder("SELECT film_id FROM film WHERE f.film_id NOT IN (");
+		idexes.forEach(v -> builderQuery.append(v).append(","));
+		if (builderQuery.lastIndexOf(",") != -1)
+			builderQuery.delete(builderQuery.length() - 1, builderQuery.length());
+		builderQuery.append(") LIMIT ").append(limit);
+		return jdbc.query(builderQuery.toString(), ((rs, rowNum) -> rs.getLong("film_id")));
 	}
 
 	public Integer getCountRows() {
