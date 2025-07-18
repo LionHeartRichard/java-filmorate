@@ -26,8 +26,7 @@ public class ReviewController {
     @PutMapping
     public Review updateReview(@Valid @RequestBody Review review) {
         log.info("PUT /reviews");
-        reviewService.updateReview(review);
-        return review;
+        return reviewService.updateReview(review);
     }
 
     @DeleteMapping("/{reviewId}")

@@ -26,32 +26,35 @@ public class ReviewRepository extends BaseRepository<Review> {
 	}
 
 	public List<Review> findAllReviews(Long count) {
-		String sql = "SELECT R.* FROM REVIEWS AS R ORDER BY R.USEFUL DESC LIMIT ?";
+		String sql = "SELECT R.* FROM REVIEWS AS R ORDER BY R.USEFUL DESC, R.REVIEW_ID ASC LIMIT ?";
 		return findMany(sql, count);
 	}
 
 	public List<Review> findReviewsByFilmId(Long filmId, Long count) {
-		String sql = "SELECT R.* FROM REVIEWS AS R WHERE FILM_ID = ? ORDER BY R.USEFUL DESC LIMIT ?";
+		String sql = "SELECT R.* FROM REVIEWS AS R WHERE R.FILM_ID = ? ORDER BY R.USEFUL DESC, R.REVIEW_ID ASC LIMIT ?";
 		return findMany(sql, filmId, count);
 	}
 
-	// TODO
 	public Review save(Review review) {
 		if (review.getReviewId() != null && review.getReviewId() > 0) {
-			String sql = "UPDATE REVIEWS " + "SET CONTENT = ?, USER_ID = ?, FILM_ID = ?, IS_POSITIVE = ?, USEFUL = ? "
-					+ "WHERE REVIEW_ID = ?";
-			jdbc.update(sql, review.getContent(), review.getUserId(), review.getFilmId(), review.getIsPositive(),
-					review.getUseful(), review.getReviewId());
-			return review;
+			return update(review);
 		} else {
 			return insert(review);
 		}
 	}
 
 	private Review insert(Review review) {
-		String sql = "INSERT INTO REVIEWS (CONTENT, USER_ID, FILM_ID, IS_POSITIVE) " + "VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO REVIEWS (CONTENT, USER_ID, FILM_ID, IS_POSITIVE) VALUES (?, ?, ?, ?)";
 		Long id = insert(sql, review.getContent(), review.getUserId(), review.getFilmId(), review.getIsPositive());
 		return review.toBuilder().reviewId(id).build();
+	}
+
+	private Review update(Review review) {
+		String sql = "UPDATE REVIEWS SET CONTENT = ?, USER_ID = ?, FILM_ID = ?, IS_POSITIVE = ? "
+				+ "WHERE REVIEW_ID = ?";
+		jdbc.update(sql, review.getContent(), review.getUserId(), review.getFilmId(), review.getIsPositive(),
+				review.getReviewId());
+		return review;
 	}
 
 	public void updateUseful(Long reviewId, int useful) {

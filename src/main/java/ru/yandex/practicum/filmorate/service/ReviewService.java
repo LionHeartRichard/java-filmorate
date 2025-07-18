@@ -37,36 +37,43 @@ public class ReviewService {
 		validateFilmId(review.getFilmId());
 		validateUserId(review.getUserId());
 
-		Review ans = reviewRepository.save(review);
+		Review saved = reviewRepository.save(review);
+		reviewRepository.updateUseful(saved.getReviewId(), 0);
 
 		Event event = new Event();
 		event.setTimestamp(System.currentTimeMillis());
-		event.setUserId(ans.getUserId());
+		event.setUserId(saved.getUserId());
 		event.setEventType(EventType.REVIEW);
 		event.setOperation(Operation.ADD);
-		event.setEntityId(ans.getReviewId());
+		event.setEntityId(saved.getReviewId());
 
 		eventRepository.save(event);
 
-		return ans;
+		return saved;
 	}
 
 	@Transactional
-	public void updateReview(Review review) {
+	public Review updateReview(Review review) {
 		log.info("Updating review {}", review.getReviewId());
-		validateReviewId(review.getReviewId());
-		validateFilmId(review.getFilmId());
-		validateUserId(review.getUserId());
-		Review ans = reviewRepository.save(review);
+		// проверяем, что такой отзыв есть
+		Review existing = reviewRepository.findById(review.getReviewId())
+				.orElseThrow(() -> new NotFoundException("Review not found: " + review.getReviewId()));
+		// собираем новый объект, оставляем userId, filmId и useful из existing
+		Review toSave = existing.toBuilder()
+				.content(review.getContent())
+				.isPositive(review.getIsPositive())
+				.build();
+		// сохраняем и возвращаем
+		Review saved = reviewRepository.save(toSave);
 
 		Event event = new Event();
 		event.setTimestamp(System.currentTimeMillis());
-		event.setUserId(ans.getUserId());
+		event.setUserId(saved.getUserId());
 		event.setEventType(EventType.REVIEW);
 		event.setOperation(Operation.UPDATE);
-		event.setEntityId(ans.getReviewId());
-
+		event.setEntityId(saved.getReviewId());
 		eventRepository.save(event);
+		return saved;
 	}
 
 	@Transactional
@@ -132,17 +139,18 @@ public class ReviewService {
 	}
 
 	@Transactional
-	private void recalcUseful(Long reviewId) {
+	protected void recalcUseful(Long reviewId) {
 		int likes = likeRepository.countLikes(reviewId);
 		int dislikes = likeRepository.countDislikes(reviewId);
 		int useful = likes - dislikes;
 		log.debug("Recalculated useful for review {}: {}", reviewId, useful);
+
 		reviewRepository.updateUseful(reviewId, useful);
 	}
 
 	// валидации
 	@Transactional(readOnly = true)
-	private void validateReviewId(Long id) {
+    protected void validateReviewId(Long id) {
 		if (reviewRepository.findById(id).isEmpty()) {
 			String msg = "Review with this ID not found: " + id;
 			log.warn(msg);
@@ -151,7 +159,7 @@ public class ReviewService {
 	}
 
 	@Transactional(readOnly = true)
-	private void validateFilmId(Long id) {
+    protected void validateFilmId(Long id) {
 		if (filmRepository.findById(id).isEmpty()) {
 			String msg = "Film with this ID not found: " + id;
 			log.warn(msg);
@@ -160,7 +168,7 @@ public class ReviewService {
 	}
 
 	@Transactional(readOnly = true)
-	private void validateUserId(Long userId) {
+    protected void validateUserId(Long userId) {
 		if (userRepository.findById(userId).isEmpty()) {
 			String msg = "User with this ID not found: " + userId;
 			log.warn(msg);
